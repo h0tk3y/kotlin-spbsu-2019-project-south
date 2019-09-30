@@ -14,6 +14,9 @@ UserBase, ChatBase, MessageBase - Pavlov
 3. Создать в src/test/kotlin свой тест("Test_Messagebase.kt") и написать там unit-тесты для своего класса
 4. Cделать pull request в ветку task_1
 
+Чего хотим добиться?
+Хотим добавить 2 юзеров, один создаёт чатик и они чо-то пишут. 
+
 
 
 
