@@ -1,4 +1,4 @@
-class Server {
+/*class Server {
     var chatBase : ChatBase
     var userBase : UserBase
     var attachmentBase : AttachmentBase
@@ -104,5 +104,5 @@ class GroupChat : Chat {
 class singleChat : Chat {
     val user1 : User
     val user2 : User
-}
+}*/
 
