@@ -1,12 +1,12 @@
-data class Message(var text : String, val chatId : Long) {
-
+data class Message(var text : String, val chatId : Long, val userId : Long) {
     var isEdited: Boolean = false
     var isRead: Boolean = false
     var isSent: Boolean = false
     var isDeleted: Boolean = false
 
-    val idInChat: Long
+    val attachment_ids : MutableList<Long>
 
+    val idInChat: Long
     init {
         idInChat = TODO()
     }
