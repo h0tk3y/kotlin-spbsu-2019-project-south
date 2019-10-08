@@ -105,5 +105,28 @@ data class singleChat(override val id: Long, val user1: Long, val user2: Long) :
 }
 ````
 
+### Базы данных
+
+Скоро сделаю
+
+
+### Структура Client
+
+class Client было решено разбить на подклассы, отвечающие за то что они делают(предоставляют данные или изменяют их).
+    
+````kotlin
+class Client(val server: Server) {
+    class userDataGetter(val userId: Long)
+    class userDataSetter(val userId: Long)
+    class messageDataGetter(val messageId: Long)
+    class messageDataSetter(val messageId: Long)
+    class chatDataGetter(val chatId: Long)
+    class chatDataSetter(val chatId: Long)
+}
+````
+
+
+**Текущая задача - реализовать эти подклассы, геттеры/сеттеры дата классов где надо, класс ServerRequest и метод сервера answerRequest.
+Начать настраивать Ktor**
 
 
