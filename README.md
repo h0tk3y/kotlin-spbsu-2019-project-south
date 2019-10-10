@@ -19,7 +19,7 @@
 1. [Вспомогательные штуки](#вспомогательные-штуки)
     1. [ReqType и FieldType](#reqtype--fieldtype)
     1. [ServerRequest](#serverrequest)
-1. [Структура Client](#структура--cleint)
+1. [Структура Client](#структура-client)
 
 
 # ИНФА ДЛЯ ДЕВЕЛОПЕРОВ
