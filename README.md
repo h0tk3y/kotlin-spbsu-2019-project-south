@@ -85,7 +85,7 @@ class Client(private val server: Server) { //Client знает interface Server
     private val objectMapper = jacksonObjectMapper() 
 }
 ````
-// Пример работы клиента см. в "Структуре клиента"
+// Пример работы клиента см. в [Структура Client](#структура-client)
 
 ***Человеческие примеры  работы с запросами есть в презентации(слайды 26 - 27)***
 
