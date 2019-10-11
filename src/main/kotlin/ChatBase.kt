@@ -1,6 +1,11 @@
-class ChatBase: DataBase {
+class ChatBase(val data_path: String = ""): DataBase {
     override var baseSize: Int = 0
     private val chats = mutableMapOf<Long, Chat>()
+
+    init {
+        // TODO: Open file {data_path} or create new data_base on this path
+    }
+
     fun add(chat : Chat): Int {
         chats.plus(Pair(baseSize, chat))
         return baseSize++

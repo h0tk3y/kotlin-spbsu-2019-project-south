@@ -1,6 +1,11 @@
-class UserBase: DataBase {
+class UserBase(val data_path: String = ""): DataBase{
     override var baseSize: Int = 0
     private val users = mutableMapOf<Long, User>()
+
+    init {
+        // TODO: Open file {data_path} or create new data_base on this path
+    }
+
     fun add(user : User): Int {
         users.plus(Pair(baseSize, user))
         return baseSize++

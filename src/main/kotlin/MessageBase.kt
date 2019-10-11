@@ -1,6 +1,11 @@
-class MessageBase : DataBase {
+class MessageBase(val data_path: String = "") : DataBase {
     override var baseSize: Int = 0
     private val messages = mutableMapOf<Long, Message>()
+
+    init {
+        // TODO: Open file {data_path} or create new data_base on this path
+    }
+
     fun add(message : Message): Int {
         messages.plus(Pair(baseSize, message))
         return baseSize++
