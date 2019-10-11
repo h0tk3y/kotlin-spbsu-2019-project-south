@@ -1,11 +1,11 @@
 class ChatBase {
-    private val chats = mutableMapOf<Long, Message>()
+    private val chats = mutableMapOf<Long, Chat>()
     private var baseSize : Int = 0
-    fun addChat(chat : Chat) {
+    fun addChat(chat : Chat): Int {
         chats.plus(Pair(baseSize, chat))
-        baseSize += 1
+        return baseSize++
     }
-    fun getChat(id : Long): Message? {
+    fun getChat(id : Long): Chat? {
         return chats[id]
     }
 }

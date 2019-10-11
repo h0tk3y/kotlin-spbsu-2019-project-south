@@ -1,9 +1,9 @@
 class UserBase {
     private val users = mutableMapOf<Long, Message>()
     private var baseSize : Int = 0
-    fun addUser(user : User) {
+    fun addUser(user : User): Int {
         users.plus(Pair(baseSize, user))
-        baseSize += 1
+        return baseSize++
     }
     fun getUser(id : Long): Message? {
         return users[id]
