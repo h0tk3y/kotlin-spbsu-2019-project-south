@@ -210,7 +210,7 @@ class ServerRequest {
 
     private val objectMapper = jacksonObjectMapper() - он будет запаковывать переданные данные в JSON
 
-     constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, val body : String /заjson-неный объект/) {
+     constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body : String /заjson-неный объект/) {
             this.id = id
             this.reqType = reqType
             this.fieldType = fieldType
