@@ -82,7 +82,7 @@ class Server {
 Дочерние классы клиента разделяют работу по типу, и имеют методы, отправляяющие запросы на сервер
 
 ````kotlin
-class Client(private val server: Server) { //Client знает interface Server 
+class Client() { 
     var loggedUserId: Long = -1
 
     private val objectMapper = jacksonObjectMapper() 
@@ -241,7 +241,7 @@ class ServerRequest {
 class Client было решено разбить на подклассы, отвечающие за то что они делают(предоставляют данные или изменяют их).
     
 ````kotlin
-class Client(val server: Server) {
+class Client() {
 
     class userData(val userId: Long = -1){
            // коммент для того кто это будет реализовывать можно добавить шабло makeRequest для функция типа (GET, USER)
