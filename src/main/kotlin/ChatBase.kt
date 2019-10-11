@@ -1,11 +1,19 @@
-class ChatBase {
+class ChatBase: DataBase {
+    override var baseSize: Int = 0
     private val chats = mutableMapOf<Long, Chat>()
-    private var baseSize : Int = 0
-    fun addChat(chat : Chat): Int {
+    fun add(chat : Chat): Int {
         chats.plus(Pair(baseSize, chat))
         return baseSize++
     }
-    fun getChat(id : Long): Chat? {
+    fun get(id : Long): Chat? {
         return chats[id]
+    }
+    fun edit(id : Long, editted_chat: Chat) {
+        if (!chats.containsKey(id))
+            return
+        chats[id] = editted_chat;
+    }
+    fun remove(id: Long) {
+        chats.remove(id)
     }
 }
