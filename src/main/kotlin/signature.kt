@@ -1,4 +1,4 @@
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+/*import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 enum class ReqType {
     ADD {
@@ -142,4 +142,4 @@ data class singleChat(override val id: Long, val user1: Long, val user2: Long) :
     override var members: MutableSet<Long> = mutableSetOf(user1, user2)
     override val messages: MutableList<Message> = mutableListOf()
 }
-
+*/
