@@ -49,7 +49,7 @@ class Server {
 }
 
 
-class Client(val server: Server) {
+class Client() {
     var loggedUserId: Long = -1
 
     private val objectMapper = jacksonObjectMapper()
