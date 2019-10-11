@@ -1,25 +1,64 @@
-/*class Server {
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
+enum class ReqType {
+    ADD {
+        override fun toString(): String {
+            return "ADD"
+        }
+    },
+    GET,
+    EDIT,
+    REMOVE
+}
+
+enum class FieldType {
+    USER {
+        override fun toString(): String {
+            return "USER"
+        }
+    },
+    MESSAGE,
+    CHAT
+}
+
+class ServerRequest {
+    var id: Long = -1
+    var reqType: ReqType? = null
+    var fieldType: FieldType? = null
+
+    private val objectMapper = jacksonObjectMapper()
+
+    constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body: String) }
+
+    constructor(requestString: String)
+
+    override fun toString(): String
+
+    private lateinit var server: Server //  на самом деле адрес
+
+    fun makeRequest() = server.answerRequest(this.toString())
+
+}
+
+class Server {
     var chatBase: ChatBase? = null
     var userBase: UserBase? = null
     var messageBase: MessageBase? = null
 
-    fun answerRequest(request : ServerRequest) {}
+    fun answerRequest(request: String) {}
 }
 
 
 class Client(val server: Server) {
-    var loggedUserId: Long = -1 // id залогиненного юзера
+    var loggedUserId: Long = -1
 
     private val objectMapper = jacksonObjectMapper()
 
-    class userDataGetter(val userId: Long)
-    class userDataSetter(val userId: Long)
-    class messageDataGetter(val messageId: Long)
-    class messageDataSetter(val messageId: Long)
-    class chatDataGetter(val chatId: Long)
-    class chatDataSetter(val chatId: Long)
-
+    class userData(val userId: Long)
+    class messageData(val messageId: Long)
+    class chatData(val chatId: Long)
 }
+
 
 
 class UI(val client: Client) {
@@ -27,28 +66,38 @@ class UI(val client: Client) {
 }
 
 
-class ChatBase {
-    private val chats: MutableMap<Long, Chat>? = null // Map(id, chat)
-    private var baseSize: Int = 0 //  кол-во чатов
-    fun getChat(id: Int) {} // возвращает чат по id
-    fun addChat() {} // добавляет чат
+
+class ChatBase: DataBase {
+    override var baseSize: Int = 0
+    private val chats = mutableMapOf<Long, Chat>()
+    fun add(chat : Chat): Int
+    fun get(id : Long): Chat?
+    fun edit(id : Long, editted_chat: Chat)
+    fun remove(id: Long)
 }
 
 
-class UserBase {
-    val users: MutableMap<Long, User>? = null // Map(id, chat)
-    fun searchByName() {}
-    fun searchById() {}
-    fun addUser() {}
-    fun deleteUser() {}
 
+class UserBase: DataBase {
+    override var baseSize: Int = 0
+    private val users = mutableMapOf<Long, User>()
+    fun add(user : User): Int
+    fun get(id : Long): User?
+    fun edit(id : Long, editted_user: User)
+    fun remove(id: Long)
 }
 
 
-class MessageBase {
-    val messages: MutableMap<Long, Message>? = null
-    fun getChat(id: Int) {}
+
+class MessageBase : DataBase {
+    override var baseSize: Int = 0
+    private val messages = mutableMapOf<Long, Message>()
+    fun add(message : Message): Int
+    fun get(id : Long): Message?
+    fun edit(id : Long, editted_message: Message)
+    fun remove(id: Long)
 }
+
 
 
 data class User(val userId: Long, val login: String) {
@@ -59,19 +108,14 @@ data class User(val userId: Long, val login: String) {
 }
 
 
-data class Message(var text: String, val chatId: Long, val userId: Long) {
+
+data class Message(var text : String, val id : Long, val chatId : Long, val userId : Long) {
     var isEdited: Boolean = false
     var isRead: Boolean = false
     var isSent: Boolean = false
     var isDeleted: Boolean = false
-
-    //val attachment_ids : MutableList<Long>
-
-    /*val idInChat: Long
-    init {
-        idInChat = TODO()
-    }*/
 }
+
 
 
 interface Chat {
@@ -83,6 +127,7 @@ interface Chat {
 }
 
 
+
 data class GroupChat(override val id: Long, val chatOwner: Long, var Name: String) : Chat {
 
     override var members: MutableSet<Long> = mutableSetOf(chatOwner)
@@ -92,8 +137,9 @@ data class GroupChat(override val id: Long, val chatOwner: Long, var Name: Strin
 }
 
 
+
 data class singleChat(override val id: Long, val user1: Long, val user2: Long) : Chat {
     override var members: MutableSet<Long> = mutableSetOf(user1, user2)
     override val messages: MutableList<Message> = mutableListOf()
 }
-*/
+
