@@ -1,4 +1,4 @@
-class Server {
+/*class Server {
     var chatBase: ChatBase? = null
     var userBase: UserBase? = null
     var messageBase: MessageBase? = null
@@ -96,4 +96,4 @@ data class singleChat(override val id: Long, val user1: Long, val user2: Long) :
     override var members: MutableSet<Long> = mutableSetOf(user1, user2)
     override val messages: MutableList<Message> = mutableListOf()
 }
-
+*/
