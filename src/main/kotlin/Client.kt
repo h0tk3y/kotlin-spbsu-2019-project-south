@@ -6,7 +6,7 @@ import FieldType.*
 class Client() {
     var loggedUserId: Long = -1
 
-    fun registerUser(name : String, login : String, email : String = "") {
+    fun registerUser(login : String, name : String = login, email : String = "") {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
