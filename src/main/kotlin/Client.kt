@@ -1,11 +1,10 @@
 import com.fasterxml.jackson.databind.util.JSONPObject
-import com.fasterxml.jackson.module.kotlin.`KotlinPackage-Extensions-6da2b0d6`.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.*
 import ReqType.*
 import FieldType.*
 
 class Client() {
     var loggedUserId: Long = -1
-
     fun registerUser(login : String, name : String = login, email : String = "") {
         loggedUserId = UserData().addUser(login, name, email)
     }
@@ -13,7 +12,7 @@ class Client() {
     class UserData(var userId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
         private fun getUser(id : Long) : User {
-            return objectMapper.readValue<User>(ServerRequest(GET, USER, userId).makeRequest())
+            return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
