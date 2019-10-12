@@ -13,7 +13,7 @@ class Client() {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, userId).makeRequest())
         }
         private fun editUser(user : User) {
-            ServerRequest(EDIT, USER, userId, user).makeRequest()
+            ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
         }
         fun addContact(contactId: Long, name : String = ""){
             val cur = getUser(userId);
