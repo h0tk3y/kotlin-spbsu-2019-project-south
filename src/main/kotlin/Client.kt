@@ -10,12 +10,15 @@ class Client() {
 
     class UserData(var userId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
+
         private fun getUser(id : Long) : User {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
+
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString(user)).makeRequest()
         }
+
         fun addUser(login : String, name : String, email : String) : Long {
             val newUser = User(-1, login)
             newUser.name = name
@@ -23,6 +26,7 @@ class Client() {
             return objectMapper.readValue<Long>(
                 ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser)).makeRequest())
         }
+
         fun addContact(contactId: Long, name : String = ""){
             val cur = getUser(userId)
             if (name == "") {
@@ -34,41 +38,49 @@ class Client() {
             }
             editUser(cur)
         }
+
         fun changeContact(contactId : Long, name : String) {
             val cur = getUser(userId)
             cur.contacts[contactId] = name
             editUser(cur)
         }
+
         fun deleteContact(contactId: Long) {
             val cur = getUser(userId)
             cur.contacts.remove(contactId)
             editUser(cur)
         }
+
         fun addBlockedUser(blockedUserId: Long){
             val cur = getUser(userId)
             cur.blockedUsers.add(blockedUserId)
             editUser(cur)
         }
+
         fun deleteBlockedUser(blockedUserId: Long) {
             val cur = getUser(userId)
             cur.blockedUsers.remove(blockedUserId)
             editUser(cur)
         }
+
         fun addChat(chatId : Long){
             val cur = getUser(userId)
             cur.chatsId.add(chatId)
             editUser(cur)
         }
+
         fun deleteChat(chatId : Long) {
             val cur = getUser(userId)
             cur.chatsId.remove(chatId)
             editUser(cur)
         }
+
         fun changeName(newName : String) {
             val cur = getUser(userId)
             cur.name = newName
             editUser(cur)
         }
+
         fun changeEmail(newEmail : String) {
             val cur = getUser(userId)
             cur.email = newEmail
@@ -76,7 +88,46 @@ class Client() {
         }
     }
 
-    class messageData(val messageId: Long)
+    class messageData(val messageId: Long) {
+        private val objectMapper = jacksonObjectMapper()
+
+        private fun getMessage(id: Long): Message {
+            return objectMapper.readValue<User>(ServerRequest(GET, MESSAGE, id).makeRequest())
+        }
+
+        private fun editMessage(message: Message) {
+            ServerRequest(EDIT, MESSAGE, message.id, objectMapper.writeValueAsString<Message>(message)).makeRequest()
+        }
+
+        fun addMessageToDB(message: Message) =
+            ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString<Message>(message)).makeRequest()
+
+        fun editTextMessage(newText: String) {
+            val cur = getMessage(messageId)
+            cur.text = newText
+            cur.isEdited = true
+            editMessage(cur)
+        }
+
+        fun deleteMessage() {
+            val cur = getMessage(messageId)
+            cur.isDeleted = true
+            editMessage(cur)
+        }
+
+        fun deleteMessageForever() = ServerRequest(
+            REMOVE,
+            MESSAGE,
+            messageId,
+            objectMapper.writeValueAsString<Message>(getMessage(messageId))
+        ).makeRequest()
+
+        fun readMessage() {
+            val cur = getMessage(messageId)
+            cur.isRead = true
+            editMessage(cur)
+        }
+    }
 
     class ChatData(val chatId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
