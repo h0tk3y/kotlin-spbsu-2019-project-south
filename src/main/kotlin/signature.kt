@@ -52,9 +52,19 @@ class Server {
 class Client() {
     var loggedUserId: Long = -1
 
-    private val objectMapper = jacksonObjectMapper()
+    fun registerUser(name : String, login : String)
 
-    class userData(val userId: Long)
+    class UserData(var userId: Long = -1) {
+        private val objectMapper = jacksonObjectMapper()
+        private fun getUser(id : Long) : User
+        private fun editUser(user : User)
+        fun addUser(login : String, name : String) : Long
+        fun addContact(contactId: Long, name : String = "")
+        fun addBlockedUser(blockedUserId: Long)
+        fun addChat(chatId : Long)
+        fun changeName(newName : String)
+    }
+
     class messageData(val messageId: Long)
     class chatData(val chatId: Long)
 }
