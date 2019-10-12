@@ -20,6 +20,9 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.4.2-rc1")
+    implementation("io.ktor:ktor-server-netty:1.2.4")
+    implementation("io.ktor:ktor-websockets:1.2.4")
+    implementation("io.ktor:ktor-client-websockets:1.2.4")
 }
 
 tasks.test {
