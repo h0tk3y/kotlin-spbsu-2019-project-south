@@ -15,14 +15,14 @@ class Client() {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
         private fun editUser(user : User) {
-            ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
+            ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString(user)).makeRequest()
         }
         fun addUser(login : String, name : String, email : String) : Long {
             val newUser = User(-1, login)
             newUser.name = name
             newUser.email = email
             return objectMapper.readValue<Long>(
-                ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString<User>(newUser)).makeRequest())
+                ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser)).makeRequest())
         }
         fun addContact(contactId: Long, name : String = ""){
             val cur = getUser(userId)
