@@ -13,7 +13,7 @@ class Client() {
     class UserData(var userId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
         private fun getUser(id : Long) : User {
-            return objectMapper.readValue<User>(ServerRequest(GET, USER, userId).makeRequest())
+            return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
