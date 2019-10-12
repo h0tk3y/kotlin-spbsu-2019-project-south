@@ -1,4 +1,4 @@
-enum class ReqType {
+enum class RequestType {
     ADD {
         override fun toString(): String {
             return "ADD"
