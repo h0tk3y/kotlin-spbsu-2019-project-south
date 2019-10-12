@@ -6,14 +6,24 @@ import FieldType.*
 class Client() {
     var loggedUserId: Long = -1
 
-    private val objectMapper = jacksonObjectMapper()
+    fun registerUser(name : String, login : String) {
+        val userData = UserData()
+        loggedUserId = userData.addUser(login, name)
+    }
 
-    class userData(val userId: Long) {
+    class UserData(var userId: Long = -1) {
+        private val objectMapper = jacksonObjectMapper()
         private fun getUser(id : Long) : User {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, userId).makeRequest())
         }
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
+        }
+        fun addUser(login : String, name : String) : Long {
+            val newUser = User(-1, login)
+            newUser.name = name
+            return objectMapper.readValue<Long>(
+                ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString<User>(newUser)).makeRequest())
         }
         fun addContact(contactId: Long, name : String = ""){
             val cur = getUser(userId);
@@ -42,6 +52,7 @@ class Client() {
             editUser(cur)
         }
     }
+
     class messageData(val messageId: Long)
     class chatData(val chatId: Long)
 }
