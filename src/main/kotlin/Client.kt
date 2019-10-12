@@ -6,9 +6,9 @@ import FieldType.*
 class Client() {
     var loggedUserId: Long = -1
 
-    fun registerUser(name : String, login : String) {
+    fun registerUser(name : String, login : String, email : String) {
         val userData = UserData()
-        loggedUserId = userData.addUser(login, name)
+        loggedUserId = userData.addUser(login, name, email)
     }
 
     class UserData(var userId: Long = -1) {
@@ -19,9 +19,10 @@ class Client() {
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString<User>(user)).makeRequest()
         }
-        fun addUser(login : String, name : String) : Long {
+        fun addUser(login : String, name : String, email : String) : Long {
             val newUser = User(-1, login)
             newUser.name = name
+            newUser.email = email
             return objectMapper.readValue<Long>(
                 ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString<User>(newUser)).makeRequest())
         }
