@@ -1,6 +1,6 @@
 /*import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
-enum class ReqType {
+enum class RequestType {
     ADD {
         override fun toString(): String {
             return "ADD"
@@ -23,12 +23,12 @@ enum class FieldType {
 
 class ServerRequest {
     var id: Long = -1
-    var reqType: ReqType? = null
+    var requestType: RequestType? = null
     var fieldType: FieldType? = null
 
     private val objectMapper = jacksonObjectMapper()
 
-    constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body: String) }
+    constructor (requestType: RequestType? = null, fieldType: FieldType? = null, id: Long = -1, body: String) }
 
     constructor(requestString: String)
 

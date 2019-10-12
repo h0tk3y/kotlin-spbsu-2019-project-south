@@ -1,6 +1,5 @@
-import com.fasterxml.jackson.databind.util.JSONPObject
 import com.fasterxml.jackson.module.kotlin.*
-import ReqType.*
+import RequestType.*
 import FieldType.*
 
 class Client() {
