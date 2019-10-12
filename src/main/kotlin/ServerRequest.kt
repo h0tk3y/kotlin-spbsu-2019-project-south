@@ -1,8 +1,8 @@
-import com.fasterxml.jackson.module.kotlin.`KotlinPackage-Extensions-6da2b0d6`
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 open class ServerRequest {
 
-    constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body : String? = null) {
+    constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body : String = "") {
         this.id = id
         this.reqType = reqType
         this.fieldType = fieldType
@@ -16,9 +16,9 @@ open class ServerRequest {
     var id : Long = -1
     var reqType : ReqType? = null
     var fieldType : FieldType? = null
-    var body : String? = null
+    var body : String = ""
 
-    private val objectMapper = `KotlinPackage-Extensions-6da2b0d6`.jacksonObjectMapper()
+    private val objectMapper = jacksonObjectMapper()
 
     override fun toString(): String {
         TODO()
