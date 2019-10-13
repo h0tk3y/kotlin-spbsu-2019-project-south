@@ -99,15 +99,15 @@ class Client() {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(id: Long): Message {
-            return objectMapper.readValue<User>(ServerRequest(GET, MESSAGE, id).makeRequest())
+            return objectMapper.readValue<Message>(ServerRequest(GET, MESSAGE, id).makeRequest())
         }
 
         private fun editMessage(message: Message) {
-            ServerRequest(EDIT, MESSAGE, message.id, objectMapper.writeValueAsString<Message>(message)).makeRequest()
+            ServerRequest(EDIT, MESSAGE, message.id, objectMapper.writeValueAsString(message)).makeRequest()
         }
 
         private fun addMessage(message: Message) =
-            ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString<Message>(message)).makeRequest()
+            ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString(message)).makeRequest()
 
         fun createMessage(text : String, chatId: Long, userId: Long) : Long {
             val newMessage = Message(text, -1, chatId, userId)
@@ -135,7 +135,7 @@ class Client() {
             REMOVE,
             MESSAGE,
             messageId,
-            objectMapper.writeValueAsString<Message>(getMessage(messageId))
+            objectMapper.writeValueAsString(getMessage(messageId))
         ).makeRequest()
 
         fun readMessage() {
