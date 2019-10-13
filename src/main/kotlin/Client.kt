@@ -9,7 +9,7 @@ object Client {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
-    class UserData(var userId: Long = -1) { //TODO: getSmth()
+    class UserData(var userId: Long = loggedUserId) { //TODO: getSmth()
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id : Long) : User {
@@ -88,10 +88,15 @@ object Client {
             editUser(cur)
         }
 
-        fun getName() : String{
-            val cur = getUser(userId)
-            return cur.name
-        }
+        fun getName() = getUser(userId).name
+
+        fun getEmail() = getUser(userId).email
+
+        fun getChats() = getUser(userId).chatsId
+
+        fun getBlockedUsers() = getUser(userId).blockedUsers
+
+        fun getContacts() = getUser(userId).contacts
     }
 
     class MessageData(private val messageId : Long = -1) {
