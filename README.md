@@ -17,7 +17,7 @@
     1. [Chat](#chat)
     1. [Базы данных](#базы-данных)
 1. [Вспомогательные штуки](#вспомогательные-штуки)
-    1. [ReqType и FieldType](#ReqType-и-FieldType)
+    1. [ReqType и FieldType](#RequestType-и-FieldType)
     1. [ServerRequest](#serverrequest)
 1. [Структура Client](#структура-client)
 
@@ -39,8 +39,22 @@
       на ближвйшее потом
     1. Начать работать с Ktor, окончательно разобраться с сетевой частью(вроде тут Даня)
     1. Начать работать с нормальными базами данных(вроде тут Иван)
+        
+1. Никита Б. - **делает геттеры в chatData** исправлет 
+   ````kotlin
+   val message = MessageData(messageId)
+   message.edit(text)
+   ````
+   на
+   ````kotlin
+   MessageData(messageId).edit(text)
+   ````
    
-1. Никита Б. - исправлет
+   во всех похожих местах
+  
+2. Илья В. - **делает геттеры в UserData**
+
+3. Глеб О. - делает MessageData
 
 
 # Глобальная струкутура
@@ -58,7 +72,6 @@ class Server {
         
         val request = ServerRequest(stringRequest)
         
-        // тут бы написать что-то по типу swith case а не миллион ифоф
         if(request.reqType == GET){
             val jsonBody = readValue<RequestData>(request.body)
             if(request.fieldType == USER){
@@ -92,7 +105,7 @@ UI - пользовательский интерфейс, пока что сам
 
 # Основные типы данных
 
-3 типа класса данных, у всего должны быть геттеры
+3 типа класса данных, возможно скоро будет 4
 
 ## User
 
@@ -122,7 +135,7 @@ data class Message(var text : String, val chatId : Long, val userId : Long) {
 
 ## Chat
 
-Chat - стандартный interface, от которого наследуются GroupChat и SingleChat - классы данных группового чата и диалого соответственно
+Chat - скоро будет переделан в GroupChat и SingleChat - классы данных группового чата и диалого соответственно
 
 ````kotlin
 interface Chat {
@@ -155,12 +168,12 @@ data class singleChat(override val id: Long, val user1: Long, val user2: Long) :
 Эти типы - "язык", на котором клиент общается с сервером.
 
 
-## ReqType и FieldType
+## RequestType и FieldType
 
-ReqType - enum, в котором хранятся типы запросов на сервер. 
+RequestType - enum, в котором хранятся типы запросов на сервер. 
 
 ````kotlin
-enum class ReqType{
+enum class RequestType{
     ADD{
         override fun toString(): String {
             return "ADD" 
@@ -197,7 +210,7 @@ enum class FieldType{
 ```kotlin
 class ServerRequest {
     var id : Long = -1
-    var reqType : ReqType? = null
+    var reqType : RequestType? = null
     var fieldType : FieldType? = null
 
 
