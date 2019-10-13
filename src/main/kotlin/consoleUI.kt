@@ -124,6 +124,8 @@ class NewChatMenu{
     }
 }
 
+
+
 fun main() {
     LoginMenu().mainAction()
     MainMenu().mainAction()
