@@ -10,15 +10,19 @@ class UserBase(val data_path: String = ""): DataBase{
         users.plus(Pair(baseSize, user))
         return baseSize++
     }
+
     fun get(id : Long): User? {
         return users[id]
     }
+
     fun edit(id : Long, editted_user: User) {
         if (!users.containsKey(id))
             return
         users[id] = editted_user;
     }
+
     fun remove(id: Long) {
         users.remove(id)
     }
+
 }

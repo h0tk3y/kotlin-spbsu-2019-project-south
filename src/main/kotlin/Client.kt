@@ -9,7 +9,8 @@ class Client() {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
-    class UserData(var userId: Long = -1) {
+    class UserData(var userId: Long = -1) { //TODO: getSmth()
+
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id : Long) : User {
@@ -87,6 +88,11 @@ class Client() {
             cur.email = newEmail
             editUser(cur)
         }
+
+        fun getName() : String{
+            TODO()
+        }
+
     }
 
     class MessageData(private val messageId : Long = -1) {
@@ -139,7 +145,7 @@ class Client() {
         }
     }
 
-    class ChatData(val chatId: Long = -1) {
+    class ChatData(val chatId: Long = -1) { //TODO: getSmth()
         private val objectMapper = jacksonObjectMapper()
 
         private fun getChat(id : Long) : Chat {
@@ -183,29 +189,29 @@ class Client() {
             }
         }
 
-        fun sendNotifications(chat: Chat, senderId : Long) {
+/*        fun sendNotifications(chat: Chat, senderId : Long) {
             for (receiver in chat.members - mutableSetOf(senderId))
                 UserData(receiver).getNotification(chatId)
-        }
+        }   */
 
         fun sendMessage(text: String, userId: Long) {
             val chat = getChat(chatId)
             val messageId = MessageData().createMessage(text, chatId, userId)
             chat.messages.add(messageId)
             editChat(chat)
-            sendNotifications(chat, userId)
+          //  sendNotifications(chat, userId)
         }
 
         fun editMessage(messageId: Long, text: String) {
             val chat = getChat(chatId)
             MessageData(messageId).editText(text)
-            sendNotifications(chat, MessageData(messageId).getUserId())
+            //sendNotifications(chat, MessageData(messageId).getUserId())
         }
 
         fun deleteMessage(messageId: Long) {
             val chat = getChat(chatId)
             MessageData(messageId).deleteMessage()
-            sendNotifications(chat, MessageData(messageId).getUserId())
+            //sendNotifications(chat, MessageData(messageId).getUserId())
         }
     }
 }
