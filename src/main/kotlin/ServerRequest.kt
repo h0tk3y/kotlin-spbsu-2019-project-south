@@ -25,6 +25,4 @@ open class ServerRequest {
     }
 
     private lateinit var server : Server
-
-    fun makeRequest() = server.answerRequest(this.toString())
 }

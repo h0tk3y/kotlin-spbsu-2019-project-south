@@ -17,10 +17,10 @@ class Server {
     private var chatBase : ChatBase = ChatBase("chats.db")
     private var messageBase : MessageBase = MessageBase("messages.db")
 
-    fun processRequest(request: ServerRequest) : String {
+    private fun processRequest(request: ServerRequest) : String {
         when (request.fieldType) {
             FieldType.USER -> {
-                val user: User = objectMapper.readValue<User>(request.body)
+                val user: User = objectMapper.readValue(request.body)
                 when (request.reqType) {
                     ReqType.GET -> return objectMapper.writeValueAsString(userBase.get(user.id))
                     ReqType.ADD -> userBase.add(user)
@@ -29,7 +29,7 @@ class Server {
                 }
             }
             FieldType.CHAT -> {
-                val chat: Chat = objectMapper.readValue<Chat>(request.body)
+                val chat: Chat = objectMapper.readValue(request.body)
                 when (request.reqType) {
                     ReqType.GET -> return objectMapper.writeValueAsString(chatBase.get(chat.id))
                     ReqType.ADD -> chatBase.add(chat)
@@ -38,7 +38,7 @@ class Server {
                 }
             }
             FieldType.MESSAGE -> {
-                val message: Message = objectMapper.readValue<Message>(request.body)
+                val message: Message = objectMapper.readValue(request.body)
                 when (request.reqType) {
                     ReqType.GET -> return objectMapper.writeValueAsString(messageBase.get(message.id))
                     ReqType.ADD -> messageBase.add(message)
@@ -50,7 +50,7 @@ class Server {
         return ""
     }
 
-    fun answerRequest(port : Int = 9999) {
+    fun respondToRequest(port : Int = 9999) {
         embeddedServer(Netty, port) {
             install(WebSockets)
             routing {
