@@ -1,3 +1,5 @@
+import org.jetbrains.exposed.sql.Op
+
 val client = Client()
 
 
@@ -28,6 +30,10 @@ fun optionsIO(options: List<String>) : Int{
     return optionNum
 }
 
+fun browserExit(){
+
+}
+
 fun signIn(){
     println("Sori ne podvezli")
 }
@@ -40,21 +46,85 @@ fun signUp(){
     client.registerUser(login = login!!, name = name!!)
 }
 
-fun init() {
-    println("Welcome to SnailMail!")
-    println("Please, sign in with your login or sign up:")
-    when(optionsIO(listOf("Sign in", "Sign up"))){
-        0 -> signIn()
-        1 -> signUp()
+class MainMenu{
+    fun mainAction(){
+
+        val optionsList = listOf<String>(
+            "View my profile",
+            "View my contacts",
+            "View my chats",
+            "View blocked users",
+            "Add new contact",
+            "Create new chat",
+            "Sign out",
+            "Exit"
+        )
+
+        while (true){
+            println("Your are in main menu")
+            when(optionsIO(optionsList)){
+                0 -> ProfileMenu().mainAction()
+                1 -> ContactsMenu().mainAction()
+                2 -> ChatsMenu().mainAction()
+                3 -> BlockedUsersMenu().mainAction()
+                4 -> NewContactMenu().mainAction()
+                5 -> ProfileMenu().mainAction()
+                6 -> LoginMenu().mainAction()
+                7 -> browserExit()
+            }
+        }
     }
 }
 
-class MainMenu(){
-
+class LoginMenu{
+    fun mainAction(){
+        println("Welcome to SnailMail!")
+        println("Please, sign in with your login or sign up:")
+        when(optionsIO(listOf("Sign in", "Sign up", "Exit"))){
+            0 -> signIn()
+            1 -> signUp()
+            2 -> browserExit()
+        }
+    }
 }
 
+class ProfileMenu{
+    fun mainAction(){
+        println("Your are in your profile menu")
+    }
+}
+
+class ContactsMenu{
+    fun mainAction(){
+        println("Your are in your contacts menu")
+    }
+}
+
+class ChatsMenu{
+    fun mainAction(){
+        println("Your are in your chats menu")
+    }
+}
+
+class BlockedUsersMenu{
+    fun mainAction(){
+        println("Your are in your blocked users menu")
+    }
+}
+
+class NewContactMenu{
+    fun mainAction(){
+        println("Your are in adding new contact menu")
+    }
+}
+
+class NewChatMenu{
+    fun mainAction(){
+        println("Your are in creating new chat menu")
+    }
+}
 
 fun main() {
-    init()
-1
+    LoginMenu().mainAction()
+    MainMenu().mainAction()
 }
