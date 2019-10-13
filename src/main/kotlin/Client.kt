@@ -88,7 +88,7 @@ class Client() {
         }
     }
 
-    class messageData(val messageId: Long) {
+    class MessageData(val messageId : Long = -1) {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(id: Long): Message {
@@ -99,10 +99,19 @@ class Client() {
             ServerRequest(EDIT, MESSAGE, message.id, objectMapper.writeValueAsString<Message>(message)).makeRequest()
         }
 
-        fun addMessageToDB(message: Message) =
+        private fun addMessage(message: Message) =
             ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString<Message>(message)).makeRequest()
 
-        fun editTextMessage(newText: String) {
+        fun createMessage(text : String, chatId: Long, userId: Long) : Long {
+            val newMessage = Message(text, -1, chatId, userId)
+            return objectMapper.readValue<Long>(addMessage(newMessage))
+        }
+
+        fun getText() : String = getMessage(messageId).text
+        fun getUserId() : Long = getMessage(messageId).userId
+        fun getChatId() : Long = getMessage(messageId).chatId
+
+        fun editText(newText: String) {
             val cur = getMessage(messageId)
             cur.text = newText
             cur.isEdited = true
@@ -178,24 +187,22 @@ class Client() {
 
         fun sendMessage(text: String, userId: Long) {
             val chat = getChat(chatId)
-            val message = MessageData().createMessage(text = text, chatId = chatId, userId = userId)
-            chat.messages.add(message.id)
+            val messageId = MessageData().createMessage(text, chatId, userId)
+            chat.messages.add(messageId)
             editChat(chat)
             sendNotifications(chat, userId)
         }
 
         fun editMessage(messageId: Long, text: String) {
             val chat = getChat(chatId)
-            val message = MessageData(messageId)
-            message.edit(text)
-            sendNotifications(chat, message.userId)
+            MessageData(messageId).editText(text)
+            sendNotifications(chat, MessageData(messageId).getUserId())
         }
 
         fun deleteMessage(messageId: Long) {
             val chat = getChat(chatId)
-            val message = MessageData(messageId)
-            message.delete()
-            sendNotifications(chat, message.userId)
+            MessageData(messageId).deleteMessage()
+            sendNotifications(chat, MessageData(messageId).getUserId())
         }
     }
 }
