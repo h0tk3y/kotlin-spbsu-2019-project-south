@@ -10,15 +10,19 @@ class ChatBase(val data_path: String = ""): DataBase {
         chats.plus(Pair(baseSize, chat))
         return baseSize++
     }
+
     fun get(id : Long): Chat? {
         return chats[id]
     }
+
     fun edit(id : Long, editted_chat: Chat) {
         if (!chats.containsKey(id))
             return
         chats[id] = editted_chat;
     }
+
     fun remove(id: Long) {
         chats.remove(id)
     }
+
 }
