@@ -4,18 +4,23 @@ import FieldType.*
 
 class Client() {
     var loggedUserId: Long = -1
+
     fun registerUser(login : String, name : String = login, email : String = "") {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
-    class UserData(var userId: Long = -1) {
+    class UserData(var userId: Long = -1) { //TODO: getSmth()
+
         private val objectMapper = jacksonObjectMapper()
+
         private fun getUser(id : Long) : User {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
+
         private fun editUser(user : User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString(user)).makeRequest()
         }
+
         fun addUser(login : String, name : String, email : String) : Long {
             val newUser = User(-1, login)
             newUser.name = name
@@ -23,6 +28,7 @@ class Client() {
             return objectMapper.readValue<Long>(
                 ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser)).makeRequest())
         }
+
         fun addContact(contactId: Long, name : String = ""){
             val cur = getUser(userId)
             if (name == "") {
@@ -34,51 +40,64 @@ class Client() {
             }
             editUser(cur)
         }
+
         fun changeContact(contactId : Long, name : String) {
             val cur = getUser(userId)
             cur.contacts[contactId] = name
             editUser(cur)
         }
+
         fun deleteContact(contactId: Long) {
             val cur = getUser(userId)
             cur.contacts.remove(contactId)
             editUser(cur)
         }
+
         fun addBlockedUser(blockedUserId: Long){
             val cur = getUser(userId)
             cur.blockedUsers.add(blockedUserId)
             editUser(cur)
         }
+
         fun deleteBlockedUser(blockedUserId: Long) {
             val cur = getUser(userId)
             cur.blockedUsers.remove(blockedUserId)
             editUser(cur)
         }
+
         fun addChat(chatId : Long){
             val cur = getUser(userId)
             cur.chatsId.add(chatId)
             editUser(cur)
         }
+
         fun deleteChat(chatId : Long) {
             val cur = getUser(userId)
             cur.chatsId.remove(chatId)
             editUser(cur)
         }
+
         fun changeName(newName : String) {
             val cur = getUser(userId)
             cur.name = newName
             editUser(cur)
         }
+
         fun changeEmail(newEmail : String) {
             val cur = getUser(userId)
             cur.email = newEmail
             editUser(cur)
         }
+
+        fun getName() : String{
+            TODO()
+        }
+
     }
 
-    class messageData(val messageId: Long)
+    class MessageData(val messageId: Long)
 
-    class ChatData(val chatId: Long = -1) {
+    class ChatData(val chatId: Long = -1) { //TODO: getSmth()
         private val objectMapper = jacksonObjectMapper()
 
         private fun getChat(id : Long) : Chat {
@@ -120,31 +139,31 @@ class Client() {
             }
         }
 
-        fun sendNotifications(chat: Chat, senderId : Long) {
+/*        fun sendNotifications(chat: Chat, senderId : Long) {
             for (receiver in chat.members - mutableSetOf(senderId))
                 UserData(receiver).getNotification(chatId)
-        }
+        }   */
 
         fun sendMessage(text: String, userId: Long) {
             val chat = getChat(chatId)
             val message = MessageData().createMessage(text = text, chatId = chatId, userId = userId)
             chat.messages.add(message.id)
             editChat(chat)
-            sendNotifications(chat, userId)
+          //  sendNotifications(chat, userId)
         }
 
         fun editMessage(messageId: Long, text: String) {
             val chat = getChat(chatId)
             val message = MessageData(messageId)
             message.edit(text)
-            sendNotifications(chat, message.userId)
+  //          sendNotifications(chat, message.userId)
         }
 
         fun deleteMessage(messageId: Long) {
             val chat = getChat(chatId)
             val message = MessageData(messageId)
             message.delete()
-            sendNotifications(chat, message.userId)
+ //           sendNotifications(chat, message.userId)
         }
     }
 }
