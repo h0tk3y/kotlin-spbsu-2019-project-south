@@ -3,7 +3,8 @@ import RequestType.*
 import FieldType.*
 
 class Client() {
-    var loggedUserId: Long = -1
+    private var loggedUserId: Long = -1
+
     fun registerUser(login : String, name : String = login, email : String = "") {
         loggedUserId = UserData().addUser(login, name, email)
     }
@@ -88,7 +89,7 @@ class Client() {
         }
     }
 
-    class MessageData(val messageId : Long = -1) {
+    class MessageData(private val messageId : Long = -1) {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(id: Long): Message {
@@ -154,10 +155,12 @@ class Client() {
             if (isSingle) {
                 val userId1 = owners.first()
                 val userId2 = owners.last()
-                UserData(userId1).addChat(chatId, UserData(userId2).getName())
-                UserData(userId2).addChat(chatId, UserData(userId1).getName())
+                //UserData(userId1).addChat(chatId, UserData(userId2).getName())
+                //UserData(userId2).addChat(chatId, UserData(userId1).getName())
+                UserData(userId1).addChat(chatId)
+                UserData(userId2).addChat(chatId)
             } else {
-                UserData(owners.first()).addChat(chatId, name)
+                UserData(owners.first()).addChat(chatId)
             }
             return objectMapper.readValue<Long>(
                 ServerRequest(ADD, CHAT, chatId, objectMapper.writeValueAsString(newChat)).makeRequest()
@@ -167,7 +170,7 @@ class Client() {
         fun addUser(userId: Long) {
             val chat = getChat(chatId)
             chat.members.add(userId)
-            UserData(userId).addChat(chatId, chat.name)
+            UserData(userId).addChat(chatId)
             editChat(chat)
         }
 
