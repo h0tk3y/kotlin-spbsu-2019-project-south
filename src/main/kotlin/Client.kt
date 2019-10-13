@@ -3,7 +3,7 @@ import RequestType.*
 import FieldType.*
 
 class Client() {
-    private var loggedUserId: Long = -1
+    var loggedUserId: Long = -1
 
     fun registerUser(login : String, name : String = login, email : String = "") {
         loggedUserId = UserData().addUser(login, name, email)
@@ -166,6 +166,7 @@ class Client() {
                 UserData(userId1).addChat(chatId)
                 UserData(userId2).addChat(chatId)
             } else {
+                //UserData(owners.first()).addChat(chatId, name)
                 UserData(owners.first()).addChat(chatId)
             }
             return objectMapper.readValue<Long>(
@@ -176,6 +177,7 @@ class Client() {
         fun addUser(userId: Long) {
             val chat = getChat(chatId)
             chat.members.add(userId)
+            //UserData(userId).addChat(chatId, chat.name)
             UserData(userId).addChat(chatId)
             editChat(chat)
         }
@@ -199,7 +201,7 @@ class Client() {
             val messageId = MessageData().createMessage(text, chatId, userId)
             chat.messages.add(messageId)
             editChat(chat)
-          //  sendNotifications(chat, userId)
+            //sendNotifications(chat, userId)
         }
 
         fun editMessage(messageId: Long, text: String) {
