@@ -64,7 +64,7 @@ object Client {
             editUser(cur)
         }
 
-        fun addChat(chatId : Long, chatName : String){
+        fun addChat(chatId : Long, chatName : String = chatId.toString()){
             val cur = getUser(userId)
             cur.chatsId[chatId] = chatName
             editUser(cur)
