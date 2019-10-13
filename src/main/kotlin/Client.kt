@@ -90,9 +90,9 @@ class Client() {
         }
 
         fun getName() : String{
-            TODO()
+            val cur = getUser(userId)
+            return cur.name
         }
-
     }
 
     class MessageData(private val messageId : Long = -1) {
