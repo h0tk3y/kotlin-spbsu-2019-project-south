@@ -143,28 +143,25 @@ class Client() {
         }
     }
 
-    class ChatData(val chatId: Long = -1) { //TODO: getSmth()
+    class ChatData(private val chatId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
 
-        private fun getChat(id : Long) : Chat {
-            return objectMapper.readValue<Chat>(ServerRequest(GET, CHAT, id).makeRequest())
+        private fun getChat(): Chat {
+            return objectMapper.readValue<Chat>(ServerRequest(GET, CHAT, chatId).makeRequest())
         }
 
-        private fun editChat(chat : Chat) {
+        private fun editChat(chat: Chat) {
             ServerRequest(EDIT, CHAT, chatId, objectMapper.writeValueAsString(chat)).makeRequest()
         }
 
-        fun createChat(isSingle: Boolean, name: String, owners: MutableSet<Long>) : Long {
+        fun addChat(isSingle: Boolean, name: String, owners: MutableSet<Long>): Long {
             val newChat = Chat(-1, isSingle, name, owners)
             if (isSingle) {
                 val userId1 = owners.first()
                 val userId2 = owners.last()
-                //UserData(userId1).addChat(chatId, UserData(userId2).getName())
-                //UserData(userId2).addChat(chatId, UserData(userId1).getName())
                 UserData(userId1).addChat(chatId)
                 UserData(userId2).addChat(chatId)
             } else {
-                //UserData(owners.first()).addChat(chatId, name)
                 UserData(owners.first()).addChat(chatId)
             }
             return objectMapper.readValue<Long>(
@@ -173,45 +170,37 @@ class Client() {
         }
 
         fun addUser(userId: Long) {
-            val chat = getChat(chatId)
-            chat.members.add(userId)
-            //UserData(userId).addChat(chatId, chat.name)
-            UserData(userId).addChat(chatId)
-            editChat(chat)
-        }
-
-        fun deleteUser(userId: Long) {
-            val chat = getChat(chatId)
-            if (userId !in chat.owners) {
-                chat.members.remove(userId)
-                UserData(userId).deleteChat(chatId)
+            val chat = getChat()
+            if(!chat.isSingle) {
+                chat.members.add(userId)
+                UserData(userId).addChat(chatId)
                 editChat(chat)
             }
         }
 
-/*        fun sendNotifications(chat: Chat, senderId : Long) {
-            for (receiver in chat.members - mutableSetOf(senderId))
-                UserData(receiver).getNotification(chatId)
-        }   */
+        fun deleteUser(userId: Long) {
+            val chat = getChat()
+            if(!chat.isSingle) {
+                if (userId !in chat.owners) {
+                    chat.members.remove(userId)
+                    UserData(userId).deleteChat(chatId)
+                    editChat(chat)
+                }
+            }
+        }
 
-        fun sendMessage(text: String, userId: Long) {
-            val chat = getChat(chatId)
-            val messageId = MessageData().createMessage(text, chatId, userId)
+        fun sendMessage(messageId: Long) {
+            val chat = getChat()
             chat.messages.add(messageId)
             editChat(chat)
-            //sendNotifications(chat, userId)
         }
 
-        fun editMessage(messageId: Long, text: String) {
-            val chat = getChat(chatId)
-            MessageData(messageId).editText(text)
-            //sendNotifications(chat, MessageData(messageId).getUserId())
-        }
+        fun editMessage(messageId: Long, text: String) = MessageData(messageId).editText(text)
 
-        fun deleteMessage(messageId: Long) {
-            val chat = getChat(chatId)
-            MessageData(messageId).deleteMessage()
-            //sendNotifications(chat, MessageData(messageId).getUserId())
-        }
+        fun deleteMessage(messageId: Long) = MessageData(messageId).deleteMessage()
+
+        fun getMembers() = getChat().members
+
+        fun getMessages() = getChat().messages
     }
 }
