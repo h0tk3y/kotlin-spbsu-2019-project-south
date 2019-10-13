@@ -17,7 +17,7 @@
     1. [Chat](#chat)
     1. [Базы данных](#базы-данных)
 1. [Вспомогательные штуки](#вспомогательные-штуки)
-    1. [ReqType и FieldType](#reqtype--fieldtype)
+    1. [ReqType и FieldType](#ReqType-и-FieldType)
     1. [ServerRequest](#serverrequest)
 1. [Структура Client](#структура-client)
 
