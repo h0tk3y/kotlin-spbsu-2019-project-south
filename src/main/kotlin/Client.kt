@@ -9,7 +9,7 @@ object Client {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
-    class UserData(var userId: Long = loggedUserId) { //TODO: getSmth()
+    class UserData(var userId: Long = loggedUserId) {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id : Long) : User {
