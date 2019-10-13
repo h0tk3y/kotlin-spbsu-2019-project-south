@@ -98,13 +98,11 @@ class Client() {
     class MessageData(private val messageId : Long = -1) {
         private val objectMapper = jacksonObjectMapper()
 
-        private fun getMessage(id: Long): Message {
-            return objectMapper.readValue<Message>(ServerRequest(GET, MESSAGE, id).makeRequest())
-        }
+        private fun getMessage(): Message =
+            objectMapper.readValue<Message>(ServerRequest(GET, MESSAGE, messageId).makeRequest())
 
-        private fun editMessage(message: Message) {
-            ServerRequest(EDIT, MESSAGE, message.id, objectMapper.writeValueAsString(message)).makeRequest()
-        }
+        private fun editMessage(message: Message) =
+            ServerRequest(EDIT, MESSAGE, messageId, objectMapper.writeValueAsString(message)).makeRequest()
 
         private fun addMessage(message: Message) =
             ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString(message)).makeRequest()
@@ -114,19 +112,19 @@ class Client() {
             return objectMapper.readValue<Long>(addMessage(newMessage))
         }
 
-        fun getText() : String = getMessage(messageId).text
-        fun getUserId() : Long = getMessage(messageId).userId
-        fun getChatId() : Long = getMessage(messageId).chatId
+        fun getText() : String = getMessage().text
+        fun getUserId() : Long = getMessage().userId
+        fun getChatId() : Long = getMessage().chatId
 
         fun editText(newText: String) {
-            val cur = getMessage(messageId)
+            val cur = getMessage()
             cur.text = newText
             cur.isEdited = true
             editMessage(cur)
         }
 
         fun deleteMessage() {
-            val cur = getMessage(messageId)
+            val cur = getMessage()
             cur.isDeleted = true
             editMessage(cur)
         }
@@ -135,11 +133,11 @@ class Client() {
             REMOVE,
             MESSAGE,
             messageId,
-            objectMapper.writeValueAsString(getMessage(messageId))
+            objectMapper.writeValueAsString(getMessage())
         ).makeRequest()
 
         fun readMessage() {
-            val cur = getMessage(messageId)
+            val cur = getMessage()
             cur.isRead = true
             editMessage(cur)
         }
