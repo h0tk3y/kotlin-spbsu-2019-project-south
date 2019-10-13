@@ -2,7 +2,7 @@ import com.fasterxml.jackson.module.kotlin.*
 import RequestType.*
 import FieldType.*
 
-class Client() {
+object Client {
     var loggedUserId: Long = -1
 
     fun registerUser(login : String, name : String = login, email : String = "") {
@@ -10,7 +10,6 @@ class Client() {
     }
 
     class UserData(var userId: Long = -1) { //TODO: getSmth()
-
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id : Long) : User {
