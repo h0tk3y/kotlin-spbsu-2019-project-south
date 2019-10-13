@@ -65,9 +65,9 @@ class Client() {
             editUser(cur)
         }
 
-        fun addChat(chatId : Long){
+        fun addChat(chatId : Long, chatName : String){
             val cur = getUser(userId)
-            cur.chatsId.add(chatId)
+            cur.chatsId[chatId] = chatName
             editUser(cur)
         }
 
