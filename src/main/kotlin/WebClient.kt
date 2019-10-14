@@ -36,7 +36,7 @@ class WebClient (private val host : String, private val port : Int) {
         }
     }
 
-    private fun makeRequest(request: ServerRequest) : ServerResponse {
+    fun makeRequest(request: ServerRequest) : ServerResponse {
         return runBlocking {
             requests.send(request)
             responses.receive()
