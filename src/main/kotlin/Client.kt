@@ -166,15 +166,15 @@ object Client {
             ServerRequest(EDIT, CHAT, chatId, objectMapper.writeValueAsString(chat)).makeRequest()
         }
 
-        fun addChat(isSingle: Boolean, name: String, owners: MutableSet<Long>): Long {
+        fun createChat(isSingle: Boolean, name: String, owners: MutableSet<Long>): Long {
             val newChat = Chat(-1, isSingle, name, owners)
             if (isSingle) {
                 val userId1 = owners.first()
                 val userId2 = owners.last()
-                UserData(userId1).addChat(chatId)
-                UserData(userId2).addChat(chatId)
+                UserData(userId1).addChat(chatId, UserData(userId2).getName())
+                UserData(userId2).addChat(chatId, UserData(userId1).getName())
             } else {
-                UserData(owners.first()).addChat(chatId)
+                UserData(owners.first()).addChat(chatId, name)
             }
             return objectMapper.readValue<Long>(
                 ServerRequest(ADD, CHAT, chatId, objectMapper.writeValueAsString(newChat)).makeRequest()
@@ -185,7 +185,7 @@ object Client {
             val chat = getChat()
             if (!chat.isSingle) {
                 chat.members.add(userId)
-                UserData(userId).addChat(chatId)
+                UserData(userId).addChat(chatId, chat.name)
                 editChat(chat)
             }
         }
