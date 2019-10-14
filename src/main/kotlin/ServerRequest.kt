@@ -9,10 +9,6 @@ open class ServerRequest {
         this.body = body
     }
 
-    constructor(requestString: String) {
-        TODO()
-    }
-
     var id : Long = -1
     var reqType : ReqType? = null
     var fieldType : FieldType? = null
@@ -21,8 +17,6 @@ open class ServerRequest {
     private val objectMapper = jacksonObjectMapper()
 
     override fun toString(): String {
-        TODO()
+        return objectMapper.writeValueAsString(this)
     }
-
-    private lateinit var server : Server
 }
