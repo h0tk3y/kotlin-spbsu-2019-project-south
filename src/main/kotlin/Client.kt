@@ -90,6 +90,8 @@ object Client {
 
         fun getName() = getUser(userId).name
 
+        fun getLogin() = getUser(userId).login
+
         fun getEmail() = getUser(userId).email
 
         fun getChats() = getUser(userId).chatsId
