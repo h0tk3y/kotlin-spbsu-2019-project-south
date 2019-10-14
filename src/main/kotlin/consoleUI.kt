@@ -1,7 +1,5 @@
 import kotlin.system.exitProcess
 
-//TODO: static peremenanya
-
 fun getId(): Long {
     return Client.getLoggedUserId()
 }
