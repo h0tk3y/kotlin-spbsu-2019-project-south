@@ -5,6 +5,8 @@ import FieldType.*
 object Client {
     private var loggedUserId: Long = -1
 
+    private val webClient = WebClient("lol", 10)
+
     fun getLoggedUserId(): Long {
         return loggedUserId
     }
@@ -17,7 +19,7 @@ object Client {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id: Long): User {
-            return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
+            return objectMapper.readValue<User>(webClient.makeRequest(ServerRequest(GET, USER, id)).body)
         }
 
         private fun editUser(user: User) {
