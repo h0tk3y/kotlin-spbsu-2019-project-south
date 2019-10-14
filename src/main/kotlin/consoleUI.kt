@@ -12,7 +12,7 @@ fun getLogin(id: Long = getId()): String {
     return Client.UserData(id).getLogin()
 }
 
-object OptionsIO{
+object OptionsIO {
     private fun printOptions(options: List<String>) {
         options.mapIndexed { index, s -> println("> $index -- $s") }
     }
@@ -40,8 +40,6 @@ object OptionsIO{
         return optionNum
     }
 }
-
-
 
 fun browserExit() {
     exitProcess(0)
