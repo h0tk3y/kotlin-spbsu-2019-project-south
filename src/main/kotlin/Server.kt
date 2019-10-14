@@ -48,7 +48,7 @@ class Server {
         return response
     }
 
-    fun respondToRequest(port : Int = 9999) {
+    fun run(port : Int = 9999) {
         embeddedServer(Netty, port) {
             install(WebSockets)
             routing {
