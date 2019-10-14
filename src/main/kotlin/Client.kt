@@ -1,5 +1,5 @@
 import com.fasterxml.jackson.module.kotlin.*
-import RequestType.*
+import TransportType.*
 import FieldType.*
 
 object Client {
