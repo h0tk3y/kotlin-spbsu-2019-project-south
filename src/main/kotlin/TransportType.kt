@@ -1,27 +1,11 @@
 enum class TransportType {
 
-    ADD {
-        override fun toString(): String {
-            return "ADD"
-        }
-    },
+    ADD,
 
-    GET {
-        override fun toString(): String {
-            return "GET"
-        }
-    },
+    GET,
 
-    EDIT {
-        override fun toString(): String {
-            return "EDIT"
-        }
-    },
+    EDIT,
 
-    REMOVE {
-        override fun toString(): String {
-            return "REMOVE"
-        }
-    }
+    REMOVE
 
 }
