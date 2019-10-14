@@ -1,4 +1,13 @@
 import com.fasterxml.jackson.module.kotlin.*
+import io.ktor.application.install
+import io.ktor.features.AutoHeadResponse.install
+import io.ktor.http.cio.websocket.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.websocket.WebSockets
+import io.ktor.websocket.webSocket
+
 class Server {
     private val objectMapper = jacksonObjectMapper()
 
@@ -6,12 +15,10 @@ class Server {
     private var chatBase : ChatBase = ChatBase("chats.db")
     private var messageBase : MessageBase = MessageBase("messages.db")
 
-    fun answerRequest(requestString: String) : String {
-        val request: ServerRequest = ServerRequest(requestString)
-
+    private fun processRequest(request: ServerRequest) : String {
         when (request.fieldType) {
             FieldType.USER -> {
-                val user: User = objectMapper.readValue<User>(request.body)
+                val user: User = objectMapper.readValue(request.body)
                 when (request.requestType) {
                     RequestType.GET -> return objectMapper.writeValueAsString(userBase.get(user.id))
                     RequestType.ADD -> userBase.add(user)
@@ -20,7 +27,7 @@ class Server {
                 }
             }
             FieldType.CHAT -> {
-                val chat: Chat = objectMapper.readValue<Chat>(request.body)
+                val chat: Chat = objectMapper.readValue(request.body)
                 when (request.requestType) {
                     RequestType.GET -> return objectMapper.writeValueAsString(chatBase.get(chat.id))
                     RequestType.ADD -> chatBase.add(chat)
@@ -29,7 +36,7 @@ class Server {
                 }
             }
             FieldType.MESSAGE -> {
-                val message: Message = objectMapper.readValue<Message>(request.body)
+                val message: Message = objectMapper.readValue(request.body)
                 when (request.requestType) {
                     RequestType.GET -> return objectMapper.writeValueAsString(messageBase.get(message.id))
                     RequestType.ADD -> messageBase.add(message)
@@ -39,6 +46,28 @@ class Server {
             }
         }
         return ""
+    }
+
+    fun respondToRequest(port : Int = 9999) {
+        embeddedServer(Netty, port) {
+            install(WebSockets)
+            routing {
+                webSocket("/") {
+                    while (true) {
+                        val frame = incoming.receive()
+                        if (frame is Frame.Text) {
+                            val text = frame.readText()
+                            val objectMapper = jacksonObjectMapper();
+                            val request : ServerRequest? = objectMapper.readValue(text)
+                            if (request != null) {
+                                val response = processRequest(request)
+                                outgoing.send(Frame.Text(response))
+                            }
+                        }
+                    }
+                }
+            }
+        }.start(wait = true)
     }
 }
 
