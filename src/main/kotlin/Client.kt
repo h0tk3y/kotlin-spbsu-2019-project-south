@@ -3,44 +3,48 @@ import RequestType.*
 import FieldType.*
 
 object Client {
-    var loggedUserId: Long = -1
+    private var loggedUserId: Long = -1
 
-    fun registerUser(login : String, name : String = login, email : String = "") {
+    fun getLoggedUserId(): Long {
+        return loggedUserId
+    }
+
+    fun registerUser(login: String, name: String = login, email: String = "") {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
     class UserData(var userId: Long = loggedUserId) {
         private val objectMapper = jacksonObjectMapper()
 
-        private fun getUser(id : Long) : User {
+        private fun getUser(id: Long): User {
             return objectMapper.readValue<User>(ServerRequest(GET, USER, id).makeRequest())
         }
 
-        private fun editUser(user : User) {
+        private fun editUser(user: User) {
             ServerRequest(EDIT, USER, userId, objectMapper.writeValueAsString(user)).makeRequest()
         }
 
-        fun addUser(login : String, name : String, email : String) : Long {
+        fun addUser(login: String, name: String, email: String): Long {
             val newUser = User(-1, login)
             newUser.name = name
             newUser.email = email
             return objectMapper.readValue<Long>(
-                ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser)).makeRequest())
+                ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser)).makeRequest()
+            )
         }
 
-        fun addContact(contactId: Long, name : String = ""){
+        fun addContact(contactId: Long, name: String = "") {
             val cur = getUser(userId)
             if (name == "") {
                 val newUser = getUser(contactId)
                 cur.contacts[contactId] = newUser.name
-            }
-            else {
+            } else {
                 cur.contacts[contactId] = name
             }
             editUser(cur)
         }
 
-        fun changeContact(contactId : Long, name : String) {
+        fun changeContact(contactId: Long, name: String) {
             val cur = getUser(userId)
             cur.contacts[contactId] = name
             editUser(cur)
@@ -52,7 +56,7 @@ object Client {
             editUser(cur)
         }
 
-        fun addBlockedUser(blockedUserId: Long){
+        fun addBlockedUser(blockedUserId: Long) {
             val cur = getUser(userId)
             cur.blockedUsers.add(blockedUserId)
             editUser(cur)
@@ -64,25 +68,25 @@ object Client {
             editUser(cur)
         }
 
-        fun addChat(chatId : Long, chatName : String = chatId.toString()){
+        fun addChat(chatId: Long, chatName: String = chatId.toString()) {
             val cur = getUser(userId)
             cur.chatsId[chatId] = chatName
             editUser(cur)
         }
 
-        fun deleteChat(chatId : Long) {
+        fun deleteChat(chatId: Long) {
             val cur = getUser(userId)
             cur.chatsId.remove(chatId)
             editUser(cur)
         }
 
-        fun changeName(newName : String) {
+        fun changeName(newName: String) {
             val cur = getUser(userId)
             cur.name = newName
             editUser(cur)
         }
 
-        fun changeEmail(newEmail : String) {
+        fun changeEmail(newEmail: String) {
             val cur = getUser(userId)
             cur.email = newEmail
             editUser(cur)
@@ -101,7 +105,7 @@ object Client {
         fun getContacts() = getUser(userId).contacts
     }
 
-    class MessageData(private val messageId : Long = -1) {
+    class MessageData(private val messageId: Long = -1) {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(): Message =
@@ -113,14 +117,14 @@ object Client {
         private fun addMessage(message: Message) =
             ServerRequest(ADD, MESSAGE, messageId, objectMapper.writeValueAsString(message)).makeRequest()
 
-        fun createMessage(text : String, chatId: Long, userId: Long) : Long {
+        fun createMessage(text: String, chatId: Long, userId: Long): Long {
             val newMessage = Message(text, -1, chatId, userId)
             return objectMapper.readValue<Long>(addMessage(newMessage))
         }
 
-        fun getText() : String = getMessage().text
-        fun getUserId() : Long = getMessage().userId
-        fun getChatId() : Long = getMessage().chatId
+        fun getText(): String = getMessage().text
+        fun getUserId(): Long = getMessage().userId
+        fun getChatId(): Long = getMessage().chatId
 
         fun editText(newText: String) {
             val cur = getMessage()
@@ -177,7 +181,7 @@ object Client {
 
         fun addUser(userId: Long) {
             val chat = getChat()
-            if(!chat.isSingle) {
+            if (!chat.isSingle) {
                 chat.members.add(userId)
                 UserData(userId).addChat(chatId)
                 editChat(chat)
@@ -186,7 +190,7 @@ object Client {
 
         fun deleteUser(userId: Long) {
             val chat = getChat()
-            if(!chat.isSingle) {
+            if (!chat.isSingle) {
                 if (userId !in chat.owners) {
                     chat.members.remove(userId)
                     UserData(userId).deleteChat(chatId)
