@@ -1,7 +1,14 @@
-import org.jetbrains.exposed.sql.Op
+fun getId() :Long {
+    return Client.loggedUserId
+}
 
-val client = Client()
+fun getName(id :Long = getId()) : String{
+    return Client.UserData(id).getName()
+}
 
+fun getLogin(id :Long = getId()) : String{
+    return Client.UserData(id).getLogin()
+}
 
 fun printOptions(options: List<String>) {
     options.mapIndexed { index, s ->  println("> $index -- $s") }
@@ -43,7 +50,7 @@ fun signUp(){
     val login = readLine()
     println("Enter your name:")
     val name = readLine()
-    client.registerUser(login = login!!, name = name!!)
+    Client.registerUser(login = login!!, name = name!!)
 }
 
 class MainMenu{
@@ -91,12 +98,76 @@ class LoginMenu{
 class ProfileMenu{
     fun mainAction(){
         println("Your are in your profile menu")
+        println("Your ID: ${getId()}")
+        println("Your login: ${getLogin()}")
+        println("Your name: ${getName()}")
+
+        when(optionsIO(listOf("Change name", "Return"))){
+            0 -> {
+                println("Enter your name:")
+                val newName = readLine()
+                Client.UserData().changeName(newName!!)
+            }
+            1 -> return
+        }
     }
 }
 
+
 class ContactsMenu{
+    private fun contacts() = Client.UserData().getContacts()
+
     fun mainAction(){
         println("Your are in your contacts menu")
+
+        val options = listOf<String>(
+            "Show your contacts",
+            "Add new contact",
+            "Remove contact",
+            "Change contact name",
+            "Return"
+        )
+        while (true){
+            println("Your are in your contacts menu")
+            when(optionsIO(options)){
+                0 -> showContactsAction()
+                1 -> addNewContactAction()
+                2 -> removeContactAction()
+                3 -> changeContactNameAction()
+                4 -> return
+            }
+        }
+
+    }
+
+    private fun contactFormat(contact : Map.Entry<Long, String>) : String{
+        return "ID: ${contact.key}, login: ${getLogin(contact.key)}, name: ${contact.value}"
+    }
+
+    private fun showContactsAction(){
+        contacts().map {
+            println(contactFormat(it))
+        }
+    }
+
+    private fun addNewContactAction(){
+        TODO() // login db
+    }
+
+    private fun removeContactAction(){
+        var contactIdbyNum : MutableMap<Int, Long> = mutableMapOf()
+        var i = 0
+        for (contact in contacts()){
+            contactIdbyNum.put(i, contact.key)
+        }
+        // TODO !!!
+        println("Select contact to remove:")
+        val num = optionsIO(contacts().map { contactFormat(it) })
+        Client.UserData().deleteContact(contactIdbyNum[num]!!)
+    }
+
+    private fun changeContactNameAction(){
+
     }
 }
 
