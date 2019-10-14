@@ -23,6 +23,10 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:1.2.4")
     implementation("io.ktor:ktor-websockets:1.2.4")
     implementation("io.ktor:ktor-client-websockets:1.2.4")
+    implementation("io.ktor:ktor-client-websockets:1.2.4")
+    implementation("io.ktor:ktor-client-cio:1.2.4")
+    implementation("io.ktor:ktor-client-js:1.2.4")
+    implementation("io.ktor:ktor-client-okhttp:1.2.4")
 }
 
 tasks.test {
