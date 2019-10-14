@@ -1,7 +1,7 @@
 import kotlin.system.exitProcess
 
 fun getId(): Long {
-    return Client.loggedUserId
+    return Client.getLoggedUserId()
 }
 
 fun getName(id: Long = getId()): String {
