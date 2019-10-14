@@ -1,5 +1,7 @@
 import kotlin.system.exitProcess
 
+//TODO: static peremenanya
+
 fun getId(): Long {
     return Client.getLoggedUserId()
 }
@@ -28,7 +30,7 @@ object OptionsIO {
         return x
     }
 
-    fun make(options: List<String>): Int {
+    fun init(options: List<String>): Int {
         printOptions(options)
         var optionNum = -1
         while (optionNum == -1) {
@@ -71,7 +73,7 @@ class MainMenu {
 
         while (true) {
             println("Your are in main menu")
-            when (OptionsIO.make(optionsList)) {
+            when (OptionsIO.init(optionsList)) {
                 0 -> ProfileMenu().mainAction()
                 1 -> ContactsMenu().mainAction()
                 2 -> ChatsMenu().mainAction()
@@ -87,7 +89,7 @@ class LoginMenu {
     fun mainAction() {
         println("Welcome to SnailMail!")
         println("Please, sign in with your login or sign up:")
-        when (OptionsIO.make(listOf("Sign in", "Sign up", "Exit"))) {
+        when (OptionsIO.init(listOf("Sign in", "Sign up", "Exit"))) {
             0 -> signIn()
             1 -> signUp()
             2 -> browserExit()
@@ -104,7 +106,7 @@ class ProfileMenu {
             println("Your login: ${getLogin()}")
             println("Your name: ${getName()}")
 
-            when (OptionsIO.make(listOf("Change name", "Return"))) {
+            when (OptionsIO.init(listOf("Change name", "Return"))) {
                 0 -> {
                     println("Enter your name:")
                     val newName = readLine()
@@ -127,16 +129,18 @@ class ContactsMenu {
             "Add new contact",
             "Remove contact",
             "Change contact name",
+            "Add to blacklist",
             "Return"
         )
         while (true) {
             println("Your are in your contacts menu")
-            when (OptionsIO.make(options)) {
+            when (OptionsIO.init(options)) {
                 0 -> showContactsAction()
                 1 -> addNewContactAction()
                 2 -> removeContactAction()
                 3 -> changeContactNameAction()
-                4 -> return
+                4 -> addToBlacklist()
+                5 -> return
             }
         }
 
@@ -154,6 +158,7 @@ class ContactsMenu {
 
     private fun addNewContactAction() {
         TODO() // login db
+        // must be adding new chat to this User and newContactUser
     }
 
     private fun removeContactAction() {
@@ -165,7 +170,7 @@ class ContactsMenu {
         }
         // TODO !!!
         println("Select contact to remove:")
-        val numId = contactIdByNum[OptionsIO.make(contacts().map { contactFormat(it) })]!!
+        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
         Client.UserData().deleteContact(numId)
     }
 
@@ -178,10 +183,23 @@ class ContactsMenu {
         }
         // TODO !!!
         println("Select contact to change name:")
-        val numId = contactIdByNum[OptionsIO.make(contacts().map { contactFormat(it) })]!!
+        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
         println("Input new name for contact ${getName(numId)}:")
         Client.UserData().changeContact(numId, readLine()!!)
     }
+
+    private fun addToBlacklist(){
+        val contactIdByNum: MutableMap<Int, Long> = mutableMapOf()
+        var i = 0
+        for (contact in contacts()) {
+            contactIdByNum.put(i, contact.key)
+            i++
+        }
+        println("Select contact to add to blacklist:")
+        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
+        Client.UserData().addBlockedUser(numId)
+    }
+
 }
 
 class ChatsMenu {
