@@ -97,19 +97,23 @@ class LoginMenu{
 
 class ProfileMenu{
     fun mainAction(){
-        println("Your are in your profile menu")
-        println("Your ID: ${getId()}")
-        println("Your login: ${getLogin()}")
-        println("Your name: ${getName()}")
 
-        when(optionsIO(listOf("Change name", "Return"))){
-            0 -> {
-                println("Enter your name:")
-                val newName = readLine()
-                Client.UserData().changeName(newName!!)
+        while (true){
+            println("Your are in your profile menu")
+            println("Your ID: ${getId()}")
+            println("Your login: ${getLogin()}")
+            println("Your name: ${getName()}")
+
+            when(optionsIO(listOf("Change name", "Return"))){
+                0 -> {
+                    println("Enter your name:")
+                    val newName = readLine()
+                    Client.UserData().changeName(newName!!)
+                }
+                1 -> return
             }
-            1 -> return
         }
+
     }
 }
 
@@ -118,7 +122,6 @@ class ContactsMenu{
     private fun contacts() = Client.UserData().getContacts()
 
     fun mainAction(){
-        println("Your are in your contacts menu")
 
         val options = listOf<String>(
             "Show your contacts",
@@ -155,19 +158,30 @@ class ContactsMenu{
     }
 
     private fun removeContactAction(){
-        var contactIdbyNum : MutableMap<Int, Long> = mutableMapOf()
+        val contactIdByNum : MutableMap<Int, Long> = mutableMapOf()
         var i = 0
         for (contact in contacts()){
-            contactIdbyNum.put(i, contact.key)
+            contactIdByNum.put(i, contact.key)
+            i++
         }
         // TODO !!!
         println("Select contact to remove:")
-        val num = optionsIO(contacts().map { contactFormat(it) })
-        Client.UserData().deleteContact(contactIdbyNum[num]!!)
+        val numId = contactIdByNum[optionsIO(contacts().map { contactFormat(it) })]!!
+        Client.UserData().deleteContact(numId)
     }
 
     private fun changeContactNameAction(){
-
+        val contactIdByNum : MutableMap<Int, Long> = mutableMapOf()
+        var i = 0
+        for (contact in contacts()){
+            contactIdByNum.put(i, contact.key)
+            i++
+        }
+        // TODO !!!
+        println("Select contact to change name:")
+        val numId = contactIdByNum[optionsIO(contacts().map { contactFormat(it) })]!!
+        println("Input new name for contact ${getName(numId)}:")
+        Client.UserData().changeContact(numId, readLine()!!)
     }
 }
 
