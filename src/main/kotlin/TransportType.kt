@@ -1,4 +1,4 @@
-enum class RequestType {
+enum class TransportType {
 
     ADD {
         override fun toString(): String {

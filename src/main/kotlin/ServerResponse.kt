@@ -1,11 +1,10 @@
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 
 class ServerResponse {
 
-    constructor (reqType: ReqType? = null, fieldType: FieldType? = null, id: Long = -1, body : String = "") {
+    constructor (responseType: TransportType? = null, fieldType: FieldType? = null, id: Long = -1, body : String = "") {
         this.id = id
-        this.reqType = reqType
+        this.responceType = responseType
         this.fieldType = fieldType
         this.body = body
     }
@@ -13,7 +12,7 @@ class ServerResponse {
     private val objectMapper = jacksonObjectMapper()
 
     var id : Long = -1
-    var reqType : ReqType? = null
+    var responceType : TransportType? = null
     var fieldType : FieldType? = null
     var body : String = ""
 
