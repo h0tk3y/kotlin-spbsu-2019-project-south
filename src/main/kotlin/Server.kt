@@ -8,7 +8,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import java.net.http.HttpClient
 
 class Server {
     private val objectMapper = jacksonObjectMapper()
@@ -54,12 +53,13 @@ class Server {
         embeddedServer(Netty, port) {
             install(WebSockets)
             routing {
-                webSocket {
+                webSocket("/") {
                     while (true) {
                         val frame = incoming.receive()
                         if (frame is Frame.Text) {
                             val text = frame.readText()
-                            val request : ServerRequest? = ServerRequest(text)
+                            val objectMapper = jacksonObjectMapper();
+                            val request : ServerRequest? = objectMapper.readValue(text)
                             if (request != null) {
                                 val response = processRequest(request)
                                 outgoing.send(Frame.Text(response))
