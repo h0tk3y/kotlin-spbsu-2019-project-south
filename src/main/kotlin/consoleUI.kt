@@ -41,6 +41,8 @@ object OptionsIO {
         }
         return optionNum
     }
+
+    fun fff(a : List<Long>, func) : Long = ()
 }
 
 fun browserExit() {
@@ -162,41 +164,21 @@ class ContactsMenu {
     }
 
     private fun removeContactAction() {
-        val contactIdByNum: MutableMap<Int, Long> = mutableMapOf()
-        var i = 0
-        for (contact in contacts()) {
-            contactIdByNum.put(i, contact.key)
-            i++
-        }
-        // TODO !!!
         println("Select contact to remove:")
-        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
+        val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
         Client.UserData().deleteContact(numId)
     }
 
     private fun changeContactNameAction() {
-        val contactIdByNum: MutableMap<Int, Long> = mutableMapOf()
-        var i = 0
-        for (contact in contacts()) {
-            contactIdByNum.put(i, contact.key)
-            i++
-        }
-        // TODO !!!
         println("Select contact to change name:")
-        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
+        val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
         println("Input new name for contact ${getName(numId)}:")
         Client.UserData().changeContact(numId, readLine()!!)
     }
 
     private fun addToBlacklist(){
-        val contactIdByNum: MutableMap<Int, Long> = mutableMapOf()
-        var i = 0
-        for (contact in contacts()) {
-            contactIdByNum.put(i, contact.key)
-            i++
-        }
         println("Select contact to add to blacklist:")
-        val numId = contactIdByNum[OptionsIO.init(contacts().map { contactFormat(it) })]!!
+        val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
         Client.UserData().addBlockedUser(numId)
     }
 
@@ -213,8 +195,6 @@ class BlockedUsersMenu {
         println("Your are in your blocked users menu")
     }
 }
-
-
 
 fun main() {
     GlobalScope.launch {
