@@ -20,7 +20,7 @@ class MessageBase(val data_path: String = "") : DataBase {
     fun edit(id : Long, edited_message: Message) {
         if (!messages.containsKey(id))
             return
-        messages[id] = edited_message;
+        messages[id] = edited_message
     }
 
     fun remove(id: Long) {

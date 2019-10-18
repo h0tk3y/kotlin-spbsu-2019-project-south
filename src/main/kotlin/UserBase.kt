@@ -18,7 +18,7 @@ class UserBase(val data_path: String = ""): DataBase{
     fun edit(id : Long, edited_user: User) {
         if (!users.containsKey(id))
             return
-        users[id] = edited_user;
+        users[id] = edited_user
     }
 
     fun remove(id: Long) {

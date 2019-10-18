@@ -179,7 +179,7 @@ object Client {
             } else {
                 UserData(owners.first()).addChat(chatId, name)
             }
-            return objectMapper.readValue<Long>(
+            return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD, CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
             )
         }
