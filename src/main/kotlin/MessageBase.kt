@@ -1,6 +1,6 @@
 class MessageBase(val data_path: String = "") : DataBase {
 
-    override var baseSize: Int = 0
+    override var baseSize: Long = 0
 
     private val messages = mutableMapOf<Long, Message>()
 
@@ -8,8 +8,8 @@ class MessageBase(val data_path: String = "") : DataBase {
         // TODO: Open file {data_path} or create new data_base on this path
     }
 
-    fun add(message : Message): Int {
-        messages.plus(Pair(baseSize, message))
+    fun add(message : Message): Long {
+        messages.put(baseSize, message)
         return baseSize++
     }
 
@@ -17,10 +17,10 @@ class MessageBase(val data_path: String = "") : DataBase {
         return messages[id]
     }
 
-    fun edit(id : Long, editted_message: Message) {
+    fun edit(id : Long, edited_message: Message) {
         if (!messages.containsKey(id))
             return
-        messages[id] = editted_message;
+        messages[id] = edited_message;
     }
 
     fun remove(id: Long) {

@@ -1,13 +1,13 @@
 class ChatBase(val data_path: String = ""): DataBase {
-    override var baseSize: Int = 0
+    override var baseSize: Long = 0
     private val chats = mutableMapOf<Long, Chat>()
 
     init {
         // TODO: Open file {data_path} or create new data_base on this path
     }
 
-    fun add(chat : Chat): Int {
-        chats.plus(Pair(baseSize, chat))
+    fun add(chat : Chat): Long {
+        chats.put(baseSize, chat)
         return baseSize++
     }
 
@@ -15,10 +15,10 @@ class ChatBase(val data_path: String = ""): DataBase {
         return chats[id]
     }
 
-    fun edit(id : Long, editted_chat: Chat) {
+    fun edit(id : Long, edited_chat: Chat) {
         if (!chats.containsKey(id))
             return
-        chats[id] = editted_chat;
+        chats[id] = edited_chat;
     }
 
     fun remove(id: Long) {
