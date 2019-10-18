@@ -147,7 +147,7 @@ class ContactsMenu {
     }
 
     private fun contactFormat(contact: Map.Entry<Long, String>): String {
-        return "ID: ${contact.key}, login: ${getLogin(contact.key)}, name: ${contact.value}"
+        return "ID: ${contact.key}, name: ${contact.value}"
     }
 
     private fun showContactsAction() {
@@ -174,12 +174,11 @@ class ContactsMenu {
         Client.UserData().changeContact(numId, readLine()!!)
     }
 
-    private fun addToBlacklist(){
+    private fun addToBlacklist() {
         println("Select contact to add to blacklist:")
         val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
         Client.UserData().addBlockedUser(numId)
     }
-
 }
 
 class ChatsMenu {
@@ -209,15 +208,12 @@ class ChatsMenu {
         return "ID: ${chat.key}, name: ${chat.value}"
     }
 
-    private fun showChatsAction() {
-        chats().map {
-            println(contactFormat(it))
-        }
+    private fun showChatsAction() = chats().map {
+        println(contactFormat(it))
     }
 
     private fun createChatAction() {
-        TODO() // login db
-        // must be adding new chat
+        TODO() // must be adding new chat and adding contacts
     }
 
     private fun removeChatAction() {
@@ -230,13 +226,41 @@ class ChatsMenu {
         println("Select contact to change name:")
         val numId = chats().keys.toList()[OptionsIO.init(chats().map { contactFormat(it) })]
         println("Input new name for contact ${getName(numId)}:")
-        Client.ChatData().changeChatName(numId, readLine()!!)
+        Client.ChatData(numId).changeChatName(readLine()!!)
     }
 }
 
 class BlockedUsersMenu {
+    private fun blockedUsers() = Client.UserData().getBlockedUsers()
+
     fun mainAction() {
-        println("Your are in your blocked users menu")
+        val options = listOf<String>(
+            "Show your blocked users",
+            "Add user to blacklist",
+            "Remove user from blacklist",
+            "Return"
+        )
+        while (true) {
+            println("Your are in your chats menu")
+            when (OptionsIO.init(options)) {
+                0 -> showBlockedUsersAction()
+                1 -> addUserAction()
+                2 -> removeUserAction()
+                3 -> return
+            }
+        }
+    }
+
+    private fun showBlockedUsersAction() {
+        TODO()
+    }
+
+    private fun addUserAction() {
+        TODO()
+    }
+
+    private fun removeUserAction() {
+        TODO()
     }
 }
 
