@@ -41,8 +41,6 @@ object OptionsIO {
         }
         return optionNum
     }
-
-    fun fff(a : List<Long>, func) : Long = ()
 }
 
 fun browserExit() {
@@ -185,8 +183,54 @@ class ContactsMenu {
 }
 
 class ChatsMenu {
+    private fun chats() = Client.UserData().getChats()
+
     fun mainAction() {
-        println("Your are in your chats menu")
+        val options = listOf<String>(
+            "Show your chats",
+            "Add new chat",
+            "Remove chat",
+            "Change chat name",
+            "Return"
+        )
+        while (true) {
+            println("Your are in your chats menu")
+            when (OptionsIO.init(options)) {
+                0 -> showChatsAction()
+                1 -> createChatAction()
+                2 -> removeChatAction()
+                3 -> changeChatNameAction()
+                4 -> return
+            }
+        }
+    }
+
+    private fun contactFormat(chat: Map.Entry<Long, String>): String {
+        return "ID: ${chat.key}, name: ${chat.value}"
+    }
+
+    private fun showChatsAction() {
+        chats().map {
+            println(contactFormat(it))
+        }
+    }
+
+    private fun createChatAction() {
+        TODO() // login db
+        // must be adding new chat
+    }
+
+    private fun removeChatAction() {
+        println("Select contact to remove:")
+        val numId = chats().keys.toList()[OptionsIO.init(chats().map { contactFormat(it) })]
+        Client.UserData().deleteChat(numId)
+    }
+
+    private fun changeChatNameAction() {
+        println("Select contact to change name:")
+        val numId = chats().keys.toList()[OptionsIO.init(chats().map { contactFormat(it) })]
+        println("Input new name for contact ${getName(numId)}:")
+        Client.ChatData().changeChatName(numId, readLine()!!)
     }
 }
 
