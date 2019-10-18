@@ -1,4 +1,6 @@
 import kotlin.system.exitProcess
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 fun getId(): Long {
     return Client.getLoggedUserId()
@@ -215,7 +217,9 @@ class BlockedUsersMenu {
 
 
 fun main() {
-    Server.run()
+    GlobalScope.launch {
+        Client.webClient.run()
+    }
     LoginMenu().mainAction()
     MainMenu().mainAction()
 }

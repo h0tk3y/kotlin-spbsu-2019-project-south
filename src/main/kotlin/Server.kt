@@ -14,6 +14,7 @@ object Server {
     private var chatBase : ChatBase = ChatBase("chats.db")
     private var messageBase : MessageBase = MessageBase("messages.db")
 
+
     private fun processRequest(request: ServerRequest) : ServerResponse {
         val response = ServerResponse(request.requestType, request.fieldType)
         when (request.fieldType) {
@@ -21,7 +22,7 @@ object Server {
                 val user: User = objectMapper.readValue(request.body)
                 when (request.requestType) {
                     TransportType.GET -> response.body = objectMapper.writeValueAsString(userBase.get(user.id))
-                    TransportType.ADD -> userBase.add(user)
+                    TransportType.ADD -> response.body = objectMapper.writeValueAsString(userBase.add(user))
                     TransportType.REMOVE -> userBase.remove(user.id)
                     TransportType.EDIT -> userBase.edit(user.id, user)
                 }
