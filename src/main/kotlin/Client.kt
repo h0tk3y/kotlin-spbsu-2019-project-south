@@ -184,6 +184,14 @@ object Client {
             )
         }
 
+        fun changeChatName(newName : String) {
+            val chat = getChat()
+            if (!chat.isSingle) {
+                chat.name = newName
+                editChat(chat)
+            }
+        }
+
         fun addUser(userId: Long) {
             val chat = getChat()
             if (!chat.isSingle) {
