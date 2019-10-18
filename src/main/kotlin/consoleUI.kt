@@ -215,6 +215,7 @@ class BlockedUsersMenu {
 
 
 fun main() {
+    Server.run()
     LoginMenu().mainAction()
     MainMenu().mainAction()
 }

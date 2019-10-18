@@ -7,7 +7,7 @@ import io.ktor.server.netty.*
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 
-class Server {
+object Server {
     private val objectMapper = jacksonObjectMapper()
 
     private var userBase : UserBase = UserBase("users.db")

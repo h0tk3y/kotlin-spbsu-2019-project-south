@@ -5,7 +5,7 @@ import FieldType.*
 object Client {
     private var loggedUserId: Long = -1
 
-    private val webClient = WebClient("lol", 10)
+    private val webClient = WebClient("127.0.0.1", 9999)
 
     fun getLoggedUserId(): Long {
         return loggedUserId
