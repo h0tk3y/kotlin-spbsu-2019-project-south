@@ -47,18 +47,6 @@ fun browserExit() {
     exitProcess(0)
 }
 
-fun signIn() {
-    println("Sori ne podvezli")
-}
-
-fun signUp() {
-    println("Enter your login:")
-    val login = readLine()
-    println("Enter your name:")
-    val name = readLine()
-    Client.registerUser(login = login!!, name = name!!)
-}
-
 class MainMenu {
     fun mainAction() {
 
@@ -75,7 +63,7 @@ class MainMenu {
             when (OptionsIO.init(optionsList)) {
                 0 -> ProfileMenu().mainAction()
                 1 -> ContactsMenu().mainAction()
-                2 -> ChatsMenu().mainAction()
+                2 -> ChatsListMenu().mainAction()
                 3 -> LoginMenu().mainAction()
                 4 -> browserExit()
             }
@@ -88,10 +76,22 @@ class LoginMenu {
         println("Welcome to SnailMail!")
         println("Please, sign in with your login or sign up:")
         when (OptionsIO.init(listOf("Sign in", "Sign up", "Exit"))) {
-            0 -> signIn()
-            1 -> signUp()
+            0 -> signInAction()
+            1 -> signUpAction()
             2 -> browserExit()
         }
+    }
+
+    private fun signInAction() {
+        println("Sori ne podvezli")
+    }
+
+    private fun signUpAction() {
+        println("Enter your login:")
+        val login = readLine()
+        println("Enter your name:")
+        val name = readLine()
+        Client.registerUser(login = login!!, name = name!!)
     }
 }
 
@@ -122,17 +122,17 @@ class ProfileMenu {
 
     private fun changeNameAction() {
         println("Enter your name:")
-        Client.UserData().changeName(readLine()!!)
+        Client.UserData(getId()).changeName(readLine()!!)
     }
 
     private fun changeEmailAction() {
         println("Enter your email:")
-        Client.UserData().changeName(readLine()!!)
+        Client.UserData(getId()).changeName(readLine()!!)
     }
 }
 
 class ContactsMenu {
-    private fun contacts() = Client.UserData().getContacts()
+    private fun contacts() = Client.UserData(getId()).getContacts()
 
     fun mainAction() {
 
@@ -141,7 +141,6 @@ class ContactsMenu {
             "Add new contact",
             "Remove contact",
             "Change contact name",
-            "Add to blacklist",
             "Return"
         )
         while (true) {
@@ -151,8 +150,7 @@ class ContactsMenu {
                 1 -> addNewContactAction()
                 2 -> removeContactAction()
                 3 -> changeContactNameAction()
-                4 -> addToBlacklist()
-                5 -> return
+                4 -> return
             }
         }
 
@@ -160,86 +158,134 @@ class ContactsMenu {
 
     private fun contactFormat(contact: Map.Entry<Long, String>): String = "ID: ${contact.key}, name: ${contact.value}"
 
-    private fun showContactsAction() {
-        contacts().map {
-            println(contactFormat(it))
-        }
+    private fun showContactsAction() = contacts().map {
+        println(contactFormat(it))
     }
 
     private fun addNewContactAction() {
-        TODO() // login db
-        // must be adding new chat to this User and newContactUser
+        TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
     }
+
+    // I suppose code below needs refactoring  --aokiga
 
     private fun removeContactAction() {
         println("Select contact to remove:")
         val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
-        Client.UserData().deleteContact(numId)
+        Client.UserData(getId()).deleteContact(numId)
     }
 
     private fun changeContactNameAction() {
         println("Select contact to change name:")
         val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
         println("Input new name for contact ${getName(numId)}:")
-        Client.UserData().changeContact(numId, readLine()!!)
+        Client.UserData(getId()).changeContact(numId, readLine()!!)
     }
 
     private fun addToBlacklist() {
         println("Select contact to add to blacklist:")
         val numId = contacts().keys.toList()[OptionsIO.init(contacts().map { contactFormat(it) })]
-        Client.UserData().addBlockedUser(numId)
+        Client.UserData(getId()).addBlockedUser(numId)
     }
 }
 
-class ChatsMenu {
-    private fun chats() = Client.UserData().getChats()
+class ChatsListMenu {
+    private fun chats() = Client.UserData(getId()).getChats()
 
     fun mainAction() {
         val options = listOf(
+            "Open chat",
             "Show your chats",
             "Add new chat",
-            "Remove chat",
-            "Change chat name",
             "Return"
         )
         while (true) {
             println("Your are in your chats menu")
             when (OptionsIO.init(options)) {
-                0 -> showChatsAction()
-                1 -> createChatAction()
-                2 -> removeChatAction()
-                3 -> changeChatNameAction()
-                4 -> return
+                0 -> openChatAction()
+                1 -> showChatsAction()
+                2 -> createChatAction()
+                5 -> return
             }
         }
     }
 
     private fun chatFormat(chat: Map.Entry<Long, String>): String = "ID: ${chat.key}, name: ${chat.value}"
 
+    private fun openChatAction() {
+        println("Enter chat id")
+        val chatId = readLine()!!.toLong()
+        if (chatId in chats().keys) {
+            ChatMenu(chatId).mainAction()
+        } else {
+            println("Sorry, you don't have this chat in your chat list")
+        }
+    }
+
     private fun showChatsAction() = chats().map {
         println(chatFormat(it))
     }
 
     private fun createChatAction() {
-        TODO() // must be adding new chat and adding contacts
-    }
-
-    private fun removeChatAction() {
-        println("Select contact to remove:")
-        val numId = chats().keys.toList()[OptionsIO.init(chats().map { chatFormat(it) })]
-        Client.UserData().deleteChat(numId)
-    }
-
-    private fun changeChatNameAction() {
-        println("Select contact to change name:")
-        val numId = chats().keys.toList()[OptionsIO.init(chats().map { chatFormat(it) })]
-        println("Input new name for contact ${getName(numId)}:")
-        Client.ChatData(numId).changeChatName(readLine()!!)
+        TODO("Must be adding new chat and adding members")
     }
 }
 
+class ChatMenu(private val chatId : Long) {
+
+    fun mainAction() {
+
+        val options = listOf(
+            "Send message",
+            "Show latest messages",
+            "Add new user",
+            "Change chat's name",
+            "Leave chat",
+            "Return"
+        )
+        while (true) {
+            println("Your are in your chats menu")
+            when (OptionsIO.init(options)) {
+                0 -> sendMessageAction()
+                1 -> showMessagesAction()
+                2 -> addUserAction()
+                3 -> changeChatNameAction()
+                4 -> {
+                    leaveChatAction()
+                    return
+                }
+                5 -> return
+            }
+        }
+    }
+
+    private fun sendMessageAction() {
+        println("Enter your message")
+        val messageId = Client.MessageData().createMessage(readLine()!!, chatId, getId())
+        Client.ChatData(chatId).sendMessage(messageId)
+    }
+
+    private fun showMessagesAction() {
+        TODO("Don't know how to get messages")
+    }
+
+    private fun addUserAction() {
+        TODO("Check existence user in chat")
+        /*
+        println("Enter id of user")
+        Client.ChatData(chatId).addUser(readLine()!!.toLong())
+        */
+    }
+
+    private fun changeChatNameAction() {
+        println("Input new name for chat")
+        Client.ChatData(chatId).changeChatName(readLine()!!)
+    }
+
+    private fun leaveChatAction() = Client.UserData(getId()).deleteChat(chatId)
+}
+
 class BlockedUsersMenu {
-    private fun blockedUsers() = Client.UserData().getBlockedUsers()
+    private fun blockedUsers() = Client.UserData(getId()).getBlockedUsers()
 
     fun mainAction() {
         val options = listOf(
@@ -252,8 +298,9 @@ class BlockedUsersMenu {
             println("Your are in your chats menu")
             when (OptionsIO.init(options)) {
                 0 -> showBlockedUsersAction()
-                1 -> removeUserAction()
-                2 -> return
+                1 -> addUserAction()
+                2 -> removeUserAction()
+                3 -> return
             }
         }
     }
@@ -264,16 +311,22 @@ class BlockedUsersMenu {
         println(blockedUserFormat(it))
     }
 
+    private fun addUserAction() {
+        TODO("Check existence of user")
+        /*
+        println("Enter id of user")
+        Client.UserData(getId()).addBBlockedUser(numId)
+        */
+    }
+
     private fun removeUserAction() {
         println("Select user to remove:")
         val numId = blockedUsers().toList()[OptionsIO.init(blockedUsers().map {
             blockedUserFormat(it)
         })]
-        Client.UserData().deleteContact(numId)
+        Client.UserData(getId()).deleteBlockedUser(numId)
     }
 }
-
-
 
 fun main() {
     GlobalScope.launch {
