@@ -66,7 +66,6 @@ class MainMenu {
             "View my profile",
             "View my contacts",
             "View my chats",
-            "View blocked users",
             "Sign out",
             "Exit"
         )
@@ -77,9 +76,8 @@ class MainMenu {
                 0 -> ProfileMenu().mainAction()
                 1 -> ContactsMenu().mainAction()
                 2 -> ChatsMenu().mainAction()
-                3 -> BlockedUsersMenu().mainAction()
-                4 -> LoginMenu().mainAction()
-                5 -> browserExit()
+                3 -> LoginMenu().mainAction()
+                4 -> browserExit()
             }
         }
     }
@@ -100,22 +98,36 @@ class LoginMenu {
 class ProfileMenu {
     fun mainAction() {
 
+        val optionsList = listOf(
+            "Change name",
+            "Change email",
+            "View my blacklist",
+            "Return"
+        )
+
         while (true) {
             println("Your are in your profile menu")
             println("Your ID: ${getId()}")
             println("Your login: ${getLogin()}")
             println("Your name: ${getName()}")
 
-            when (OptionsIO.init(listOf("Change name", "Return"))) {
-                0 -> {
-                    println("Enter your name:")
-                    val newName = readLine()
-                    Client.UserData().changeName(newName!!)
-                }
-                1 -> return
+            when (OptionsIO.init(optionsList)) {
+                0 -> changeNameAction()
+                1 -> changeEmailAction()
+                2 -> BlockedUsersMenu().mainAction()
+                3 -> return
             }
         }
+    }
 
+    private fun changeNameAction() {
+        println("Enter your name:")
+        Client.UserData().changeName(readLine()!!)
+    }
+
+    private fun changeEmailAction() {
+        println("Enter your email:")
+        Client.UserData().changeName(readLine()!!)
     }
 }
 
