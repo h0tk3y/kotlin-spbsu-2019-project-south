@@ -224,6 +224,8 @@ object Client {
 
         fun getMembers() = getChat().members
 
+        fun getName() = getChat().name
+
         fun getMessages() = getChat().messages
     }
 }

@@ -199,7 +199,7 @@ class ChatsListMenu {
             "Return"
         )
         while (true) {
-            println("Your are in your chats menu")
+            println("This is a list of your chats")
             when (OptionsIO.init(options)) {
                 0 -> openChatAction()
                 1 -> showChatsAction()
@@ -243,7 +243,7 @@ class ChatMenu(private val chatId : Long) {
             "Return"
         )
         while (true) {
-            println("Your are in your chats menu")
+            println("Your are in ${Client.ChatData(chatId).getName()} chat")
             when (OptionsIO.init(options)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
@@ -295,7 +295,7 @@ class BlockedUsersMenu {
             "Return"
         )
         while (true) {
-            println("Your are in your chats menu")
+            println("Your are in your blacklist")
             when (OptionsIO.init(options)) {
                 0 -> showBlockedUsersAction()
                 1 -> addUserAction()
