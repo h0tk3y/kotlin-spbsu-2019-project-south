@@ -127,7 +127,7 @@ class ProfileMenu {
 
     private fun changeEmailAction() {
         println("Enter your email:")
-        Client.UserData(getId()).changeName(readLine()!!)
+        Client.UserData(getId()).changeEmail(readLine()!!)
     }
 }
 
