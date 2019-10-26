@@ -18,7 +18,7 @@ class ChatBase(val data_path: String = ""): DataBase {
     fun edit(id : Long, edited_chat: Chat) {
         if (!chats.containsKey(id))
             return
-        chats[id] = edited_chat;
+        chats[id] = edited_chat
     }
 
     fun remove(id: Long) {

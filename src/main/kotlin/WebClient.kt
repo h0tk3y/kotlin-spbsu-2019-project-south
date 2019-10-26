@@ -18,7 +18,6 @@ class WebClient (private val host : String, private val port : Int) {
     suspend fun run() {
 
         val objectMapper = jacksonObjectMapper()
-
         client.ws(
             method = HttpMethod.Get,
             host = host,

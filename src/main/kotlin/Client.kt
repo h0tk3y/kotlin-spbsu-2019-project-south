@@ -5,7 +5,7 @@ import FieldType.*
 object Client {
     private var loggedUserId: Long = -1
 
-    private val webClient = WebClient("lol", 10)
+    val webClient = WebClient("127.0.0.1", 9999)
 
     fun getLoggedUserId(): Long {
         return loggedUserId
@@ -15,11 +15,13 @@ object Client {
         loggedUserId = UserData().addUser(login, name, email)
     }
 
-    class UserData(var userId: Long = loggedUserId) {
+    class UserData(private var userId: Long = loggedUserId) {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id: Long): User {
-            return objectMapper.readValue<User>(webClient.makeRequest(ServerRequest(GET, USER, id)).body)
+            return objectMapper.readValue(
+                webClient.makeRequest(ServerRequest(
+                GET, USER, id, objectMapper.writeValueAsString(User(id)))).body)
         }
 
         private fun editUser(user: User) {
@@ -27,10 +29,11 @@ object Client {
         }
 
         fun addUser(login: String, name: String, email: String): Long {
-            val newUser = User(-1, login)
+            val newUser = User(-1)
+            newUser.login = login
             newUser.name = name
             newUser.email = email
-            return objectMapper.readValue<Long>(
+            return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser))).body
             )
         }
@@ -111,7 +114,7 @@ object Client {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(): Message =
-            objectMapper.readValue<Message>(webClient.makeRequest(ServerRequest(GET, MESSAGE, messageId)).body)
+            objectMapper.readValue(webClient.makeRequest(ServerRequest(GET, MESSAGE, messageId)).body)
 
         private fun editMessage(message: Message) =
             webClient.makeRequest(ServerRequest(EDIT, MESSAGE, messageId, objectMapper.writeValueAsString(message)))
@@ -121,7 +124,7 @@ object Client {
 
         fun createMessage(text: String, chatId: Long, userId: Long): Long {
             val newMessage = Message(text, -1, chatId, userId)
-            return objectMapper.readValue<Long>(addMessage(newMessage))
+            return objectMapper.readValue(addMessage(newMessage))
         }
 
         fun getText(): String = getMessage().text
@@ -159,7 +162,7 @@ object Client {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getChat(): Chat {
-            return objectMapper.readValue<Chat>(webClient.makeRequest(ServerRequest(GET, CHAT, chatId)).body)
+            return objectMapper.readValue(webClient.makeRequest(ServerRequest(GET, CHAT, chatId)).body)
         }
 
         private fun editChat(chat: Chat) {
@@ -176,9 +179,17 @@ object Client {
             } else {
                 UserData(owners.first()).addChat(chatId, name)
             }
-            return objectMapper.readValue<Long>(
+            return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD, CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
             )
+        }
+
+        fun changeChatName(newName : String) {
+            val chat = getChat()
+            if (!chat.isSingle) {
+                chat.name = newName
+                editChat(chat)
+            }
         }
 
         fun addUser(userId: Long) {
@@ -212,6 +223,8 @@ object Client {
         fun deleteMessage(messageId: Long) = MessageData(messageId).deleteMessage()
 
         fun getMembers() = getChat().members
+
+        fun getName() = getChat().name
 
         fun getMessages() = getChat().messages
     }

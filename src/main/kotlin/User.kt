@@ -1,4 +1,5 @@
-data class User(val id: Long, val login: String) {
+data class User(val id: Long) {
+    var login: String = ""
     var name: String = ""
     var email: String = ""
     val blockedUsers: MutableSet<Long> = mutableSetOf()
