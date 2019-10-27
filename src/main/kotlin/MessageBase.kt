@@ -9,6 +9,7 @@ class MessageBase(val data_path: String = "") : DataBase {
     }
 
     fun add(message : Message): Long {
+        message.id = baseSize
         messages.put(baseSize, message)
         return baseSize++
     }

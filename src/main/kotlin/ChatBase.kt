@@ -7,6 +7,7 @@ class ChatBase(val data_path: String = ""): DataBase {
     }
 
     fun add(chat : Chat): Long {
+        chat.id = baseSize
         chats.put(baseSize, chat)
         return baseSize++
     }

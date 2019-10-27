@@ -1,4 +1,4 @@
-data class User(val id: Long) {
+data class User(var id: Long) {
     var login: String = ""
     var name: String = ""
     var email: String = ""

@@ -7,6 +7,7 @@ class UserBase(val data_path: String = ""): DataBase{
     }
 
     fun add(user : User): Long {
+        user.id = baseSize
         users.put(baseSize, user)
         return baseSize++
     }
