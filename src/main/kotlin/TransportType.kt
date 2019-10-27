@@ -6,6 +6,8 @@ enum class TransportType {
 
     EDIT,
 
-    REMOVE
+    REMOVE,
+
+    FIND
 
 }
