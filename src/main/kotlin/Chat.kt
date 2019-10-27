@@ -1,4 +1,4 @@
-data class Chat(val id: Long, val isSingle: Boolean, var name: String, val owners: MutableSet<Long>) {
+data class Chat(val id: Long = -1, val isSingle: Boolean = true, var name: String = "New Chat", val owners: MutableSet<Long> = mutableSetOf()) {
     val members: MutableSet<Long> = owners
     val messages: MutableList<Long> = mutableListOf()
 }

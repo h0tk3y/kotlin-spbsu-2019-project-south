@@ -20,8 +20,12 @@ object Client {
 
         private fun getUser(id: Long): User {
             return objectMapper.readValue(
-                webClient.makeRequest(ServerRequest(
-                GET, USER, id, objectMapper.writeValueAsString(User(id)))).body)
+                webClient.makeRequest(
+                    ServerRequest(
+                        GET, USER, id, objectMapper.writeValueAsString(User(id))
+                    )
+                ).body
+            )
         }
 
         private fun editUser(user: User) {
@@ -114,7 +118,16 @@ object Client {
         private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(): Message =
-            objectMapper.readValue(webClient.makeRequest(ServerRequest(GET, MESSAGE, messageId)).body)
+            objectMapper.readValue(
+                webClient.makeRequest(
+                    ServerRequest(
+                        GET,
+                        MESSAGE,
+                        messageId,
+                        objectMapper.writeValueAsString(Message(id = messageId))
+                    )
+                ).body
+            )
 
         private fun editMessage(message: Message) =
             webClient.makeRequest(ServerRequest(EDIT, MESSAGE, messageId, objectMapper.writeValueAsString(message)))
@@ -144,11 +157,13 @@ object Client {
             editMessage(cur)
         }
 
-        fun deleteMessageForever() = webClient.makeRequest(ServerRequest(
-            REMOVE,
-            MESSAGE,
-            messageId,
-            objectMapper.writeValueAsString(getMessage()))
+        fun deleteMessageForever() = webClient.makeRequest(
+            ServerRequest(
+                REMOVE,
+                MESSAGE,
+                messageId,
+                objectMapper.writeValueAsString(getMessage())
+            )
         )
 
         fun readMessage() {
@@ -184,7 +199,7 @@ object Client {
             )
         }
 
-        fun changeChatName(newName : String) {
+        fun changeChatName(newName: String) {
             val chat = getChat()
             if (!chat.isSingle) {
                 chat.name = newName
