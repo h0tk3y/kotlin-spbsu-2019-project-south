@@ -25,7 +25,7 @@ object Server {
                     TransportType.ADD -> response.body = objectMapper.writeValueAsString(userBase.add(user))
                     TransportType.REMOVE -> userBase.remove(user.id)
                     TransportType.EDIT -> userBase.edit(user.id, user)
-                    TransportType.FIND -> response.body = objectMapper.writeValueAsString(userBase.find(user.id))
+ //                   TransportType.FIND -> response.body = objectMapper.writeValueAsString(userBase.find(user.id))
                 }
             }
             FieldType.CHAT -> {
@@ -35,7 +35,7 @@ object Server {
                     TransportType.ADD -> chatBase.add(chat)
                     TransportType.REMOVE -> chatBase.remove(chat.id)
                     TransportType.EDIT -> chatBase.edit(chat.id, chat)
-                    TransportType.FIND -> response.body = objectMapper.writeValueAsString(chatBase.find(chat.id))
+   //                 TransportType.FIND -> response.body = objectMapper.writeValueAsString(chatBase.find(chat.id))
                 }
             }
             FieldType.MESSAGE -> {
@@ -45,7 +45,7 @@ object Server {
                     TransportType.ADD -> messageBase.add(message)
                     TransportType.REMOVE -> messageBase.remove(message.id)
                     TransportType.EDIT -> messageBase.edit(message.id, message)
-                    TransportType.FIND -> response.body = objectMapper.writeValueAsString(messageBase.find(message.id))
+    //                TransportType.FIND -> response.body = objectMapper.writeValueAsString(messageBase.find(message.id))
                 }
             }
         }
