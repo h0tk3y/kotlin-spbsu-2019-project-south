@@ -180,15 +180,15 @@ object Client {
             webClient.makeRequest(ServerRequest(EDIT, CHAT, chatId, objectMapper.writeValueAsString(chat)))
         }
 
-        fun createChat(isSingle: Boolean, name: String, owners: MutableSet<Long>): Long {
-            val newChat = Chat(-1, isSingle, name, owners)
+        fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>): Long {
+            val newChat = Chat(-1, isSingle, name, members)
             if (isSingle) {
-                val userId1 = owners.first()
-                val userId2 = owners.last()
+                val userId1 = members.first()
+                val userId2 = members.last()
                 UserData(userId1).addChat(chatId, UserData(userId2).getName())
                 UserData(userId2).addChat(chatId, UserData(userId1).getName())
             } else {
-                UserData(owners.first()).addChat(chatId, name)
+                members.forEach{ UserData(it).addChat(chatId, name) }
             }
             return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD, CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
@@ -238,5 +238,7 @@ object Client {
         fun getName() = getChat().name
 
         fun getMessages() = getChat().messages
+
+        fun isSingle() = getChat().isSingle
     }
 }
