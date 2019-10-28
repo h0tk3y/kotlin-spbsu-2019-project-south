@@ -34,16 +34,34 @@ class ChatMenu(private val chatId : Long) {
         Client.ChatData(chatId).sendMessage(messageId)
     }
 
-    private fun showMessagesAction() {
-        TODO("Don't know how to get messages")
+    private fun showMessagesAction() { // TODO("Maybe needs refactoring")
+        val lim = 25
+        val options = listOf(
+            "Continue",
+            "Return"
+        )
+
+        val messages = Client.ChatData(chatId).getMessages()
+        var i = 0
+        while (i < messages.size) {
+            for (cnt in 0 until lim) {
+                if (i == messages.size) return
+                val userId = Client.MessageData(messages[i]).getUserId()
+                val userName = Client.UserData(userId).getName()
+                val text = Client.MessageData(messages[i]).getText()
+                println("From $userName: $text")
+                if (userId != getId()) Client.MessageData(messages[i]).readMessage()
+                i++
+            }
+            if (optionsIO(options) == 1) return
+        }
     }
 
     private fun addUserAction() {
-        TODO("Check existence user in chat")
-        /*
+        //TODO("Check existence user in chat")
         println("Enter id of user")
-        Client.ChatData(chatId).addUser(readLine()!!.toLong())
-        */
+        val numId = readLine()!!.toLong()
+        Client.ChatData(chatId).addUser(numId)
     }
 
     private fun changeChatNameAction() {
