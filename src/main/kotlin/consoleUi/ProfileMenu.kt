@@ -15,6 +15,8 @@ class ProfileMenu {
             println("Your ID: ${getId()}")
             println("Your login: ${getLogin()}")
             println("Your name: ${getName()}")
+            println("Your email: ${Client.UserData().getEmail()}")
+            println()
 
             when (optionsIO(optionsList)) {
                 0 -> changeNameAction()

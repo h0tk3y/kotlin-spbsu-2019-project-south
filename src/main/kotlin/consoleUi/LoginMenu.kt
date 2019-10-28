@@ -20,6 +20,8 @@ class LoginMenu {
         val login = readLine()
         println("Enter your name:")
         val name = readLine()
-        Client.registerUser(login = login!!, name = name!!)
+        println("Enter your email:")
+        val email = readLine()
+        Client.registerUser(login = login!!, name = name!!, email = email!!)
     }
 }
