@@ -11,7 +11,7 @@ class BlockedUsersMenu {
             "Return"
         )
         while (true) {
-            println("Your are in your blacklist")
+            println("You are in your blacklist")
             when (optionsIO(options)) {
                 0 -> showBlockedUsersAction()
                 1 -> addUserAction()

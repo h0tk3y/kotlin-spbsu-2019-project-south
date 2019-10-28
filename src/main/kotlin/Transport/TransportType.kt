@@ -8,6 +8,8 @@ enum class TransportType {
 
     REMOVE,
 
+    SEND_MESSAGE
+
     //FIND,
 
 }
