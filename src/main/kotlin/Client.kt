@@ -3,11 +3,10 @@ import TransportType.*
 import FieldType.*
 
 object Client {
-    private var loggedUserId: Long = -1
-
-    private var loggedUserLogin: String = ""
-
     val webClient = WebClient("127.0.0.1", 9999)
+    private val objectMapper = jacksonObjectMapper()
+
+    private var loggedUserId: Long = -1
 
     fun getLoggedUserId(): Long {
         return loggedUserId
@@ -22,7 +21,6 @@ object Client {
     }
 
     class UserData(private var userId: Long = loggedUserId) {
-        private val objectMapper = jacksonObjectMapper()
 
         private fun getUser(id: Long): User {
             return objectMapper.readValue(
@@ -119,7 +117,6 @@ object Client {
     }
 
     class MessageData(private val messageId: Long = -1) {
-        private val objectMapper = jacksonObjectMapper()
 
         private fun getMessage(): Message =
             objectMapper.readValue(
@@ -178,7 +175,6 @@ object Client {
     }
 
     class ChatData(private val chatId: Long = -1) {
-        private val objectMapper = jacksonObjectMapper()
 
         private fun getChat(): Chat {
             return objectMapper.readValue(webClient.makeRequest(ServerRequest(GET, CHAT, chatId)).body)
