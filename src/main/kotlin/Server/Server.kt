@@ -15,7 +15,7 @@ object Server {
     private var messageBase : MessageBase = MessageBase("messages.db")
 
 
-    private fun processRequest(request: ServerRequest) : ServerResponse {
+    private fun parseRequest(request: ServerRequest) : ServerResponse {
         val response = ServerResponse(request.requestType, request.fieldType)
         when (request.fieldType) {
             FieldType.USER -> {
@@ -64,7 +64,7 @@ object Server {
                             val objectMapper = jacksonObjectMapper();
                             val request : ServerRequest? = objectMapper.readValue(text)
                             if (request != null) {
-                                val response = processRequest(request)
+                                val response = parseRequest(request)
                                 outgoing.send(Frame.Text(objectMapper.writeValueAsString(response)))
                             }
                         }
