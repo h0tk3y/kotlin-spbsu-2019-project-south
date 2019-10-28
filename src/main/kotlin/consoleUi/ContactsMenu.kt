@@ -25,14 +25,23 @@ class ContactsMenu {
 
     }
 
-    private fun contactFormat(contact: Map.Entry<Long, String>): String = "ID: ${contact.key}, name: ${contact.value}"
+    private fun contactFormat(contact: Map.Entry<Long, String>): String =
+        "ID: ${contact.key}, name: ${contact.value}"
 
     private fun showContactsAction() = contacts().map {
         println(contactFormat(it))
     }
 
     private fun addNewContactAction() {
-        TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
+        println("Input id of User")
+        val userId = readLine()!!.toLong()
+        println("Input new name for contact")
+        var userName = readLine()
+        if (userName.isNullOrEmpty()) userName = Client.UserData(userId).getName()
+        Client.UserData(getId()).addContact(userId, userName)
+        Client.UserData(userId).addContact(getId(), getName())
+        Client.ChatData().createChat(true, "", mutableSetOf(getId(), userId))
+        //TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
     }
 
     private fun removeContactAction() {
