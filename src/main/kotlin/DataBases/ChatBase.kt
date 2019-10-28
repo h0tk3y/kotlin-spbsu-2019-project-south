@@ -1,4 +1,4 @@
-class ChatBase(val data_path: String = ""): DataBase {
+class ChatBase(val dataPath: String = ""): DataBase {
     override var baseSize: Long = 0
     private val chats = mutableMapOf<Long, Chat>()
 
@@ -16,10 +16,10 @@ class ChatBase(val data_path: String = ""): DataBase {
         return chats[id]
     }
 
-    fun edit(id : Long, edited_chat: Chat) {
+    fun edit(id : Long, editedChat: Chat) {
         if (!chats.containsKey(id))
             return
-        chats[id] = edited_chat
+        chats[id] = editedChat
     }
 
     fun remove(id: Long) {
