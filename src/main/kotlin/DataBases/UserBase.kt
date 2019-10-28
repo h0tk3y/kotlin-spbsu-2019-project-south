@@ -1,4 +1,4 @@
-class UserBase(val data_path: String = ""): DataBase{
+class UserBase(val dataPath: String = ""): DataBase{
     override var baseSize: Long = 0
     private val users = mutableMapOf<Long, User>()
 
@@ -16,10 +16,10 @@ class UserBase(val data_path: String = ""): DataBase{
         return users[id]
     }
 
-    fun edit(id : Long, edited_user: User) {
+    fun edit(id : Long, editedUser: User) {
         if (!users.containsKey(id))
             return
-        users[id] = edited_user
+        users[id] = editedUser
     }
 
     fun remove(id: Long) {

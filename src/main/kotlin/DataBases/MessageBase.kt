@@ -1,4 +1,4 @@
-class MessageBase(val data_path: String = "") : DataBase {
+class MessageBase(val dataPath: String = "") : DataBase {
 
     override var baseSize: Long = 0
 
@@ -18,10 +18,10 @@ class MessageBase(val data_path: String = "") : DataBase {
         return messages[id]
     }
 
-    fun edit(id : Long, edited_message: Message) {
+    fun edit(id : Long, editedMessage: Message) {
         if (!messages.containsKey(id))
             return
-        messages[id] = edited_message
+        messages[id] = editedMessage
     }
 
     fun remove(id: Long) {
