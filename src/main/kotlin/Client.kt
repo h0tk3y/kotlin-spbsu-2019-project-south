@@ -12,7 +12,9 @@ object Client {
         return loggedUserId
     }
 
-    fun getLoggedUserLogin() : String{
+    private var loggedUserLogin: String = ""
+
+    fun getLoggedUserLogin(): String {
         return loggedUserLogin
     }
 
@@ -244,7 +246,7 @@ object Client {
         fun getMessages() = getChat().messages
     }
 
-    class LoginData(private val login: String){
+    class LoginData(private val login: String = loggedUserLogin) {
 
     }
 }
