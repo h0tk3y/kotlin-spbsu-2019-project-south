@@ -5,10 +5,16 @@ import FieldType.*
 object Client {
     private var loggedUserId: Long = -1
 
+    private var loggedUserLogin: String = ""
+
     val webClient = WebClient("127.0.0.1", 9999)
 
     fun getLoggedUserId(): Long {
         return loggedUserId
+    }
+
+    fun getLoggedUserLogin() : String{
+        return loggedUserLogin
     }
 
     fun registerUser(login: String, name: String = login, email: String = "") {
@@ -240,5 +246,9 @@ object Client {
         fun getName() = getChat().name
 
         fun getMessages() = getChat().messages
+    }
+
+    class LoginData(private val login: String){
+
     }
 }
