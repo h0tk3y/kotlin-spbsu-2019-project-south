@@ -10,47 +10,42 @@ import io.ktor.websocket.webSocket
 object Server {
     private val objectMapper = jacksonObjectMapper()
 
-    private var userBase : UserBase = UserBase("users.db")
-    private var chatBase : ChatBase = ChatBase("chats.db")
-    private var messageBase : MessageBase = MessageBase("messages.db")
-
-
-    private fun processRequest(request: ServerRequest) : ServerResponse {
-        val response = ServerResponse(request.requestType, request.fieldType)
-        when (request.fieldType) {
-            FieldType.USER -> {
-                val user: User = objectMapper.readValue(request.body)
-                when (request.requestType) {
-                    TransportType.GET -> response.body = objectMapper.writeValueAsString(userBase.get(user.id))
-                    TransportType.ADD -> response.body = objectMapper.writeValueAsString(userBase.add(user))
-                    TransportType.REMOVE -> userBase.remove(user.id)
-                    TransportType.EDIT -> userBase.edit(user.id, user)
- //                   TransportType.FIND -> response.body = objectMapper.writeValueAsString(userBase.find(user.id))
-                }
+    private fun processRequest(request : ServerRequest) : ServerResponse {
+        val response = ServerResponse(request.requestType)
+        val requestHandler = RequestHandler()
+        when (request.requestType) {
+            TransportType.GET_USER -> {
+                val user : User? = requestHandler.getUser(request.id)
+                response.body = objectMapper.writeValueAsString(user)
             }
-            FieldType.CHAT -> {
-                val chat: Chat = objectMapper.readValue(request.body)
-                when (request.requestType) {
-                    TransportType.GET -> response.body = objectMapper.writeValueAsString(chatBase.get(chat.id))
-                    TransportType.ADD -> chatBase.add(chat)
-                    TransportType.REMOVE -> chatBase.remove(chat.id)
-                    TransportType.EDIT -> chatBase.edit(chat.id, chat)
-   //                 TransportType.FIND -> response.body = objectMapper.writeValueAsString(chatBase.find(chat.id))
-                }
+            TransportType.SEND_MESSAGE -> requestHandler.sendMessage(request.body)
+            TransportType.GET_CHAT -> {
+                val chat : Chat? = requestHandler.getChat(request.id)
+                response.body = objectMapper.writeValueAsString(chat)
             }
-            FieldType.MESSAGE -> {
-                val message: Message = objectMapper.readValue(request.body)
-                when (request.requestType) {
-                    TransportType.GET -> response.body = objectMapper.writeValueAsString(messageBase.get(message.id))
-                    TransportType.ADD -> messageBase.add(message)
-                    TransportType.REMOVE -> messageBase.remove(message.id)
-                    TransportType.EDIT -> messageBase.edit(message.id, message)
-    //                TransportType.FIND -> response.body = objectMapper.writeValueAsString(messageBase.find(message.id))
-                }
+            TransportType.GET_MESSAGES -> {
+                val messages : List<Message> = requestHandler.getMessages(request.id, request.body)
+                response.body = objectMapper.writeValueAsString(messages)
             }
+            TransportType.REGISTER -> TODO()
+            TransportType.LOGIN -> TODO()
+            TransportType.DELETE_MESSAGE -> requestHandler.deleteMessage(request.id)
+            TransportType.DELETE_CHAT -> requestHandler.deleteChat(request.id)
+            TransportType.EDIT_MESSAGE -> requestHandler.editMessage(request.id, request.body)
+            TransportType.EDIT_USER -> requestHandler.editUser(request.id, request.body)
+            TransportType.GET_USER_CHATS -> {
+                val chats : List<Chat> = requestHandler.getUserChats(request.id)
+                response.body = objectMapper.writeValueAsString(chats)
+            }
+            TransportType.ADD_CHAT -> requestHandler.addChat(request.body)
+            TransportType.REMOVE_USER -> requestHandler.removeUser(request.id, request.body)
+            TransportType.EDIT_CHAT -> requestHandler.editChat(request.id, request.body)
+            TransportType.ADD_MEMBER -> requestHandler.addMember(request.id, request.body)
+            TransportType.ADD_ADMIN -> requestHandler.addAdmin(request.id, request.body)
         }
         return response
     }
+
 
     fun run(port : Int = 9999) {
         embeddedServer(Netty, port) {
