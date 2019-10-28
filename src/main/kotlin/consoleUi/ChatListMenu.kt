@@ -16,7 +16,7 @@ class ChatsListMenu {
                 0 -> openChatAction()
                 1 -> showChatsAction()
                 2 -> createChatAction()
-                5 -> return
+                3 -> return
             }
         }
     }
@@ -26,7 +26,7 @@ class ChatsListMenu {
     private fun openChatAction() {
         println("Select chat to open:")
         val numId = chats().keys.toList()[optionsIO(chats().map { chatFormat(it) })]
-        Client.UserData(getId()).deleteContact(numId)
+        ChatMenu(numId).mainAction()
     }
 
     private fun showChatsAction() = chats().map {

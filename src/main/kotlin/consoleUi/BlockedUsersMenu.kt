@@ -28,11 +28,10 @@ class BlockedUsersMenu {
     }
 
     private fun addUserAction() {
-        TODO("Check existence of user")
-        /*
+        //TODO("Check existence of user and search by login")
         println("Enter id of user")
-        Client.UserData(getId()).addBBlockedUser(numId)
-        */
+        val numId = readLine()!!.toLong()
+        Client.UserData(getId()).addBlockedUser(numId)
     }
 
     private fun removeUserAction() {

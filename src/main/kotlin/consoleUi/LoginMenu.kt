@@ -12,7 +12,7 @@ class LoginMenu {
     }
 
     private fun signInAction() {
-        println("Sori ne podvezli")
+        TODO()
     }
 
     private fun signUpAction() {

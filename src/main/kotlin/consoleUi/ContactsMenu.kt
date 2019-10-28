@@ -35,8 +35,6 @@ class ContactsMenu {
         TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
     }
 
-    // I suppose code below needs refactoring  --aokiga
-
     private fun removeContactAction() {
         println("Select contact to remove:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
