@@ -33,9 +33,7 @@ object Client {
         }
 
         fun addUser(login: String, name: String, email: String): Long {
-            val newUser = User(-1)
-            newUser.login = login
-            newUser.name = name
+            val newUser = User(-1, login, name)
             newUser.email = email
             return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD, USER, userId, objectMapper.writeValueAsString(newUser))).body
