@@ -59,7 +59,7 @@ object Server {
                             val objectMapper = jacksonObjectMapper();
                             val request : ServerRequest? = objectMapper.readValue(text)
                             if (request != null) {
-                                val response = parseRequest(request)
+                                val response = processRequest(request)
                                 outgoing.send(Frame.Text(objectMapper.writeValueAsString(response)))
                             }
                         }

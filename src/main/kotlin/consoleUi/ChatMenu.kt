@@ -13,7 +13,7 @@ class ChatMenu(private val chatId : Long) {
             "Return"
         )
         while (true) {
-            println("Your are in ${Client.ChatData(chatId).getName()} chat")
+            println("Your are in ${Client.ChatDataHandler(chatId).getName()} chat")
             when (optionsIO(options)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
@@ -30,8 +30,8 @@ class ChatMenu(private val chatId : Long) {
 
     private fun sendMessageAction() {
         println("Enter your message")
-        val messageId = Client.MessageData().createMessage(readLine()!!, chatId, getId())
-        Client.ChatData(chatId).sendMessage(messageId)
+        val messageId = Client.MessageDataHandler().createMessage(readLine()!!, chatId, getId())
+        Client.ChatDataHandler(chatId).sendMessage(messageId)
     }
 
     private fun showMessagesAction() { // TODO("Maybe needs refactoring")
@@ -66,8 +66,8 @@ class ChatMenu(private val chatId : Long) {
 
     private fun changeChatNameAction() {
         println("Input new name for chat")
-        Client.ChatData(chatId).changeChatName(readLine()!!)
+        Client.ChatDataHandler(chatId).changeChatName(readLine()!!)
     }
 
-    private fun leaveChatAction() = Client.UserData(getId()).deleteChat(chatId)
+    private fun leaveChatAction() = Client.UserDataHandler(getId()).deleteChat(chatId)
 }

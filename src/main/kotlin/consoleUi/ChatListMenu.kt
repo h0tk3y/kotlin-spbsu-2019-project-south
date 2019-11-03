@@ -1,7 +1,7 @@
 package consoleUi
 
 class ChatsListMenu {
-    private fun chats() = Client.UserData(getId()).getChats()
+    private fun chats() = Client.UserDataHandler(getId()).getChats()
 
     fun mainAction() {
         val options = listOf(
