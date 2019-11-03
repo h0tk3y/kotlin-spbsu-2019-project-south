@@ -1,7 +1,7 @@
 package consoleUi
 
 class BlockedUsersMenu {
-    private fun blockedUsers() = Client.UserData(getId()).getBlockedUsers()
+    private fun blockedUsers() = Client.UserDataHandler(getId()).getBlockedUsers()
 
     fun mainAction() {
         val options = listOf(
@@ -40,6 +40,6 @@ class BlockedUsersMenu {
         val numId = blockedUsers().toList()[optionsIO(blockedUsers().map {
             blockedUserFormat(it)
         })]
-        Client.UserData(getId()).deleteBlockedUser(numId)
+        Client.UserDataHandler(getId()).unblockUser(numId)
     }
 }

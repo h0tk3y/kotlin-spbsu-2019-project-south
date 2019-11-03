@@ -1,7 +1,7 @@
 package consoleUi
 
 class ContactsMenu {
-    private fun contacts() = Client.UserData(getId()).getContacts()
+    private fun contacts() = Client.UserDataHandler(getId()).getContacts()
 
     fun mainAction() {
 
@@ -40,19 +40,19 @@ class ContactsMenu {
     private fun removeContactAction() {
         println("Select contact to remove:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        Client.UserData(getId()).deleteContact(numId)
+        Client.UserDataHandler(getId()).removeContact(numId)
     }
 
     private fun changeContactNameAction() {
         println("Select contact to change name:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
         println("Input new name for contact ${getName(numId)}:")
-        Client.UserData(getId()).changeContact(numId, readLine()!!)
+        Client.UserDataHandler(getId()).changeContactName(numId, readLine()!!)
     }
 
     private fun addToBlacklist() {
         println("Select contact to add to blacklist:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        Client.UserData(getId()).addBlockedUser(numId)
+        Client.UserDataHandler(getId()).blockUser(numId)
     }
 }

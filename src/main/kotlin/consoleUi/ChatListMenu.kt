@@ -1,7 +1,7 @@
 package consoleUi
 
 class ChatsListMenu {
-    private fun chats() = Client.UserData(getId()).getChats()
+    private fun chats() = Client.UserDataHandler(getId()).getChats()
 
     fun mainAction() {
         val options = listOf(
@@ -26,7 +26,7 @@ class ChatsListMenu {
     private fun openChatAction() {
         println("Select chat to open:")
         val numId = chats().keys.toList()[optionsIO(chats().map { chatFormat(it) })]
-        Client.UserData(getId()).deleteContact(numId)
+        Client.UserDataHandler(getId()).removeContact(numId)
     }
 
     private fun showChatsAction() = chats().map {
