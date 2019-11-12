@@ -1,4 +1,5 @@
 
+import DataBases.DataBaseHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 
@@ -23,7 +24,9 @@ class DataBaseTests {
 
     @Test
     fun addGetUserDB() {
-        val userDB = UserBase()
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
         var user = User(-1, "Vadim Salavatov")
         val id = userDB.add(user)
         assertNotNull(userDB.get(id))
