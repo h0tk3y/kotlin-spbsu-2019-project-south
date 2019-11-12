@@ -79,6 +79,26 @@ class DataBaseTests {
         handler.closeAll()
     }
 
+    @Test
+    fun addGetUserContacts() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val contactUser = User(-1, "sp", "Ivan Pavlov")
+        contactUser.email = "pavlov200912@mail.ru"
+        val contactId = userDB.add(contactUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        mainUser.contacts.put(contactId, "My fng neighbour")// TODO? UNIQUE PAIR (user, other)
+        val userId = userDB.add(mainUser)
+
+        val contacts = userDB.getContacts(userId)
+        assert(contacts!![contactId] == "My fng neighbour")
+
+        handler.closeAll()
+    }
 
     @Test
     fun addGetChatDB() {

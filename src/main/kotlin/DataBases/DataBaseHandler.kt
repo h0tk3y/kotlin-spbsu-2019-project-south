@@ -5,6 +5,7 @@ import java.sql.*
 import User
 import Chat
 import Message
+import UserBase
 
 class DataBaseHandler {
     // TODO: Add Logging
@@ -262,11 +263,12 @@ class DataBaseHandler {
 fun main() {
     val dbH = DataBaseHandler()
     dbH.initAll()
-    /*val user = User(-1, "sp", "Pavlov Ivan")
+    val userDB = UserBase(dbH.connection!!)
+    val user = User(-1, "sp", "Pavlov Ivan")
     user.email = "pavlov200912@mail.ru"
     user.blockedUsers.add(2)
     user.contacts.put(2, "Pashtet Pavlov")
-    dbH.addUser(user)
+    userDB.add(user)
     val chat = Chat(-1, false, "My Chat", setOf<Long>(3, 2) as MutableSet<Long>)
     dbH.addChat(chat)
     val message = Message("Hello world of SQL!", -1, 1, 3)
@@ -275,5 +277,5 @@ fun main() {
     message.isDeleted = false
     message.isEdited = false
     dbH.addMessage(message)
-    dbH.closeAll()*/
+    dbH.closeAll()
 }
