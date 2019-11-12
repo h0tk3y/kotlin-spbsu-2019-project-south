@@ -3,6 +3,12 @@ import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Statement
 
+
+/***
+ * You CANT'T call function edit() in order to change users contacts
+ * You MUST use editContact instead
+ */
+
 class UserBase(val connection: Connection) {
 
     fun add(user: User): Long {
@@ -14,7 +20,7 @@ class UserBase(val connection: Connection) {
                 VALUES (?, ?, ?);
             """
             // '${user.login}', '${user.name}', '${user.email}'
-            val prStatementUser = connection!!.prepareStatement(
+            val prStatementUser = connection.prepareStatement(
                 queryInsert,
                 Statement.RETURN_GENERATED_KEYS
             )
@@ -35,7 +41,7 @@ class UserBase(val connection: Connection) {
                    VALUES (?, ?, ?, ?);
                 """
                 // $userId, $otherId, FALSE, '$otherName'
-                val prStatementContact = connection!!.prepareStatement(
+                val prStatementContact = connection.prepareStatement(
                     queryContact,
                     Statement.RETURN_GENERATED_KEYS
                 )
@@ -54,7 +60,7 @@ class UserBase(val connection: Connection) {
                    VALUES (?, ?, ?, ?);
                 """
                 // $$userId, $otherId, TRUE, ''
-                val prStatementBlocked = connection!!.prepareStatement(
+                val prStatementBlocked = connection.prepareStatement(
                     queryBlocked,
                     Statement.RETURN_GENERATED_KEYS
                 )
@@ -99,11 +105,46 @@ class UserBase(val connection: Connection) {
     }
 
     fun remove(userId: Long) {
-
+        try {
+            @Language("MySQL")
+            val queryUser = """
+                DELETE FROM users
+                WHERE user_id = ?
+            """
+            val prStatementUser = connection.prepareStatement(
+                queryUser
+            )
+            prStatementUser.setInt(1, userId.toInt())
+            prStatementUser.execute()
+            prStatementUser.close()
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
+    // TODO: remove userId
     fun edit(userId: Long, user: User) {
-
+        try {
+            @Language("MySQL")
+            val queryInsert = """
+                UPDATE users
+                SET
+                    name = ?,
+                    email = ?
+                WHERE 
+                    user_id = ?
+            """
+            val prStatementUser = connection.prepareStatement(
+                queryInsert
+            )
+            prStatementUser.setString(1, user.name)
+            prStatementUser.setString(2, user.email)
+            prStatementUser.setInt(3, userId.toInt())
+            prStatementUser.execute()
+            prStatementUser.close()
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
 

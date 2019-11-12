@@ -1,7 +1,6 @@
 
 import DataBases.DataBaseHandler
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test
 
@@ -27,11 +26,57 @@ class DataBaseTests {
         val handler = DataBaseHandler()
         handler.initAll()
         val userDB = UserBase(handler.connection!!)
-        var user = User(-1, "Vadim Salavatov")
-        val id = userDB.add(user)
-        assertNotNull(userDB.get(id))
-        user = userDB.get(id)!!
-        assert(user.login == "Vadim Salavatov")
+
+        // Subtest1
+        var user1 = User(-1, "Vadim Salavatov")
+        val id1 = userDB.add(user1)
+        assertNotNull(userDB.get(id1))
+        user1 = userDB.get(id1)!!
+        assert(user1.login == "Vadim Salavatov")
+
+        // Subtest2
+        var user2 = User(-1, "sp", "Ivan Pavlov")
+        user2.email = "pavlov200912@mail.ru"
+        val id2 = userDB.add(user2)
+        assertNotNull(userDB.get(id2))
+        user2 = userDB.get(id2)!!
+        assert(user2.login == "sp")
+        assert(user2.name == "Ivan Pavlov")
+        assert(user2.email == "pavlov200912@mail.ru")
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun addRemoveGetUserDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "Vadim Salavatov")
+        val id1 = userDB.add(user1)
+        userDB.remove(id1)
+        assertNull(userDB.get(id1))
+        handler.closeAll()
+    }
+
+    @Test
+    fun addEditGetUserDB() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "Vadim Salavatov")
+        val id1 = userDB.add(user1)
+
+        val editedUser = User(id1, "vadimka123", "Vadim Salavatov")
+        userDB.edit(id1, editedUser)
+        assert(userDB.get(id1)!!.login == "Vadim Salavatov") // You can't edit login!
+        assert(userDB.get(id1)!!.name == "Vadim Salavatov")
+        handler.closeAll()
     }
 
 
