@@ -95,10 +95,142 @@ class DataBaseTests {
         val userId = userDB.add(mainUser)
 
         val contacts = userDB.getContacts(userId)
-        assert(contacts!![contactId] == "My fng neighbour")
+        assert(contacts[contactId] == "My fng neighbour")
 
         handler.closeAll()
     }
+
+    @Test
+    fun addGetContacts() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val contactUser = User(-1, "sp", "Ivan Pavlov")
+        contactUser.email = "pavlov200912@mail.ru"
+        val contactId = userDB.add(contactUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.addContact(userId, contactId, "My fng neighbour")
+
+        val contacts = userDB.getContacts(userId)
+        assert(contacts[contactId] == "My fng neighbour")
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun addEditGetContats() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val contactUser = User(-1, "sp", "Ivan Pavlov")
+        contactUser.email = "pavlov200912@mail.ru"
+        val contactId = userDB.add(contactUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.addContact(userId, contactId, "My fng neighbour")
+        userDB.editContact(userId, contactId, "My lovely neighbour")
+
+        val contacts = userDB.getContacts(userId)
+        assert(contacts[contactId] == "My lovely neighbour")
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun addGetRemoveContacts() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val contactUser = User(-1, "sp", "Ivan Pavlov")
+        val contactId = userDB.add(contactUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.addContact(userId, contactId, "My fng neighbour")
+        userDB.removeContact(userId, contactId, "My fng neighbour")
+
+        val contacts = userDB.getContacts(userId)
+        assert(contacts[contactId] != "My fng neighbour")
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun blockUser() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val blockedUser = User(-1, "sp", "Ivan Pavlov")
+        val blockedId = userDB.add(blockedUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.blockUser(userId, blockedId)
+        assert(userDB.isBlocked(userId, blockedId))
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun unblockUser() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val blockedUser = User(-1, "sp", "Ivan Pavlov")
+        val blockedId = userDB.add(blockedUser)
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.blockUser(userId, blockedId)
+        userDB.unblockUser(userId, blockedId)
+        assert(!userDB.isBlocked(userId, blockedId))
+
+        handler.closeAll()
+    }
+
+    @Test
+    fun getBlockedUsers() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        val blockedUser = User(-1, "sp", "Ivan Pavlov")
+        val blockedId = userDB.add(blockedUser)
+
+        val otherBlockedUser = User(-1, "sp", "Ivan Pavlov")
+        val otherblockedId = userDB.add(otherBlockedUser)
+
+
+        val mainUser = User(-1, "Vadim Salavatov")
+        val userId = userDB.add(mainUser)
+
+        userDB.blockUser(userId, otherblockedId)
+        userDB.blockUser(userId, blockedId)
+
+        val blocks = userDB.getBlocked(userId)
+        assert(blocks.contains(blockedId))
+        assert(blocks.contains(otherblockedId))
+        assert(blocks.size == 2)
+
+        handler.closeAll()
+
+    }
+
 
     @Test
     fun addGetChatDB() {

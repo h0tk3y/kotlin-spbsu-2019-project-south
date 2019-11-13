@@ -2,7 +2,6 @@ import org.intellij.lang.annotations.Language
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Statement
-import javax.management.Query
 
 
 /***
@@ -149,7 +148,7 @@ class UserBase(val connection: Connection) {
     }
 
     // TODO: UNTESTED
-    fun getChats(userId: Long): MutableMap<Long, String>? {
+    fun getChats(userId: Long): MutableMap<Long, String> {
         val chats = mutableMapOf<Long, String>()
         try {
             @Language("MySQL")
@@ -176,13 +175,14 @@ class UserBase(val connection: Connection) {
         }
     }
 
-    fun getContacts(userId: Long): MutableMap<Long, String>? {
+    fun getContacts(userId: Long): MutableMap<Long, String> {
         val contacts = mutableMapOf<Long, String>()
         try {
             @Language("MySQL")
             val queryChats = """
                 SELECT other_user_id, name FROM related_users
                 WHERE user_id = ?
+                AND is_blocked = FALSE
             """
             val preparedStatement = connection.prepareStatement(
                 queryChats
@@ -201,7 +201,6 @@ class UserBase(val connection: Connection) {
             throw se
         }
     }
-
 
     private fun queryRelatedUser(query: String, userId: Long, contactId: Long, newName: String, isBlocked: Boolean) {
         try {
@@ -244,7 +243,7 @@ class UserBase(val connection: Connection) {
             VALUES (?, ?, ?, ?);
         """.trimIndent()
         try {
-            queryRelatedUser(query, userId, contactId, name, false)
+            queryRelatedUser(query, userId, contactId, name, isBlocked)
         } catch (se: SQLException) {
             throw se
         }
@@ -264,29 +263,73 @@ class UserBase(val connection: Connection) {
                 is_blocked = ?
         """.trimIndent()
         try {
-            queryRelatedUser(query, userId, contactId, name, false)
+            queryRelatedUser(query, userId, contactId, name, isBlocked)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    // TODO: UNTESTED
     fun editContact(userId: Long, contactId: Long, newName: String) =
         editRelatedUser(userId, contactId, newName)
 
-    // TODO: UNTESTED
     fun addContact(userId: Long, contactId: Long, name: String) =
         addRelatedUser(userId, contactId, name, false)
 
-    // TODO: UNTESTED
     fun removeContact(userId: Long, contactId: Long, name: String) =
         removeRelatedUser(userId, contactId, name, false)
 
-    // TODO: UNTESTED
-    fun blockUser(userId: Long, contactId: Long) =
-        addRelatedUser(userId, contactId, "", true)
+    fun blockUser(userId: Long, blockedId: Long) =
+        addRelatedUser(userId, blockedId, "", true)
 
-    // TODO: UNTESTED
-    fun unblockUser(userId: Long, contactId: Long) =
-        removeRelatedUser(userId, contactId, "", true)
+    fun unblockUser(userId: Long, blockedId: Long) =
+        removeRelatedUser(userId, blockedId, "", true)
+
+    fun isBlocked(userId: Long, otherId: Long) : Boolean {
+        try {
+            @Language("MySQL")
+            val query = """
+                SELECT * FROM related_users
+                WHERE is_blocked = TRUE
+                AND  user_id = ?
+                AND other_user_id = ?
+            """.trimIndent()
+            val preparedStatement = connection.prepareStatement(
+                query
+            )
+            preparedStatement.setInt(1, userId.toInt())
+            preparedStatement.setInt(2, otherId.toInt())
+            preparedStatement.execute()
+            val rs = preparedStatement.resultSet
+            return rs.next()
+        } catch (se: SQLException) {
+            throw se
+        }
+    }
+
+    fun getBlocked(userId: Long): MutableSet<Long> {
+        val blocks = mutableSetOf<Long>()
+        try {
+            @Language("MySQL")
+            val queryChats = """
+                SELECT other_user_id FROM related_users
+                WHERE user_id = ?
+                AND is_blocked = TRUE
+            """
+            val preparedStatement = connection.prepareStatement(
+                queryChats
+            )
+            preparedStatement.setInt(1, userId.toInt())
+            preparedStatement.execute()
+            val rs = preparedStatement.resultSet
+            while (rs.next()) {
+                val blockedId = rs.getInt(1)
+                blocks.add(blockedId.toLong())
+            }
+            preparedStatement.close()
+            return blocks
+        } catch (se: SQLException) {
+            throw se
+        }
+    }
+
 }
