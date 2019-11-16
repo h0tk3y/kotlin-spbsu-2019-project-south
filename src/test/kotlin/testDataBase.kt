@@ -410,13 +410,92 @@ class DataBaseTests {
         chatDB.remove(chatId)
         handler.closeAll()
     }
-    /* @Test
-     fun addGetMessageDB() {
-         val messageDB = MessageBase(connection )
-         var message = Message("Hello, Vadim Salavatov!", -1, -1, -1)
-         val id = messageDB.add(message)
-         assertNotNull(messageDB.get(id))
-         message = messageDB.get(id)!!
-         assert(message.text == "Hello, Vadim Salavatov!")
-     }*/
+
+    @Test
+    fun addGetMessageDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val messageDB = MessageBase(handler.connection!!)
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Pavlov Ivan")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat = Chat(-1, true, "Conversation")
+        chat.owners.add(user2Id)
+        chat.members.add(user1Id)
+        val chatId = chatDB.add(chat)
+
+        val message = Message("Hello, Vadim!", -1, chatId, user1Id)
+        val messageId = messageDB.add(message)
+        assert(messageDB.get(messageId)!!.text == "Hello, Vadim!")
+
+        chatDB.remove(chatId)
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        messageDB.remove(messageId)
+        handler.closeAll()
+    }
+
+    @Test
+    fun removeMessageDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val messageDB = MessageBase(handler.connection!!)
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Pavlov Ivan")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat = Chat(-1, true, "Conversation")
+        chat.owners.add(user2Id)
+        chat.members.add(user1Id)
+        val chatId = chatDB.add(chat)
+
+        val message = Message("Hello, Vadim!", -1, chatId, user1Id)
+        val messageId = messageDB.add(message)
+        messageDB.remove(messageId)
+        assertNull(messageDB.get(messageId))
+
+        chatDB.remove(chatId)
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        handler.closeAll()
+    }
+
+    @Test
+    fun editMessageDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val messageDB = MessageBase(handler.connection!!)
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Pavlov Ivan")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat = Chat(-1, true, "Conversation")
+        chat.owners.add(user2Id)
+        chat.members.add(user1Id)
+        val chatId = chatDB.add(chat)
+
+        val message = Message("Hello, Vadim!", -1, chatId, user1Id)
+        val messageId = messageDB.add(message)
+        val message2 = Message("Hello, Vadim Salavatov!", -1, chatId, user1Id)
+        messageDB.edit(messageId, message2)
+        assert(messageDB.get(messageId)!!.text == "Hello, Vadim Salavatov!")
+
+
+        chatDB.remove(chatId)
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        messageDB.remove(messageId)
+        handler.closeAll()
+    }
+
 }
