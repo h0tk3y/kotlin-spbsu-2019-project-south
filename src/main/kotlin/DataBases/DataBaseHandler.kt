@@ -131,11 +131,11 @@ class DataBaseHandler {
     fun initAll() {
         try {
             // Creating DB
-            connection = DriverManager.getConnection(DB_URL, USER, PASS)
+            connection = DriverManager.getConnection("$DB_URL?autoReconnect=true&useSSL=false", USER, PASS)
             createDB()
 
             // Creating Tables
-            connection = DriverManager.getConnection(DB_URL + DB_NAME, USER, PASS)
+            connection = DriverManager.getConnection("$DB_URL$DB_NAME?autoReconnect=true&useSSL=false", USER, PASS)
             createAllTables()
         } catch (se: SQLException) {
             se.printStackTrace()
