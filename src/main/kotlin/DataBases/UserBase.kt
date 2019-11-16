@@ -147,7 +147,6 @@ class UserBase(val connection: Connection) {
         }
     }
 
-    // TODO: UNTESTED
     fun getChats(userId: Long): MutableMap<Long, String> {
         val chats = mutableMapOf<Long, String>()
         try {

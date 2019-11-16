@@ -498,4 +498,85 @@ class DataBaseTests {
         handler.closeAll()
     }
 
+    @Test
+    fun getChatsUserDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user3 = User(-1 ,"nb", "Nikita Bosov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val user3Id = userDB.add(user3)
+
+        val chat1 = Chat(-1, true, "VV chat")
+        chat1.owners.add(user1Id)
+        chat1.owners.add(user2Id)
+        val chat1Id = chatDB.add(chat1)
+
+        val chat2 = Chat(-1, true, "Bosov-Vadim chat")
+        chat2.owners.add(user2Id)
+        chat2.owners.add(user3Id)
+        val chat2Id = chatDB.add(chat2)
+
+        val vadimsChats = userDB.getChats(user2Id)
+        assert(vadimsChats.size == 2)
+        assert(vadimsChats.contains(chat1Id))
+        assert(vadimsChats.contains(chat2Id))
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        userDB.remove(user3Id)
+        chatDB.remove(chat1Id)
+        chatDB.remove(chat2Id)
+        handler.closeAll()
+    }
+
+    @Test
+    fun getMessagesChatDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+        val messageBase = MessageBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user3 = User(-1 ,"nb", "Nikita Bosov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val user3Id = userDB.add(user3)
+
+        val chat1 = Chat(-1, true, "VV chat")
+        chat1.owners.add(user1Id)
+        chat1.members.add(user2Id)
+        chat1.members.add(user3Id)
+        val chat1Id = chatDB.add(chat1)
+
+        val message1 = Message("Hello, I'm Vadim", -1, chat1Id, user2Id)
+        val message1Id = messageBase.add(message1)
+
+        val message2 = Message("Hello, I'm Nikita", -1, chat1Id, user3Id)
+        val message2Id = messageBase.add(message2)
+
+
+        val message3 = Message("Hello, I'm Vanya", -1, chat1Id, user1Id)
+        val message3Id = messageBase.add(message3)
+
+        val chatMessages = chatDB.getMessages(chat1Id)
+        assert(chatMessages.size == 3)
+        val chatMessagesId = chatMessages.map { it.id }
+        assert(chatMessagesId.contains(message1Id))
+        assert(chatMessagesId.contains(message2Id))
+        assert(chatMessagesId.contains(message3Id))
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        userDB.remove(user3Id)
+        chatDB.remove(chat1Id)
+        handler.closeAll()
+    }
 }
