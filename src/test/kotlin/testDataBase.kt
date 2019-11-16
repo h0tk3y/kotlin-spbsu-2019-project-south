@@ -44,6 +44,9 @@ class DataBaseTests {
         assert(user2.name == "Ivan Pavlov")
         assert(user2.email == "pavlov200912@mail.ru")
 
+
+        userDB.remove(id1)
+        userDB.remove(id2)
         handler.closeAll()
     }
 
@@ -58,6 +61,7 @@ class DataBaseTests {
         val id1 = userDB.add(user1)
         userDB.remove(id1)
         assertNull(userDB.get(id1))
+
         handler.closeAll()
     }
 
@@ -76,6 +80,8 @@ class DataBaseTests {
         userDB.edit(id1, editedUser)
         assert(userDB.get(id1)!!.login == "Vadim Salavatov") // You can't edit login!
         assert(userDB.get(id1)!!.name == "Vadim Salavatov")
+
+        userDB.remove(id1)
         handler.closeAll()
     }
 
@@ -97,6 +103,8 @@ class DataBaseTests {
         val contacts = userDB.getContacts(userId)
         assert(contacts[contactId] == "My fng neighbour")
 
+        userDB.remove(contactId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -118,6 +126,9 @@ class DataBaseTests {
         val contacts = userDB.getContacts(userId)
         assert(contacts[contactId] == "My fng neighbour")
 
+
+        userDB.remove(contactId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -140,6 +151,9 @@ class DataBaseTests {
         val contacts = userDB.getContacts(userId)
         assert(contacts[contactId] == "My lovely neighbour")
 
+
+        userDB.remove(contactId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -161,6 +175,9 @@ class DataBaseTests {
         val contacts = userDB.getContacts(userId)
         assert(contacts[contactId] != "My fng neighbour")
 
+
+        userDB.remove(contactId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -179,6 +196,9 @@ class DataBaseTests {
         userDB.blockUser(userId, blockedId)
         assert(userDB.isBlocked(userId, blockedId))
 
+
+        userDB.remove(blockedId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -199,6 +219,9 @@ class DataBaseTests {
         userDB.unblockUser(userId, blockedId)
         assert(!userDB.isBlocked(userId, blockedId))
 
+
+        userDB.remove(blockedId)
+        userDB.remove(userId)
         handler.closeAll()
     }
 
@@ -227,29 +250,173 @@ class DataBaseTests {
         assert(blocks.contains(otherblockedId))
         assert(blocks.size == 2)
 
+        userDB.remove(blockedId)
+        userDB.remove(userId)
+        userDB.remove(otherblockedId)
         handler.closeAll()
-
     }
 
 
     @Test
     fun addGetChatDB() {
-        val chatDB = ChatBase()
-        var chat = Chat(-1, true, "SingleChat", mutableSetOf())
-        val id = chatDB.add(chat)
-        assertNotNull(chatDB.get(id))
-        chat = chatDB.get(id)!!
-        assert(chat.isSingle)
-        assert(chat.name == "SingleChat")
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+
+        var chat1 = Chat(-1, true, "Vadim chat")
+        val id1 = chatDB.add(chat1)
+        assertNotNull(chatDB.get(id1))
+        chat1 = chatDB.get(id1)!!
+        assert(chat1.name == "Vadim chat")
+
+        chatDB.remove(id1)
+        handler.closeAll()
     }
 
     @Test
-    fun addGetMessageDB() {
-        val messageDB = MessageBase()
-        var message = Message("Hello, Vadim Salavatov!", -1, -1, -1)
-        val id = messageDB.add(message)
-        assertNotNull(messageDB.get(id))
-        message = messageDB.get(id)!!
-        assert(message.text == "Hello, Vadim Salavatov!")
+    fun removeChatDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+
+        val chat1 = Chat(-1, true, "Vadim chat")
+        val id1 = chatDB.add(chat1)
+        assertNotNull(chatDB.get(id1))
+        chatDB.remove(id1)
+        assertNull(chatDB.get(id1))
+
+        handler.closeAll()
     }
+
+    @Test
+    fun editChatDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+
+        var chat1 = Chat(-1, true, "Vadim chat")
+        val id1 = chatDB.add(chat1)
+        assertNotNull(chatDB.get(id1))
+        chat1 = Chat(id1, true, "Vadimich chat")
+        chatDB.edit(id1, chat1)
+        assert(chatDB.get(id1)!!.name == "Vadimich chat")
+
+        chatDB.remove(id1)
+        handler.closeAll()
+    }
+
+    @Test
+    fun getMembersChatDB() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat1 = Chat(-1, true, "Vadim chat")
+        val chatId = chatDB.add(chat1)
+        chatDB.addMember(chatId, user1Id)
+        chatDB.addAdmin(chatId, user2Id)
+        val members = chatDB.getMembers(chatId)
+        assert(members.size == 2)
+        assert(members.contains(user1Id))
+        assert(members.contains(user2Id))
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        chatDB.remove(chatId)
+        handler.closeAll()
+    }
+
+    @Test
+    fun getAdminsChatDB() {
+
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat1 = Chat(-1, true, "Vadim chat")
+        val chatId = chatDB.add(chat1)
+        chatDB.addMember(chatId, user1Id)
+        chatDB.addAdmin(chatId, user2Id)
+        val admins = chatDB.getAdmins(chatId)
+        assert(admins.size == 1)
+        assert(admins.contains(user2Id))
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        chatDB.remove(chatId)
+        handler.closeAll()
+    }
+
+    @Test
+    fun removeAdminChatDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat1 = Chat(-1, true, "Vadim chat")
+        val chatId = chatDB.add(chat1)
+        chatDB.addMember(chatId, user1Id)
+        chatDB.addAdmin(chatId, user2Id)
+        chatDB.addAdmin(chatId, user1Id)
+        chatDB.removeAdmin(chatId, user2Id)
+        assert(!chatDB.getAdmins(chatId).contains(user2Id))
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        chatDB.remove(chatId)
+        handler.closeAll()
+    }
+
+    @Test
+    fun removeMemberChatDB() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val chatDB = ChatBase(handler.connection!!)
+        val userDB = UserBase(handler.connection!!)
+
+        val user1 = User(-1, "sp", "Ivan Pavlov")
+        val user2 = User(-1, "vs", "Vadim Salavatov")
+        val user1Id = userDB.add(user1)
+        val user2Id = userDB.add(user2)
+        val chat1 = Chat(-1, true, "Vadim chat")
+        val chatId = chatDB.add(chat1)
+        chatDB.addMember(chatId, user1Id)
+        chatDB.addAdmin(chatId, user2Id)
+        chatDB.removeMember(chatId, user1Id)
+        val members1 = chatDB.getMembers(chatId)
+        assert(members1.size == 1)
+        assert(members1.contains(user2Id))
+        chatDB.removeMember(chatId, user2Id)
+        assert(chatDB.getMembers(chatId).isEmpty())
+
+        userDB.remove(user1Id)
+        userDB.remove(user2Id)
+        chatDB.remove(chatId)
+        handler.closeAll()
+    }
+    /* @Test
+     fun addGetMessageDB() {
+         val messageDB = MessageBase(connection )
+         var message = Message("Hello, Vadim Salavatov!", -1, -1, -1)
+         val id = messageDB.add(message)
+         assertNotNull(messageDB.get(id))
+         message = messageDB.get(id)!!
+         assert(message.text == "Hello, Vadim Salavatov!")
+     }*/
 }
