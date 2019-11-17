@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    implementation ("mysql","mysql-connector-java", "5.1.40")
     compile("org.slf4j", "slf4j-simple", "1.7.25")
     compile("org.jetbrains.exposed:exposed:0.16.1")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
