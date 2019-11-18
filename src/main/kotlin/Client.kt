@@ -138,14 +138,15 @@ object Client {
             editMessage(cur)
         }
 
-        fun readMessage() {
+      /*  fun readMessage() {
             val cur = getMessage()
             cur.isRead = true
             editMessage(cur)
-        }
+        } */
     }
 
-    class ChatDataHandler(private val chatId: Long = -1) {
+    // TODO: REFACTOR CHAT HANDLER!
+  /*  class ChatDataHandler(private val chatId: Long = -1) {
 
         private fun getChat(): Chat {
             return objectMapper.readValue(webClient.makeRequest(ServerRequest(GET_CHAT, chatId)).body)
@@ -157,14 +158,6 @@ object Client {
 
         fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>): Long {
             val newChat = Chat(-1, isSingle, name, members)
-            if (isSingle) {
-                val userId1 = members.first()
-                val userId2 = members.last()
-                UserDataHandler(userId1).addChat(chatId, UserDataHandler(userId2).getName())
-                UserDataHandler(userId2).addChat(chatId, UserDataHandler(userId1).getName())
-            } else {
-                members.forEach{ UserDataHandler(it).addChat(chatId, name) }
-            }
             return objectMapper.readValue(
                 webClient.makeRequest(ServerRequest(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
             )
@@ -215,7 +208,7 @@ object Client {
         fun getMessages() = getChat().messages
 
         fun isSingle() = getChat().isSingle
-    }
+    } */
 
     class LoginDataHandler() {
 
