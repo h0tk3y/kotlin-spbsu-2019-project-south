@@ -274,6 +274,7 @@ class UserBase(val connection: Connection) {
     fun addContact(userId: Long, contactId: Long, name: String) =
         addRelatedUser(userId, contactId, name, false)
 
+    // TODO: REMOVE NAME FROM THIS FUNCTION
     fun removeContact(userId: Long, contactId: Long, name: String) =
         removeRelatedUser(userId, contactId, name, false)
 
