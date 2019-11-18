@@ -231,12 +231,12 @@ class ChatBase(val connection: Connection) {
     fun getMembers(chatId: Long) =
         getChatUsers(chatId, isAdmin = false, isOwner = false).union(
             getAdmins(chatId)
-        )
+        ).toMutableList()
 
     fun getAdmins(chatId: Long) =
         getChatUsers(chatId, false, true).union(
             getChatUsers(chatId, true, false)
-        )
+        ).toMutableSet()
 
     // TODO: ADD OWNERS IN CHAT ADD
     private fun addChatUser(chatId: Long, userId: Long, isOwner: Boolean, isAdmin: Boolean) {
