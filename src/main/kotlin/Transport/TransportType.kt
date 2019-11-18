@@ -1,15 +1,36 @@
 enum class TransportType {
 
-    ADD,
+    GET_USER,
+    GET_USER_CHATS,
+    REMOVE_USER,
+    EDIT_USER,
+    ADD_CONTACT,
+    EDIT_CONTACT,
+    REMOVE_CONTACT,
+    BLOCK_USER,
+    UNBLOCK_USER,
+    GET_BLOCKED_USERS,
+    GET_CONTACTS,
 
-    GET,
+    SEND_MESSAGE,
+    EDIT_MESSAGE,
+    DELETE_MESSAGE,
+    GET_MESSAGE,
 
-    EDIT,
+    ADD_CHAT,
+    GET_CHAT,
+    GET_MESSAGES,
+    GET_MEMBERS,
+    GET_ADMINS,
+    DELETE_CHAT,
+    EDIT_CHAT,
+    ADD_MEMBER,
+    JOIN_CHAT,
+    KICK_MEMBER,
+    LEAVE_CHAT,
+    ADD_ADMIN,
+    REMOVE_ADMIN,
 
-    REMOVE,
-
-    SEND_MESSAGE
-
-    //FIND,
-
+    REGISTER,
+    LOGIN
 }
