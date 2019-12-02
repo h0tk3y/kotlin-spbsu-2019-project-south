@@ -4,7 +4,7 @@ import TransportType
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class ServerResponse(
-    var responseType: TransportType? = null,
+    var status: ResponseStatus = ResponseStatus.SUCCESSFUL,
     var id: Long = -1,
     var body: String = ""
 ) {

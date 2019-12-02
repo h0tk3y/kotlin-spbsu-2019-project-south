@@ -1,3 +1,4 @@
+import Transport.ResponseStatus
 import Transport.ServerRequest
 import Transport.ServerResponse
 import com.fasterxml.jackson.module.kotlin.*
@@ -14,7 +15,7 @@ object Server {
     private val objectMapper = jacksonObjectMapper()
 
     private fun processRequest(request: ServerRequest): ServerResponse {
-        val response = ServerResponse(request.requestType)
+        val response = ServerResponse()
         val requestHandler = RequestHandler()
         try {
             when (request.requestType) {
@@ -82,6 +83,7 @@ object Server {
                 TransportType.UNBLOCK_USER_IN_CHAT -> TODO()
             }
         } catch (se: SQLException) {
+            response.status = ResponseStatus.DATABASE_ERROR
             response.body = "Oh no, it's a scary exception!"
         }
         return response
