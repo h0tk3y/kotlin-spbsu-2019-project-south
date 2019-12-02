@@ -3,7 +3,7 @@ import TransportType.*
 import DataClasses.*
 
 object Client {
-    var webClient = WebClient("127.0.0.1", 9999)
+    private var webClient = WebClient("127.0.0.1", 9999)
 
     fun connectTo(host: String, port: Int) {
         webClient = WebClient(host, port)
