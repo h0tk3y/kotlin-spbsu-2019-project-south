@@ -1,3 +1,4 @@
+import Transport.TransportType
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class ServerResponse(
