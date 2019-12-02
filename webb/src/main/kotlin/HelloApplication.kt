@@ -22,6 +22,7 @@ import io.ktor.features.*
 import io.ktor.html.*
 import io.ktor.routing.*
 import kotlinx.html.*
+import Server
 
 // Entry Point of the application as defined in resources/application.conf.
 // @see https://ktor.io/servers/configuration.html#hocon-file
