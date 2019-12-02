@@ -1,5 +1,5 @@
-import Transport.TransportType
 import com.fasterxml.jackson.module.kotlin.*
+import consoleUi.BlockedUsersMenu
 import io.ktor.application.install
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
@@ -23,7 +23,7 @@ object Server {
                 val chats : MutableMap<Long, String> = requestHandler.getUserChats(request.id)
                 response.body = objectMapper.writeValueAsString(chats)
             }
-            TransportType.GET_USER_CONTACTS -> {
+            TransportType.GET_CONTACTS -> {
                 val contacts = requestHandler.getUserContacts(request.id)
                 response.body = objectMapper.writeValueAsString(contacts)
             }
@@ -50,10 +50,12 @@ object Server {
                 response.body = objectMapper.writeValueAsString(messages)
             }
             TransportType.GET_MEMBERS -> {
-                val members: MutableSet<Long> = requestHandler.getMembers(request.id)
+                val members: MutableList<Long> = requestHandler.getMembers(request.id)
+                response.body = objectMapper.writeValueAsString(members)
             }
             TransportType.GET_ADMINS -> {
                 val admins: MutableSet<Long> = requestHandler.getAdmins(request.id)
+                response.body = objectMapper.writeValueAsString(admins)
             }
             TransportType.DELETE_CHAT -> requestHandler.deleteChat(request.id)
             TransportType.EDIT_CHAT -> requestHandler.editChat(request.id, request.body)
@@ -64,6 +66,17 @@ object Server {
 
             TransportType.REGISTER -> requestHandler.register(request.body)
             TransportType.LOGIN -> TODO()
+            TransportType.EDIT_CONTACT -> requestHandler.editContact(request.id, request.body)
+            TransportType.BLOCK_USER -> requestHandler.blockUser(request.id, request.body)
+            TransportType.UNBLOCK_USER -> requestHandler.unblockUser(request.id, request.body)
+            TransportType.GET_BLOCKED_USERS -> {
+                val blockedUsers: MutableSet<Long> = requestHandler.getBlockedUsers(request.id)
+                response.body = Server.objectMapper.writeValueAsString(blockedUsers)
+            }
+            TransportType.JOIN_CHAT -> TODO()
+            TransportType.LEAVE_CHAT -> TODO()
+            TransportType.BLOCK_USER_IN_CHAT -> TODO()
+            TransportType.UNBLOCK_USER_IN_CHAT -> TODO()
         }
         return response
     }

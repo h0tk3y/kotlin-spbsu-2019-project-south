@@ -90,7 +90,7 @@ class RequestHandler() {
         return chatBase.getMessages(chatId)
     }
 
-    fun getMembers(chatId: Long): MutableSet<Long> {
+    fun getMembers(chatId: Long): MutableList<Long> {
         return chatBase.getMembers(chatId)
     }
 
@@ -133,5 +133,40 @@ class RequestHandler() {
     fun register(userString: String) {
         val user: User = objectMapper.readValue(userString)
         userBase.add(user)
+    }
+
+    fun editContact(userId: Long, contactString: String) {
+        val newContact: Pair<Long, String> = objectMapper.readValue(contactString)
+        userBase.editContact(userId, newContact.first, newContact.second)
+    }
+
+    fun blockUser(userId: Long, blockedUserIdString: String) {
+        val blockedUserId: Long = objectMapper.readValue(blockedUserIdString)
+        userBase.blockUser(userId, blockedUserId)
+    }
+
+    fun unblockUser(userId: Long, userToUnlockIdString: String) {
+        val userToUnlockId: Long = objectMapper.readValue(userToUnlockIdString)
+        userBase.unblockUser(userId, userToUnlockId)
+    }
+
+    fun getBlockedUsers(userId: Long): MutableSet<Long> {
+        return userBase.getBlocked(userId)
+    }
+
+    fun joinChat(chatId: Long, userString: String) {
+        TODO()
+    }
+
+    fun leaveChat(chatId: Long, userString: String) {
+        TODO()
+    }
+
+    fun blockUserInChat(chatId: Long, userString: String) {
+        TODO()
+    }
+
+    fun unblockUserInChat() {
+        TODO()
     }
 }
