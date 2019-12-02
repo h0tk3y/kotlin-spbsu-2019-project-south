@@ -11,11 +11,11 @@ fun getId(): Long {
 }
 
 fun getName(id: Long = getId()): String {
-    return Client.UserData(id).getName()
+    return Client.UserDataHandler(id).getName()
 }
 
 fun getLogin(id: Long = getId()): String {
-    return Client.UserData(id).getLogin()
+    return Client.UserDataHandler(id).getLogin()
 }
 
 class MainMenu {

@@ -15,7 +15,7 @@ class ProfileMenu {
             println("Your ID: ${getId()}")
             println("Your login: ${getLogin()}")
             println("Your name: ${getName()}")
-            println("Your email: ${Client.UserData().getEmail()}")
+            println("Your email: ${Client.UserDataHandler().getEmail()}")
             println()
 
             when (optionsIO(optionsList)) {
@@ -29,11 +29,11 @@ class ProfileMenu {
 
     private fun changeNameAction() {
         println("Enter your name:")
-        Client.UserData(getId()).changeName(readLine()!!)
+        Client.UserDataHandler(getId()).changeName(readLine()!!)
     }
 
     private fun changeEmailAction() {
         println("Enter your email:")
-        Client.UserData(getId()).changeEmail(readLine()!!)
+        Client.UserDataHandler(getId()).changeEmail(readLine()!!)
     }
 }
