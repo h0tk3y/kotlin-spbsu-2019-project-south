@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.module.kotlin.*
-import consoleUi.BlockedUsersMenu
 import io.ktor.application.install
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
@@ -10,10 +9,16 @@ import io.ktor.websocket.webSocket
 
 object Server {
     private val objectMapper = jacksonObjectMapper()
-
     private fun processRequest(request: ServerRequest): ServerResponse {
         val response = ServerResponse(request.requestType)
         val requestHandler = RequestHandler()
+        val withoutToken = arrayOf(TransportType.LOGIN, TransportType.REGISTER)
+        if (request.requestType !in withoutToken) {
+            if (!TokenHandler().verifyToken(request.jwt)) {
+                response.body = "";
+                return response
+            }
+        }
         when (request.requestType) {
             TransportType.GET_USER -> {
                 val user : User? = requestHandler.getUser(request.id)
