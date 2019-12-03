@@ -1,3 +1,4 @@
+import DataClasses.LoginData
 import com.fasterxml.jackson.module.kotlin.*
 import io.ktor.application.install
 import io.ktor.http.cio.websocket.*
@@ -69,8 +70,14 @@ object Server {
             TransportType.ADD_ADMIN -> requestHandler.addAdmin(request.id, request.body)
             TransportType.REMOVE_ADMIN -> requestHandler.removeAdmin(request.id, request.body)
 
-            TransportType.REGISTER -> requestHandler.register(request.body)
-            TransportType.LOGIN -> TODO()
+            TransportType.REGISTER -> {
+                val loginData: LoginData = requestHandler.register(request.body)
+                response.body = objectMapper.writeValueAsString(loginData)
+            }
+            TransportType.LOGIN -> {
+                val loginData: LoginData = requestHandler.login(request.body)
+                response.body = objectMapper.writeValueAsString(loginData)
+            }
             TransportType.EDIT_CONTACT -> requestHandler.editContact(request.id, request.body)
             TransportType.BLOCK_USER -> requestHandler.blockUser(request.id, request.body)
             TransportType.UNBLOCK_USER -> requestHandler.unblockUser(request.id, request.body)
