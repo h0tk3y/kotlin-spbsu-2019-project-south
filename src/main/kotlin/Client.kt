@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
+import Transport.ServerRequest
 import Transport.WebClient
 
 object Client {
@@ -13,6 +14,8 @@ object Client {
     private val objectMapper = jacksonObjectMapper()
 
     private var loggedUserId: Long = -1
+
+    private var token: String = ""
 
     fun getLoggedUserId(): Long {
         return loggedUserId
@@ -216,21 +219,30 @@ object Client {
         fun registerUser(login: String, name: String = login, email: String = "") {
             val newUser = User(-1, login, name)
             newUser.email = email
-            loggedUserId = objectMapper.readValue(
-                webClient.makeRequest(ServerRequest(REGISTER, body = objectMapper.writeValueAsString(newUser))).body
+            val loggedUserData : LoginData = objectMapper.readValue(
+                webClient.makeRequest(
+                    ServerRequest(
+                        REGISTER,
+                        body = objectMapper.writeValueAsString(newUser)
+                    )
+                ).body
             )
+            loggedUserId = loggedUserData.id
+            token = loggedUserData.jwt
         }
 
         fun loginUser(login: String, password: String) {
-            loggedUserId = objectMapper.readValue(
+            val loggedUserData : LoginData = objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
-                        LOGIN, body = objectMapper.writeValueAsString(
-                            LoginData(login, password)
+                        LOGIN,
+                        body = objectMapper.writeValueAsString(LoginData(login, password)
                         )
                     )
                 ).body
             )
+            loggedUserId = loggedUserData.id
+            token = loggedUserData.jwt
         }
     }
 }
