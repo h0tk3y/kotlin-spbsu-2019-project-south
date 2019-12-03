@@ -13,10 +13,16 @@ import java.sql.SQLException
 
 object Server {
     private val objectMapper = jacksonObjectMapper()
-
     private fun processRequest(request: ServerRequest): ServerResponse {
         val response = ServerResponse()
         val requestHandler = RequestHandler()
+        val withoutToken = arrayOf(TransportType.LOGIN, TransportType.REGISTER)
+        if (request.requestType !in withoutToken) {
+            if (!TokenHandler().verifyToken(request.jwt)) {
+                response.body = "";
+                return response
+            }
+        }
         try {
             when (request.requestType) {
                 TransportType.GET_USER -> {
