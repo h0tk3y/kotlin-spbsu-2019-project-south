@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
+import org.jetbrains.exposed.sql.idParam
 
 object Client {
     private var webClient = WebClient("127.0.0.1", 9999)
@@ -25,26 +26,50 @@ object Client {
             return objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
-                        GET_USER, userId, objectMapper.writeValueAsString(User(id))
+                        GET_USER,
+                        userId,
+                        objectMapper.writeValueAsString(User(id)),
+                        token
                     )
                 ).body
             )
         }
 
         private fun editUser(user: User) {
-            webClient.makeRequest(ServerRequest(EDIT_USER, userId, objectMapper.writeValueAsString(user)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_USER,
+                    userId,
+                    objectMapper.writeValueAsString(user),
+                    token
+                )
+            )
         }
 
         fun addContact(contactId: Long, name: String = UserDataHandler(contactId).getName()) {
             val newContact = UserContact(userId, contactId)
             newContact.name = name
-            webClient.makeRequest(ServerRequest(ADD_CONTACT, userId, objectMapper.writeValueAsString(newContact)))
+            webClient.makeRequest(
+                ServerRequest(
+                    ADD_CONTACT,
+                    userId,
+                    objectMapper.writeValueAsString(newContact),
+                    token
+                )
+            )
         }
 
         fun changeContactName(contactId: Long, newName: String) {
             val editedContact = UserContact(userId, contactId)
             editedContact.name = newName
-            webClient.makeRequest(ServerRequest(EDIT_CONTACT, userId, objectMapper.writeValueAsString(editedContact)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_CONTACT,
+                    userId,
+                    objectMapper.writeValueAsString(editedContact),
+                    token
+                )
+            )
         }
 
         fun removeContact(contactId: Long) {
@@ -53,19 +78,34 @@ object Client {
                 ServerRequest(
                     REMOVE_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(removingContact)
+                    objectMapper.writeValueAsString(removingContact),
+                    token
                 )
             )
         }
 
         fun blockUser(blockedUserId: Long) {
             val newBlockedUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(ServerRequest(BLOCK_USER, userId, objectMapper.writeValueAsString(newBlockedUser)))
+            webClient.makeRequest(
+                ServerRequest(
+                    BLOCK_USER,
+                    userId,
+                    objectMapper.writeValueAsString(newBlockedUser),
+                    token
+                )
+            )
         }
 
         fun unblockUser(blockedUserId: Long) {
             val unblockingUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(ServerRequest(UNBLOCK_USER, userId, objectMapper.writeValueAsString(unblockingUser)))
+            webClient.makeRequest(
+                ServerRequest(
+                    UNBLOCK_USER,
+                    userId,
+                    objectMapper.writeValueAsString(unblockingUser),
+                    token
+                )
+            )
         }
 
         fun changeName(newName: String) {
@@ -87,15 +127,33 @@ object Client {
         fun getEmail() = getUser(userId).email
 
         fun getChats(): List<Chat> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_USER_CHATS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_USER_CHATS,
+                    userId,
+                    jwt = token
+                )
+            ).body
         )
 
         fun getContacts() : MutableMap<Long, String> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_CONTACTS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_CONTACTS,
+                    userId,
+                    jwt = token
+                )
+            ).body
         )
 
         fun getBlockedUsers() : MutableSet<Long> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_BLOCKED_USERS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_BLOCKED_USERS,
+                    userId,
+                    jwt = token
+                )
+            ).body
         )
     }
 
@@ -107,16 +165,30 @@ object Client {
                     ServerRequest(
                         GET_MESSAGE,
                         messageId,
-                        objectMapper.writeValueAsString(Message(id = messageId))
+                        objectMapper.writeValueAsString(Message(id = messageId)),
+                        jwt = token
                     )
                 ).body
             )
 
         private fun editMessage(message: Message) =
-            webClient.makeRequest(ServerRequest(EDIT_MESSAGE, messageId, objectMapper.writeValueAsString(message)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_MESSAGE,
+                    messageId,
+                    objectMapper.writeValueAsString(message),
+                    token
+                )
+            )
 
         private fun sendMessage(message: Message) =
-            webClient.makeRequest(ServerRequest(SEND_MESSAGE, body = objectMapper.writeValueAsString(message))).body
+            webClient.makeRequest(
+                ServerRequest(
+                    SEND_MESSAGE,
+                    body = objectMapper.writeValueAsString(message),
+                    jwt = token
+                )
+            ).body
 
         fun createMessage(text: String, chatId: Long, userId: Long): Long {
             val newMessage = Message(text, -1, chatId, userId)
