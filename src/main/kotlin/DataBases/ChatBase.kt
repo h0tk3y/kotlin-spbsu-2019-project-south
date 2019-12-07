@@ -21,8 +21,8 @@ class ChatBase(val connection: Connection) {
         try {
             @Language("MySQL")
             val queryInsert = """
-                INSERT INTO chats(name, is_single)
-                VALUES (?, ?);
+                INSERT INTO chats(name, is_single, owner_id)
+                VALUES (?, ?, ?);
             """
             // '${user.login}', '${user.name}', '${user.email}'
             val prStatementChat = connection.prepareStatement(
@@ -31,6 +31,7 @@ class ChatBase(val connection: Connection) {
             )
             prStatementChat.setString(1, chat.name)
             prStatementChat.setBoolean(2, chat.isSingle)
+            prStatementChat.setInt(3, chat.owner_id.toInt())
             prStatementChat.executeUpdate()
             val rs = prStatementChat.generatedKeys
             if (rs.next()) {
@@ -41,39 +42,20 @@ class ChatBase(val connection: Connection) {
             for (otherId in chat.members) {
                 @Language("MySQL")
                 val queryMember = """
-                   INSERT INTO chat_members(is_owner, is_admin, chat_id, user_id)
-                   VALUES (?, ?, ?, ?);
+                   INSERT INTO chat_members(is_admin, chat_id, user_id)
+                   VALUES (?, ?, ?);
                 """
                 val prStatementMember = connection.prepareStatement(
                     queryMember,
                     Statement.RETURN_GENERATED_KEYS
                 )
                 prStatementMember.setBoolean(1, false)
-                prStatementMember.setBoolean(2, false)
-                prStatementMember.setInt(3, chatId)
-                prStatementMember.setInt(4, otherId.toInt())
+                prStatementMember.setInt(2, chatId)
+                prStatementMember.setInt(3, otherId.toInt())
                 prStatementMember.executeUpdate()
                 prStatementMember.close()
             }
 
-
-            for (otherId in chat.owners) {
-                @Language("MySQL")
-                val queryMember = """
-                   INSERT INTO chat_members(is_owner, is_admin, chat_id, user_id)
-                   VALUES (?, ?, ?, ?);
-                """
-                val prStatementMember = connection.prepareStatement(
-                    queryMember,
-                    Statement.RETURN_GENERATED_KEYS
-                )
-                prStatementMember.setBoolean(1, true)
-                prStatementMember.setBoolean(2, false)
-                prStatementMember.setInt(3, chatId)
-                prStatementMember.setInt(4, otherId.toInt())
-                prStatementMember.executeUpdate()
-                prStatementMember.close()
-            }
             return chatId.toLong()
         } catch (se: SQLException) {
             throw se
@@ -112,7 +94,8 @@ class ChatBase(val connection: Connection) {
                 UPDATE chats
                 SET
                     name = ?,
-                    is_single = ?
+                    is_single = ?,
+                    owner_id = ?
                 WHERE 
                     chat_id = ?
             """
@@ -121,7 +104,8 @@ class ChatBase(val connection: Connection) {
             )
             prStatementChat.setString(1, chat.name)
             prStatementChat.setBoolean(2, chat.isSingle)
-            prStatementChat.setInt(3, chatId.toInt())
+            prStatementChat.setInt(3, chat.owner_id.toInt())
+            prStatementChat.setInt(4, chatId.toInt())
             prStatementChat.execute()
             prStatementChat.close()
         } catch (se: SQLException) {
@@ -148,9 +132,10 @@ class ChatBase(val connection: Connection) {
             prStatementChat.execute()
             val rs = prStatementChat.resultSet
             if (rs.next()) {
-                val chat = Chat(rs.getInt("chat_id").toLong(),
-                    rs.getBoolean("is_single"),
-                    rs.getString("name"))
+                val chat = Chat(id = rs.getInt("chat_id").toLong(),
+                    isSingle = rs.getBoolean("is_single"),
+                    name = rs.getString("name"),
+                    owner_id = rs.getInt("owner_id").toLong())
                 return chat
             }
             prStatementChat.close()
@@ -160,7 +145,6 @@ class ChatBase(val connection: Connection) {
         return null
     }
 
-    // TODO: UNTESTED
     fun getMessages(chatId: Long): MutableSet<Message> {
         try {
             @Language("MySQL")
@@ -197,21 +181,19 @@ class ChatBase(val connection: Connection) {
         }
     }
 
-    private fun getChatUsers(chatId: Long, isOwner: Boolean, isAdmin: Boolean) : MutableSet<Long>{
+    private fun getChatUsers(chatId: Long, isAdmin: Boolean) : MutableSet<Long>{
         try {
             @Language("MySQL")
             val query = """
                 SELECT user_id FROM chat_members
                 WHERE chat_id = ?
                 AND is_admin = ?
-                AND is_owner = ?
             """.trimIndent()
             val preparedStatement = connection.prepareStatement(
                 query
             )
             preparedStatement.setInt(1, chatId.toInt())
             preparedStatement.setBoolean(2, isAdmin)
-            preparedStatement.setBoolean(3, isOwner)
             preparedStatement.execute()
             val rs = preparedStatement.resultSet
 
@@ -229,30 +211,27 @@ class ChatBase(val connection: Connection) {
      * Get all members: Admins, Owners, Members
      */
     fun getMembers(chatId: Long) =
-        getChatUsers(chatId, isAdmin = false, isOwner = false).union(
+        getChatUsers(chatId, isAdmin = false).union(
             getAdmins(chatId)
         ).toMutableList()
 
     fun getAdmins(chatId: Long) =
-        getChatUsers(chatId, false, true).union(
-            getChatUsers(chatId, true, false)
-        ).toMutableSet()
+            getChatUsers(chatId, true)
 
-    // TODO: ADD OWNERS IN CHAT ADD
-    private fun addChatUser(chatId: Long, userId: Long, isOwner: Boolean, isAdmin: Boolean) {
+
+    private fun addChatUser(chatId: Long, userId: Long, isAdmin: Boolean) {
         try {
             @Language("MySQL")
             val query = """
-                INSERT INTO chat_members(is_owner, is_admin, chat_id, user_id) 
-                VALUES (?, ?, ?, ?)
+                INSERT INTO chat_members(is_admin, chat_id, user_id) 
+                VALUES (?, ?, ?)
             """.trimIndent()
             val preparedStatement = connection.prepareStatement(
                 query
             )
-            preparedStatement.setBoolean(1, isOwner)
-            preparedStatement.setBoolean(2, isAdmin)
-            preparedStatement.setInt(3, chatId.toInt())
-            preparedStatement.setInt(4, userId.toInt())
+            preparedStatement.setBoolean(1, isAdmin)
+            preparedStatement.setInt(2, chatId.toInt())
+            preparedStatement.setInt(3, userId.toInt())
             preparedStatement.execute()
             preparedStatement.close()
         } catch (se: SQLException) {
@@ -261,29 +240,27 @@ class ChatBase(val connection: Connection) {
     }
 
     fun addAdmin(chatId: Long, userId: Long) =
-        addChatUser(chatId, userId, isOwner = false, isAdmin = true)
+        addChatUser(chatId, userId, isAdmin = true)
 
     fun addMember(chatId: Long, userId: Long) =
-        addChatUser(chatId, userId, isOwner = false, isAdmin = false)
+        addChatUser(chatId, userId, isAdmin = false)
 
 
-    private fun deleteChatUser(chatId: Long, userId: Long, isOwner: Boolean, isAdmin: Boolean) {
+    private fun deleteChatUser(chatId: Long, userId: Long, isAdmin: Boolean) {
         try {
             @Language("MySQL")
             val query = """
                 DELETE FROM chat_members
-                WHERE is_owner = ?
-                AND is_admin = ?
+                WHERE is_admin = ?
                 AND chat_id = ?
                 AND user_id = ?
             """.trimIndent()
             val preparedStatement = connection.prepareStatement(
                 query
             )
-            preparedStatement.setBoolean(1, isOwner)
-            preparedStatement.setBoolean(2, isAdmin)
-            preparedStatement.setInt(3, chatId.toInt())
-            preparedStatement.setInt(4, userId.toInt())
+            preparedStatement.setBoolean(1, isAdmin)
+            preparedStatement.setInt(2, chatId.toInt())
+            preparedStatement.setInt(3, userId.toInt())
             preparedStatement.execute()
             preparedStatement.close()
         } catch (se: SQLException) {
@@ -292,14 +269,14 @@ class ChatBase(val connection: Connection) {
     }
 
     fun removeAdmin(chatId: Long, userId: Long) =
-        deleteChatUser(chatId, userId, isOwner = false, isAdmin = true)
+        deleteChatUser(chatId, userId, isAdmin = true)
 
     /***
      * Remove user from chat as admin and as member
      */
     fun removeMember(chatId: Long, userId: Long) {
-        deleteChatUser(chatId, userId, isAdmin = false, isOwner = false)
-        deleteChatUser(chatId, userId, isAdmin = true, isOwner = false)
+        deleteChatUser(chatId, userId, isAdmin = false)
+        deleteChatUser(chatId, userId, isAdmin = true)
     }
 
 }

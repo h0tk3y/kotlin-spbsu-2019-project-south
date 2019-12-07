@@ -167,6 +167,24 @@ class UserBase(val connection: Connection) {
                 val chatName = rs.getString(2)
                 chats.put(chatId.toLong(), chatName)
             }
+            @Language("MySQL")
+            val queryOwners = """
+                SELECT chat_id, name FROM chats
+                WHERE owner_id = ?;
+            """.trimIndent()
+            val preparedStatementOwner = connection.prepareStatement(
+                queryOwners
+            )
+            preparedStatementOwner.setInt(1, userId.toInt())
+            preparedStatementOwner.execute()
+            val rsOwner = preparedStatementOwner.resultSet
+
+            while (rsOwner.next()) {
+                val chatId = rsOwner.getInt(1)
+                val chatName = rsOwner.getString(2)
+                chats.put(chatId.toLong(), chatName)
+            }
+            preparedStatementOwner.close()
             preparedStatement.close()
             return chats
         } catch (se: SQLException) {
