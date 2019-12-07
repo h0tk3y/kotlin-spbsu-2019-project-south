@@ -2,6 +2,7 @@ import DataBases.DataBaseHandler
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.lang.reflect.Member
+import java.sql.SQLException
 
 class RequestHandler() {
     private val objectMapper = jacksonObjectMapper()
@@ -22,35 +23,63 @@ class RequestHandler() {
 
 
     fun getUser(userId: Long): User? {
-        return userBase.get(userId)
+        try {
+            return userBase.get(userId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getUserChats(userId: Long): MutableMap<Long, String> {
-        return userBase.getChats(userId)
+        try {
+            return userBase.getChats(userId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getUserContacts(userId: Long): MutableMap<Long, String> {
-        return userBase.getContacts(userId)
+        try {
+            return userBase.getContacts(userId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun removeUser(chatId: Long, userIdString: String) {
         val userId: Long = objectMapper.readValue(userIdString)
-        chatBase.removeMember(chatId, userId)
+        try {
+            chatBase.removeMember(chatId, userId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun editUser(userId: Long, userString: String) {
         val user: User = objectMapper.readValue(userString)
-        userBase.edit(userId, user)
+        try {
+            userBase.edit(userId, user)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun removeContact(userId: Long, contactString: String) {
         val contact: User = objectMapper.readValue(contactString)
-        userBase.removeContact(userId, contact.id, contact.name)
+        try {
+            userBase.removeContact(userId, contact.id, contact.name)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun addContact(userId: Long, contactString: String) {
         val contact: User = objectMapper.readValue(contactString)
-        userBase.addContact(userId, contact.id, contact.name)
+        try {
+            userBase.addContact(userId, contact.id, contact.name)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
 
@@ -58,20 +87,36 @@ class RequestHandler() {
 
     fun sendMessage(messageString : String) {
         val message : Message = objectMapper.readValue(messageString)
-        messageBase.add(message)
+        try {
+            messageBase.add(message)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun editMessage(messageId: Long, messageString: String) {
         val message: Message = objectMapper.readValue(messageString)
-        messageBase.edit(messageId, message)
+        try {
+            messageBase.edit(messageId, message)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun deleteMessage(messageId: Long) {
-        messageBase.remove(messageId)
+        try {
+            messageBase.remove(messageId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getMessage(messageId: Long): Message? {
-        return messageBase.get(messageId)
+        try {
+            return messageBase.get(messageId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
 
@@ -79,52 +124,96 @@ class RequestHandler() {
 
     fun addChat(chatString: String) {
         val chat: Chat = objectMapper.readValue(chatString)
-        chatBase.add(chat)
+        try {
+            chatBase.add(chat)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getChat(chatId: Long): Chat? {
-        return chatBase.get(chatId)
+        try {
+            return chatBase.get(chatId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getMessages(chatId: Long): MutableSet<Message>{
-        return chatBase.getMessages(chatId)
+        try {
+            return chatBase.getMessages(chatId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getMembers(chatId: Long): MutableList<Long> {
-        return chatBase.getMembers(chatId)
+        try {
+            return chatBase.getMembers(chatId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getAdmins(chatId: Long): MutableSet<Long> {
-        return chatBase.getAdmins(chatId)
+        try {
+            return chatBase.getAdmins(chatId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun deleteChat(chatId: Long) {
-        chatBase.remove(chatId)
+        try {
+            chatBase.remove(chatId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun editChat(chatId: Long, chatString: String) {
         val chat: Chat = objectMapper.readValue(chatString)
-        chatBase.edit(chatId, chat)
+        try {
+            chatBase.edit(chatId, chat)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun addMember(chatId: Long, memberIdString: String) {
         val memberId: Long = objectMapper.readValue(memberIdString)
-        chatBase.addMember(chatId, memberId)
+        try {
+            chatBase.addMember(chatId, memberId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun kickMember(chatId: Long, memberIdString: String) {
         val memberId: Long = objectMapper.readValue(memberIdString)
-        chatBase.removeMember(chatId, memberId)
+        try {
+            chatBase.removeMember(chatId, memberId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun addAdmin(chatId: Long, adminIdString: String) {
         val adminId: Long = objectMapper.readValue(adminIdString)
-        chatBase.addAdmin(chatId, adminId)
+        try {
+            chatBase.addAdmin(chatId, adminId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun removeAdmin(chatId: Long, adminIdString: String) {
         val adminId: Long = objectMapper.readValue(adminIdString)
-        chatBase.removeAdmin(chatId, adminId)
+        try {
+            chatBase.removeAdmin(chatId, adminId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
 
@@ -132,26 +221,46 @@ class RequestHandler() {
 
     fun register(userString: String) {
         val user: User = objectMapper.readValue(userString)
-        userBase.add(user)
+        try {
+            userBase.add(user)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun editContact(userId: Long, contactString: String) {
         val newContact: Pair<Long, String> = objectMapper.readValue(contactString)
-        userBase.editContact(userId, newContact.first, newContact.second)
+        try {
+            userBase.editContact(userId, newContact.first, newContact.second)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun blockUser(userId: Long, blockedUserIdString: String) {
         val blockedUserId: Long = objectMapper.readValue(blockedUserIdString)
-        userBase.blockUser(userId, blockedUserId)
+        try {
+            userBase.blockUser(userId, blockedUserId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun unblockUser(userId: Long, userToUnlockIdString: String) {
         val userToUnlockId: Long = objectMapper.readValue(userToUnlockIdString)
-        userBase.unblockUser(userId, userToUnlockId)
+        try {
+            userBase.unblockUser(userId, userToUnlockId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun getBlockedUsers(userId: Long): MutableSet<Long> {
-        return userBase.getBlocked(userId)
+        try {
+            return userBase.getBlocked(userId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
     fun joinChat(chatId: Long, userString: String) {

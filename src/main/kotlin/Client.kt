@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
+import Transport.WebClient
 
 object Client {
     private var webClient = WebClient("127.0.0.1", 9999)
