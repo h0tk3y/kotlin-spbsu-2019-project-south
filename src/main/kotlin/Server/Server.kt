@@ -1,6 +1,7 @@
 import Transport.ResponseStatus
 import ServerRequest
 import Transport.ServerResponse
+import DataClasses.LoginData
 import com.fasterxml.jackson.module.kotlin.*
 import io.ktor.application.install
 import io.ktor.http.cio.websocket.*
@@ -13,10 +14,16 @@ import java.sql.SQLException
 
 object Server {
     private val objectMapper = jacksonObjectMapper()
-
     private fun processRequest(request: ServerRequest): ServerResponse {
         val response = ServerResponse()
         val requestHandler = RequestHandler()
+        val withoutToken = arrayOf(TransportType.LOGIN, TransportType.REGISTER)
+        if (request.requestType !in withoutToken) {
+            if (!TokenHandler().verifyToken(request.jwt)) {
+                response.body = "";
+                return response
+            }
+        }
         try {
             when (request.requestType) {
                 TransportType.GET_USER -> {
@@ -68,8 +75,14 @@ object Server {
                 TransportType.ADD_ADMIN -> requestHandler.addAdmin(request.id, request.body)
                 TransportType.REMOVE_ADMIN -> requestHandler.removeAdmin(request.id, request.body)
 
-                TransportType.REGISTER -> requestHandler.register(request.body)
-                TransportType.LOGIN -> TODO()
+                TransportType.REGISTER -> {
+                    val loginData: LoginData = requestHandler.register(request.body)
+                    response.body = objectMapper.writeValueAsString(loginData)
+                }
+                TransportType.LOGIN -> {
+                    val loginData: LoginData = requestHandler.login(request.body)
+                    response.body = objectMapper.writeValueAsString(loginData)
+                }
                 TransportType.EDIT_CONTACT -> requestHandler.editContact(request.id, request.body)
                 TransportType.BLOCK_USER -> requestHandler.blockUser(request.id, request.body)
                 TransportType.UNBLOCK_USER -> requestHandler.unblockUser(request.id, request.body)
@@ -83,12 +96,11 @@ object Server {
                 TransportType.UNBLOCK_USER_IN_CHAT -> TODO()
             }
         } catch (se: SQLException) {
-            response.status = ResponseStatus.DATABASE_ERROR
-            response.body = "Oh no, it's a scary exception!"
+                response.status = ResponseStatus.DATABASE_ERROR
+                response.body = "Oh no, it's a scary exception!"
+            }
+            return response
         }
-        return response
-    }
-
 
     fun run(port : Int = 9999) {
         embeddedServer(Netty, port) {

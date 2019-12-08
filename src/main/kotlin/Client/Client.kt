@@ -22,6 +22,8 @@ object Client {
 
     private var loggedUserId: Long = -1
 
+    private var token: String = ""
+
     fun getLoggedUserId(): Long {
         return loggedUserId
     }
@@ -78,7 +80,8 @@ object Client {
                 ServerRequest(
                     REMOVE_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(removingContact)
+                    objectMapper.writeValueAsString(removingContact),
+                    token
                 )
             )
         }
@@ -124,15 +127,30 @@ object Client {
         fun getEmail() = getUser(userId).email
 
         fun getChats(): List<Chat> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_USER_CHATS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_USER_CHATS,
+                    userId
+                )
+            ).body
         )
 
         fun getContacts() : MutableMap<Long, String> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_CONTACTS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_CONTACTS,
+                    userId
+                )
+            ).body
         )
 
         fun getBlockedUsers() : MutableSet<Long> = objectMapper.readValue(
-            webClient.makeRequest(ServerRequest(GET_BLOCKED_USERS, userId)).body
+            webClient.makeRequest(
+                ServerRequest(
+                    GET_BLOCKED_USERS,
+                    userId
+                )
+            ).body
         )
     }
 
@@ -144,7 +162,8 @@ object Client {
                     ServerRequest(
                         GET_MESSAGE,
                         messageId,
-                        objectMapper.writeValueAsString(Message(id = messageId))
+                        objectMapper.writeValueAsString(Message(id = messageId)),
+                        jwt = token
                     )
                 ).body
             )
@@ -265,7 +284,7 @@ object Client {
         fun registerUser(login: String, name: String = login, email: String = "") {
             val newUser = User(-1, login, name)
             newUser.email = email
-            loggedUserId = objectMapper.readValue(
+            val loggedUserData : LoginData = objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
                         REGISTER,
@@ -273,18 +292,24 @@ object Client {
                     )
                 ).body
             )
+            loggedUserId = loggedUserData.id
+            token = loggedUserData.jwt
+            webClient.token = token
         }
 
         fun loginUser(login: String, password: String) {
-            loggedUserId = objectMapper.readValue(
+            val loggedUserData : LoginData = objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
-                        LOGIN, body = objectMapper.writeValueAsString(
-                            LoginData(login, password)
+                        LOGIN,
+                        body = objectMapper.writeValueAsString(LoginData(login, password)
                         )
                     )
                 ).body
             )
+            loggedUserId = loggedUserData.id
+            token = loggedUserData.jwt
+            webClient.token = token
         }
     }
 }

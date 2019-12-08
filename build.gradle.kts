@@ -28,6 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:1.2.4")
     implementation("io.ktor:ktor-client-js:1.2.4")
     implementation("io.ktor:ktor-client-okhttp:1.2.4")
+    implementation ("com.auth0:java-jwt:3.8.3")
 }
 
 tasks.test {
