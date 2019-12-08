@@ -40,7 +40,7 @@ class DataBaseHandler {
             val queryUsers = """
                 CREATE TABLE IF NOT EXISTS users(
                     user_id INT AUTO_INCREMENT PRIMARY KEY,
-                    login varchar(50),
+                    login varchar(50) UNIQUE,
                     name varchar(50),
                     email varchar(50)
                 );"""

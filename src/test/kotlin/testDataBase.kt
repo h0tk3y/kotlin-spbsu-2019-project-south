@@ -233,10 +233,10 @@ class DataBaseTests {
         handler.initAll()
         val userDB = UserBase(handler.connection!!)
 
-        val blockedUser = User(-1, "sp", "Ivan Pavlov")
+        val blockedUser = User(-1, "sp1", "Ivan Pavlov")
         val blockedId = userDB.add(blockedUser)
 
-        val otherBlockedUser = User(-1, "sp", "Ivan Pavlov")
+        val otherBlockedUser = User(-1, "sp2", "Ivan Pavlov")
         val otherblockedId = userDB.add(otherBlockedUser)
 
 
@@ -585,6 +585,38 @@ class DataBaseTests {
         assert(passDB.checkPassword("<test>_sp", "sp2001"))
         assertFalse(passDB.checkPassword("<test>_sp", "sp2002"))
         assertFalse(passDB.checkPassword("<test>_sp1", "sp2002"))
+        handler.closeAll()
+    }
+
+    @Test
+    fun findUserById() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val userDB = UserBase(handler.connection!!)
+
+        // Subtest1
+        var user1 = User(-1, "Vadim Salavatov")
+        val id1 = userDB.add(user1)
+        assertNotNull(userDB.findByLogin("Vadim Salavatov"))
+        user1 = userDB.findByLogin("Vadim Salavatov")!!
+        assert(user1.login == "Vadim Salavatov")
+
+        // Subtest2
+        var user2 = User(-1, "sp", "Ivan Pavlov")
+        user2.email = "pavlov200912@mail.ru"
+
+        val id2 = userDB.add(user2)
+        assertNotNull(userDB.findByLogin("sp"))
+        user2 = userDB.findByLogin("sp")!!
+
+        assert(user2.login == "sp")
+        assert(user2.name == "Ivan Pavlov")
+        println("EMAIL: ${user2.email}")
+        //assert(user2.email == "pavlov200912@mail.ru")
+
+
+        userDB.remove(id1)
+        userDB.remove(id2)
         handler.closeAll()
     }
 }
