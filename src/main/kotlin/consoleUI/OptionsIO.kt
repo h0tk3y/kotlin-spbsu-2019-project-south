@@ -1,5 +1,7 @@
 package consoleUI
 
+import client.ServerException
+
 private fun printOptions(options: List<String>) = options.mapIndexed { index, s -> println("> $index -- $s") }
 
 private fun optionNumReader(string: String?, maxRange: Int): Int {
@@ -23,4 +25,42 @@ fun optionsIO(options: List<String>): Int {
         }
     }
     return optionNum
+}
+
+fun readNotEmptyLine() : String {
+    while (true) {
+        val s = readLine()
+        if (s == "" || s == null) {
+            println("Invalid input. Please, try again.")
+            continue
+        }
+        return s
+    }
+}
+
+fun readId() : Long {
+    outerLoop@ while (true) {
+        var id : Long
+        innerLoop@ while (true) {
+            try {
+                id = readNotEmptyLine().toLong()
+                break@innerLoop
+            } catch (e: NumberFormatException) {
+                println("Invalid input. Please, try again.")
+                continue@innerLoop
+            }
+        }
+        try {
+            client.Client.UserDataHandler(id).getName()
+            return id
+        }
+        catch (e : ServerException) {
+            println("This user does not exists. Please try again.")
+            continue@outerLoop
+        }
+    }
+}
+
+fun printException(e : ServerException) {
+    println("${e.cause}")
 }
