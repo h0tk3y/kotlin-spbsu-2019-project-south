@@ -75,7 +75,8 @@ object Client {
                 ServerRequest(
                     REMOVE_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(removingContact)
+                    objectMapper.writeValueAsString(removingContact),
+                    token
                 )
             )
         }
@@ -156,7 +157,8 @@ object Client {
                     ServerRequest(
                         GET_MESSAGE,
                         messageId,
-                        objectMapper.writeValueAsString(Message(id = messageId))
+                        objectMapper.writeValueAsString(Message(id = messageId)),
+                        jwt = token
                     )
                 ).body
             )
@@ -302,6 +304,7 @@ object Client {
             )
             loggedUserId = loggedUserData.id
             token = loggedUserData.jwt
+            webClient.token = token
         }
     }
 }
