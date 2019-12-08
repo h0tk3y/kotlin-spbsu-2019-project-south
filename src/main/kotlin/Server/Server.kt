@@ -97,6 +97,9 @@ object Server {
                         response.body = objectMapper.writeValueAsString(blockedUsers)
                     }
                     RequestType.LEAVE_CHAT -> requestHandler.leaveChat(senderId, request.id, request.body)
+                    RequestType.IS_ADMIN -> response.body = objectMapper.writeValueAsString(requestHandler.isAdmin(senderId, request.id))
+                    RequestType.IS_MEMBER -> response.body = objectMapper.writeValueAsString(requestHandler.isMember(senderId, request.id))
+                    RequestType.IS_OWNER ->  response.body = objectMapper.writeValueAsString(requestHandler.isOwner(senderId, request.id))
                 }
             } catch (se: Exception) {
                 when (se) {

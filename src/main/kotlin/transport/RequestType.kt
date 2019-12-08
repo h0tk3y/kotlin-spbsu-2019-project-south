@@ -93,6 +93,13 @@ enum class RequestType {
     REGISTER, // (access for all)
     // userString(User)
 
-    LOGIN    // (access for all)
+    LOGIN,    // (access for all)
     //TODO!!!
+
+
+    IS_ADMIN,
+
+    IS_MEMBER,
+
+    IS_OWNER
 }

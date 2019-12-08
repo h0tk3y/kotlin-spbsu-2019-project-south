@@ -335,4 +335,30 @@ class RequestHandler() {
             throw se
         }
     }
+
+
+
+    fun isAdmin(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return senderId in getMembers(senderId, chatId)
+        } catch (e: SQLException) {
+            throw e
+        }
+    }
+
+    fun isMember(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return senderId in getMembers(senderId, chatId)
+        } catch (e: SQLException) {
+            throw e
+        }
+    }
+
+    fun isOwner(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return chatBase.get(chatId)!!.owner_id == senderId
+        } catch (e: SQLException) {
+            throw e
+        }
+    }
 }
