@@ -5,7 +5,7 @@ import Transport.ServerRequest
 import Transport.WebClient
 
 object Client {
-    private var webClient = WebClient("127.0.0.1", 9999)
+    var webClient = WebClient("127.0.0.1", 9999)
 
     fun connectTo(host: String, port: Int) {
         webClient = WebClient(host, port)
@@ -29,8 +29,7 @@ object Client {
                     ServerRequest(
                         GET_USER,
                         userId,
-                        objectMapper.writeValueAsString(User(id)),
-                        token
+                        objectMapper.writeValueAsString(User(id))
                     )
                 ).body
             )
@@ -41,8 +40,7 @@ object Client {
                 ServerRequest(
                     EDIT_USER,
                     userId,
-                    objectMapper.writeValueAsString(user),
-                    token
+                    objectMapper.writeValueAsString(user)
                 )
             )
         }
@@ -54,8 +52,7 @@ object Client {
                 ServerRequest(
                     ADD_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(newContact),
-                    token
+                    objectMapper.writeValueAsString(newContact)
                 )
             )
         }
@@ -67,8 +64,7 @@ object Client {
                 ServerRequest(
                     EDIT_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(editedContact),
-                    token
+                    objectMapper.writeValueAsString(editedContact)
                 )
             )
         }
@@ -79,8 +75,7 @@ object Client {
                 ServerRequest(
                     REMOVE_CONTACT,
                     userId,
-                    objectMapper.writeValueAsString(removingContact),
-                    token
+                    objectMapper.writeValueAsString(removingContact)
                 )
             )
         }
@@ -91,8 +86,7 @@ object Client {
                 ServerRequest(
                     BLOCK_USER,
                     userId,
-                    objectMapper.writeValueAsString(newBlockedUser),
-                    token
+                    objectMapper.writeValueAsString(newBlockedUser)
                 )
             )
         }
@@ -103,8 +97,7 @@ object Client {
                 ServerRequest(
                     UNBLOCK_USER,
                     userId,
-                    objectMapper.writeValueAsString(unblockingUser),
-                    token
+                    objectMapper.writeValueAsString(unblockingUser)
                 )
             )
         }
@@ -131,8 +124,7 @@ object Client {
             webClient.makeRequest(
                 ServerRequest(
                     GET_USER_CHATS,
-                    userId,
-                    jwt = token
+                    userId
                 )
             ).body
         )
@@ -141,8 +133,7 @@ object Client {
             webClient.makeRequest(
                 ServerRequest(
                     GET_CONTACTS,
-                    userId,
-                    jwt = token
+                    userId
                 )
             ).body
         )
@@ -151,8 +142,7 @@ object Client {
             webClient.makeRequest(
                 ServerRequest(
                     GET_BLOCKED_USERS,
-                    userId,
-                    jwt = token
+                    userId
                 )
             ).body
         )
@@ -166,8 +156,7 @@ object Client {
                     ServerRequest(
                         GET_MESSAGE,
                         messageId,
-                        objectMapper.writeValueAsString(Message(id = messageId)),
-                        jwt = token
+                        objectMapper.writeValueAsString(Message(id = messageId))
                     )
                 ).body
             )
@@ -177,8 +166,7 @@ object Client {
                 ServerRequest(
                     EDIT_MESSAGE,
                     messageId,
-                    objectMapper.writeValueAsString(message),
-                    token
+                    objectMapper.writeValueAsString(message)
                 )
             )
 
@@ -186,8 +174,7 @@ object Client {
             webClient.makeRequest(
                 ServerRequest(
                     SEND_MESSAGE,
-                    body = objectMapper.writeValueAsString(message),
-                    jwt = token
+                    body = objectMapper.writeValueAsString(message)
                 )
             ).body
 
@@ -300,6 +287,7 @@ object Client {
             )
             loggedUserId = loggedUserData.id
             token = loggedUserData.jwt
+            webClient.token = token
         }
 
         fun loginUser(login: String, password: String) {
