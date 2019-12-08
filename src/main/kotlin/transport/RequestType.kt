@@ -56,7 +56,6 @@ enum class RequestType {
     ADD_CHAT, // create new chat (access for all)
     // chatString(Chat)
 
-
     GET_CHAT, // todo
 
     GET_MESSAGES, // return list of messages (access only for chat members | ACCESS ERROR)
@@ -76,9 +75,6 @@ enum class RequestType {
     ADD_MEMBER, // adding(inviting) new member to chat (hz dlya kogo access todo)
     // chatId, memberIdString
 
-    JOIN_CHAT, // join to chat (access for not blocked in chat user | ACCESS ERROR | STATUS ERROR)
-    // server todo
-
     KICK_MEMBER, // (access for admin | ACCESS ERROR | STATUS ERROR)
     // chatId, memberIdString
 
@@ -91,11 +87,6 @@ enum class RequestType {
     REMOVE_ADMIN, // (access for owner | ACCESS ERROR | STATUS ERROR)
     // chatId, adminIdString
 
-    BLOCK_USER_IN_CHAT, // (access for admin | ACCESS ERROR | STATUS ERROR)
-    // server todo
-
-    UNBLOCK_USER_IN_CHAT, // (access for admin | ACCESS ERROR | STATUS ERROR)
-    // server todo
 
 
 
