@@ -229,11 +229,13 @@ object Client {
 
     class LoginDataHandler() {
 
-        fun registerUser(login: String, name: String = login, email: String = "") {
+        fun registerUser(login: String, password : String, name: String = login, email: String = "") {
             val newUser = User(-1, login, name)
             newUser.email = email
+            val loginData = LoginData(login, password)
+            loginData.user = newUser
             val loggedUserData: LoginData = objectMapper.readValue(
-                getResponse(REGISTER, -1, objectMapper.writeValueAsString(newUser))
+                getResponse(REGISTER, -1, objectMapper.writeValueAsString(loginData))
             )
             loggedUserId = loggedUserData.id
             webClient.token = loggedUserData.jwt
