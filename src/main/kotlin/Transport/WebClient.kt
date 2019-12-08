@@ -16,6 +16,8 @@ class WebClient (private val host : String, private val port : Int) {
         install(WebSockets)
     }
 
+    var token = ""
+
     private val requests = Channel<ServerRequest>()
     private val responses = Channel<ServerResponse>()
 
@@ -40,6 +42,7 @@ class WebClient (private val host : String, private val port : Int) {
     }
 
     fun makeRequest(request: ServerRequest) : ServerResponse {
+        request.jwt = token
         return runBlocking {
             requests.send(request)
             responses.receive()

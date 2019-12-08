@@ -1,4 +1,5 @@
 import DataBases.DataBaseHandler
+import DataClasses.LoginData
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.lang.reflect.Member
@@ -10,13 +11,14 @@ class RequestHandler() {
     private var userBase: UserBase
     private var chatBase: ChatBase
     private var messageBase: MessageBase
-
+    private var passwordBase : PasswordBase //TODO
 
     init {
         handler.initAll()
         this.userBase = UserBase(this.handler.connection!!)
         this.chatBase = ChatBase(this.handler.connection!!)
         this.messageBase = MessageBase(this.handler.connection!!)
+        this.passwordBase = PasswordBase(this.handler.connection!!) //TODO
     }
 
 
@@ -216,16 +218,34 @@ class RequestHandler() {
         }
     }
 
-
-
-
-    fun register(userString: String) {
-        val user: User = objectMapper.readValue(userString)
+    fun register(loginDataString: String) : LoginData {
+        val userLoginData: LoginData = objectMapper.readValue(loginDataString)
         try {
-            userBase.add(user)
-        } catch (se: SQLException) {
+            passwordBase.add(userLoginData.login, userLoginData.password)
+            val userId = userBase.add(userLoginData.user)
+            userLoginData.user.id = userId
+            userLoginData.id = userId
+            userLoginData.jwt = TokenHandler().makeToken(userLoginData.user)
+        }
+        catch (se: SQLException) {
             throw se
         }
+        return userLoginData
+    }
+
+    fun login(loginDataString : String) : LoginData {
+        val userLoginData : LoginData = objectMapper.readValue(loginDataString)
+        try {
+            if (passwordBase.checkPassword(userLoginData.login, userLoginData.password)) {
+                val user: User = userBase.findByLogin(userLoginData.login);
+                userLoginData.jwt = TokenHandler().makeToken(userBase.get(user.id) ?: throw TODO())
+                userLoginData.id = user.id
+            }
+        }
+        catch (se: SQLException) {
+            throw se
+        }
+        return userLoginData
     }
 
     fun editContact(userId: Long, contactString: String) {
