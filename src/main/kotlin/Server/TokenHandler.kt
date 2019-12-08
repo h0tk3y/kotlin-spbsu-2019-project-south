@@ -1,6 +1,8 @@
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.JWTVerificationException
+import com.auth0.jwt.interfaces.DecodedJWT
 import java.util.*
 
 class TokenHandler {
@@ -18,6 +20,15 @@ class TokenHandler {
                .withClaim("id", user.id)
                .withExpiresAt(getExpiration())
                .sign(algorithm)
+    }
+
+    fun getId(token: String) : Long {
+        try {
+            val jwt: DecodedJWT = JWT.decode(token)
+            return jwt.getClaim("id").asLong()
+        } catch (e: JWTDecodeException) {
+            throw e
+        }
     }
 
     fun verifyToken(token : String) : Boolean {

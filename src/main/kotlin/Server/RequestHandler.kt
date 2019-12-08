@@ -33,6 +33,7 @@ class RequestHandler() {
     }
 
     fun getUserChats(userId: Long): MutableMap<Long, String> {
+
         try {
             return userBase.getChats(userId)
         } catch (se: SQLException) {
@@ -77,18 +78,25 @@ class RequestHandler() {
 
     fun addContact(userId: Long, contactString: String) {
         val contact: User = objectMapper.readValue(contactString)
-        try {
-            userBase.addContact(userId, contact.id, contact.name)
-        } catch (se: SQLException) {
-            throw se
+        if (!userBase.isBlocked(contact.id, userId)) {
+            try {
+                userBase.addContact(userId, contact.id, contact.name)
+            } catch (se: SQLException) {
+                throw se
+            }
+        } else {
+            throw ServerException("User is blocked")
         }
     }
 
 
 
 
-    fun sendMessage(messageString : String) {
+    fun sendMessage(senderId: Long, messageString : String) {
         val message : Message = objectMapper.readValue(messageString)
+        if (senderId !in chatBase.getMembers(message.chatId)) {
+            throw ServerException("Not a chat member")
+        }
         try {
             messageBase.add(message)
         } catch (se: SQLException) {
@@ -96,8 +104,11 @@ class RequestHandler() {
         }
     }
 
-    fun editMessage(messageId: Long, messageString: String) {
+    fun editMessage(senderId: Long, messageId: Long, messageString: String) {
         val message: Message = objectMapper.readValue(messageString)
+        if (message.userId != senderId) {
+            throw ServerException("Invalid editor")
+        }
         try {
             messageBase.edit(messageId, message)
         } catch (se: SQLException) {
@@ -105,8 +116,14 @@ class RequestHandler() {
         }
     }
 
-    fun deleteMessage(messageId: Long) {
+    fun deleteMessage(senderId: Long, messageId: Long) {
+        val message: Message? = getMessage(messageId)
         try {
+            if (message != null) {
+                if (message.userId != senderId && senderId !in getAdmins(senderId, message.chatId)) {
+                    throw ServerException("Invalid editor")
+                }
+            }
             messageBase.remove(messageId)
         } catch (se: SQLException) {
             throw se
@@ -124,10 +141,10 @@ class RequestHandler() {
 
 
 
-    fun addChat(chatString: String) {
+    fun addChat(chatString: String) : Long {
         val chat: Chat = objectMapper.readValue(chatString)
         try {
-            chatBase.add(chat)
+            return chatBase.add(chat)
         } catch (se: SQLException) {
             throw se
         }
@@ -141,23 +158,32 @@ class RequestHandler() {
         }
     }
 
-    fun getMessages(chatId: Long): MutableSet<Message>{
+    fun getMessages(senderId: Long, chatId: Long): MutableSet<Message> {
         try {
+            if (senderId !in getMembers(senderId, chatId)) {
+                throw ServerException("Not a chat member")
+            }
             return chatBase.getMessages(chatId)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    fun getMembers(chatId: Long): MutableList<Long> {
+    fun getMembers(senderId: Long, chatId: Long): MutableList<Long> {
         try {
+            if (senderId !in getAdmins(senderId, chatId)) {
+                throw ServerException("Not an admin")
+            }
             return chatBase.getMembers(chatId)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    fun getAdmins(chatId: Long): MutableSet<Long> {
+    fun getAdmins(senderId: Long, chatId: Long): MutableSet<Long> {
+        if (senderId !in chatBase.getAdmins(chatId)) {
+            throw ServerException("Not an admin")
+        }
         try {
             return chatBase.getAdmins(chatId)
         } catch (se: SQLException) {
@@ -165,17 +191,23 @@ class RequestHandler() {
         }
     }
 
-    fun deleteChat(chatId: Long) {
+    fun deleteChat(senderId: Long, chatId: Long) {
         try {
+            if (chatBase.get(chatId)!!.owner_id != senderId) {
+                throw  ServerException("Not an owner")
+            }
             chatBase.remove(chatId)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    fun editChat(chatId: Long, chatString: String) {
+    fun editChat(senderId: Long, chatId: Long, chatString: String) {
         val chat: Chat = objectMapper.readValue(chatString)
         try {
+            if (senderId !in getAdmins(senderId, chatId)) {
+                throw ServerException("Not an admin")
+            }
             chatBase.edit(chatId, chat)
         } catch (se: SQLException) {
             throw se
@@ -191,27 +223,36 @@ class RequestHandler() {
         }
     }
 
-    fun kickMember(chatId: Long, memberIdString: String) {
+    fun kickMember(senderId: Long, chatId: Long, memberIdString: String) {
         val memberId: Long = objectMapper.readValue(memberIdString)
         try {
+            if (senderId !in getAdmins(senderId, chatId)) {
+                throw ServerException("Not an admin")
+            }
             chatBase.removeMember(chatId, memberId)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    fun addAdmin(chatId: Long, adminIdString: String) {
+    fun addAdmin(senderId: Long, chatId: Long, adminIdString: String) {
         val adminId: Long = objectMapper.readValue(adminIdString)
         try {
+            if (chatBase.get(chatId)!!.owner_id != senderId) {
+                throw  ServerException("Not an owner")
+            }
             chatBase.addAdmin(chatId, adminId)
         } catch (se: SQLException) {
             throw se
         }
     }
 
-    fun removeAdmin(chatId: Long, adminIdString: String) {
+    fun removeAdmin(senderId: Long, chatId: Long, adminIdString: String) {
         val adminId: Long = objectMapper.readValue(adminIdString)
         try {
+            if (chatBase.get(chatId)!!.owner_id != senderId) {
+                throw  ServerException("Not an owner")
+            }
             chatBase.removeAdmin(chatId, adminId)
         } catch (se: SQLException) {
             throw se
@@ -283,19 +324,41 @@ class RequestHandler() {
         }
     }
 
-    fun joinChat(chatId: Long, userString: String) {
-        TODO()
+    fun leaveChat(senderId: Long, chatId: Long, userString: String) {
+        val memberId: Long = objectMapper.readValue(userString)
+        try {
+            if (senderId !in getMembers(senderId, chatId)) {
+                throw ServerException("Not an admin")
+            }
+            chatBase.removeMember(chatId, memberId)
+        } catch (se: SQLException) {
+            throw se
+        }
     }
 
-    fun leaveChat(chatId: Long, userString: String) {
-        TODO()
+
+
+    fun isAdmin(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return senderId in getMembers(senderId, chatId)
+        } catch (e: SQLException) {
+            throw e
+        }
     }
 
-    fun blockUserInChat(chatId: Long, userString: String) {
-        TODO()
+    fun isMember(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return senderId in getMembers(senderId, chatId)
+        } catch (e: SQLException) {
+            throw e
+        }
     }
 
-    fun unblockUserInChat() {
-        TODO()
+    fun isOwner(senderId: Long, chatId: Long) : Boolean {
+        try {
+            return chatBase.get(chatId)!!.owner_id == senderId
+        } catch (e: SQLException) {
+            throw e
+        }
     }
 }

@@ -1,0 +1,1 @@
+class ServerException(message: String) : Exception(message)
