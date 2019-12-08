@@ -4,10 +4,6 @@ import Chat
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
-import Message
-import ServerRequest
-import User
-import WebClient
 
 object Client {
     private var webClient = WebClient("127.0.0.1", 9999)
