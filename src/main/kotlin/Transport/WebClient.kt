@@ -7,7 +7,7 @@ import io.ktor.http.HttpMethod
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 
-class WebClient (private val host : String, private val port : Int) {
+class   WebClient (private val host : String, private val port : Int) {
     private val client = HttpClient {
         install(WebSockets)
     }

@@ -1,6 +1,13 @@
+package Client
+
+import Chat
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
+import Message
+import ServerRequest
+import User
+import WebClient
 
 object Client {
     private var webClient = WebClient("127.0.0.1", 9999)
@@ -30,19 +37,37 @@ object Client {
         }
 
         private fun editUser(user: User) {
-            webClient.makeRequest(ServerRequest(EDIT_USER, userId, objectMapper.writeValueAsString(user)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_USER,
+                    userId,
+                    objectMapper.writeValueAsString(user)
+                )
+            )
         }
 
         fun addContact(contactId: Long, name: String = UserDataHandler(contactId).getName()) {
             val newContact = UserContact(userId, contactId)
             newContact.name = name
-            webClient.makeRequest(ServerRequest(ADD_CONTACT, userId, objectMapper.writeValueAsString(newContact)))
+            webClient.makeRequest(
+                ServerRequest(
+                    ADD_CONTACT,
+                    userId,
+                    objectMapper.writeValueAsString(newContact)
+                )
+            )
         }
 
         fun changeContactName(contactId: Long, newName: String) {
             val editedContact = UserContact(userId, contactId)
             editedContact.name = newName
-            webClient.makeRequest(ServerRequest(EDIT_CONTACT, userId, objectMapper.writeValueAsString(editedContact)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_CONTACT,
+                    userId,
+                    objectMapper.writeValueAsString(editedContact)
+                )
+            )
         }
 
         fun removeContact(contactId: Long) {
@@ -58,12 +83,24 @@ object Client {
 
         fun blockUser(blockedUserId: Long) {
             val newBlockedUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(ServerRequest(BLOCK_USER, userId, objectMapper.writeValueAsString(newBlockedUser)))
+            webClient.makeRequest(
+                ServerRequest(
+                    BLOCK_USER,
+                    userId,
+                    objectMapper.writeValueAsString(newBlockedUser)
+                )
+            )
         }
 
         fun unblockUser(blockedUserId: Long) {
             val unblockingUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(ServerRequest(UNBLOCK_USER, userId, objectMapper.writeValueAsString(unblockingUser)))
+            webClient.makeRequest(
+                ServerRequest(
+                    UNBLOCK_USER,
+                    userId,
+                    objectMapper.writeValueAsString(unblockingUser)
+                )
+            )
         }
 
         fun changeName(newName: String) {
@@ -111,10 +148,21 @@ object Client {
             )
 
         private fun editMessage(message: Message) =
-            webClient.makeRequest(ServerRequest(EDIT_MESSAGE, messageId, objectMapper.writeValueAsString(message)))
+            webClient.makeRequest(
+                ServerRequest(
+                    EDIT_MESSAGE,
+                    messageId,
+                    objectMapper.writeValueAsString(message)
+                )
+            )
 
         private fun sendMessage(message: Message) =
-            webClient.makeRequest(ServerRequest(SEND_MESSAGE, body = objectMapper.writeValueAsString(message))).body
+            webClient.makeRequest(
+                ServerRequest(
+                    SEND_MESSAGE,
+                    body = objectMapper.writeValueAsString(message)
+                )
+            ).body
 
         fun createMessage(text: String, chatId: Long, userId: Long): Long {
             val newMessage = Message(text, -1, chatId, userId)
@@ -216,7 +264,12 @@ object Client {
             val newUser = User(-1, login, name)
             newUser.email = email
             loggedUserId = objectMapper.readValue(
-                webClient.makeRequest(ServerRequest(REGISTER, body = objectMapper.writeValueAsString(newUser))).body
+                webClient.makeRequest(
+                    ServerRequest(
+                        REGISTER,
+                        body = objectMapper.writeValueAsString(newUser)
+                    )
+                ).body
             )
         }
 

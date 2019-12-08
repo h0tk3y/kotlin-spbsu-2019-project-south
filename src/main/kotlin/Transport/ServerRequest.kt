@@ -1,4 +1,4 @@
-import Transport.TransportType
+import TransportType
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 open class ServerRequest(
