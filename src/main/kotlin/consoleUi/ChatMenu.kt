@@ -1,7 +1,7 @@
 package consoleUi
 
 class ChatMenu(private val chatId : Long) {
-
+/*
     fun mainAction() {
 
         val options = listOf(
@@ -70,4 +70,6 @@ class ChatMenu(private val chatId : Long) {
     }
 
     private fun leaveChatAction() = Client.UserDataHandler(getId()).deleteChat(chatId)
+
+*/
 }

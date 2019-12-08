@@ -4,9 +4,15 @@ import Chat
 import com.fasterxml.jackson.module.kotlin.*
 import TransportType.*
 import DataClasses.*
+import User
+import Transport.*
+import ServerRequest
+import Message
+import TransportType
+import Transport.ResponseStatus
 
 object Client {
-    private var webClient = WebClient("127.0.0.1", 9999)
+    var webClient = WebClient("127.0.0.1", 9999)
 
     fun connectTo(host: String = "127.0.0.1", port: Int = 9999) {
         webClient = WebClient(host, port)
@@ -20,17 +26,17 @@ object Client {
         return loggedUserId
     }
 
+    private fun getResponseBody(requestType : TransportType, id : Long = -1, body : String = "") : String {
+        val response = webClient.makeRequest(ServerRequest(requestType, id, body))
+        if(response.status != ResponseStatus.SUCCESSFUL){
+            throw ServerException(response.body)
+        }
+        return response.body
+    }
+
     class UserDataHandler(private val userId: Long = loggedUserId) {
 
-        private fun getUser(id: Long): User {
-            return objectMapper.readValue(
-                webClient.makeRequest(
-                    ServerRequest(
-                        GET_USER, userId, objectMapper.writeValueAsString(User(id))
-                    )
-                ).body
-            )
-        }
+        private fun getUser(): User  = objectMapper.readValue(getResponseBody(GET_USER, userId))
 
         private fun editUser(user: User) {
             webClient.makeRequest(
@@ -282,3 +288,4 @@ object Client {
         }
     }
 }
+
