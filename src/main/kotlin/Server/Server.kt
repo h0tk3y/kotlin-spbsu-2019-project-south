@@ -1,5 +1,5 @@
 import Transport.ResponseStatus
-import Transport.ServerRequest
+import ServerRequest
 import Transport.ServerResponse
 import DataClasses.LoginData
 import com.fasterxml.jackson.module.kotlin.*

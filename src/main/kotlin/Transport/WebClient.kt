@@ -1,6 +1,6 @@
 package Transport
 
-import Transport.ServerRequest
+import ServerRequest
 import Transport.ServerResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -11,7 +11,7 @@ import io.ktor.http.HttpMethod
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 
-class WebClient (private val host : String, private val port : Int) {
+class   WebClient (private val host : String, private val port : Int) {
     private val client = HttpClient {
         install(WebSockets)
     }

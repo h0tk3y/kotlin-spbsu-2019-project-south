@@ -1,10 +1,15 @@
 enum class TransportType {
 
-
     GET_USER,        //get user by id (access for all)
     // userId
 
     GET_USER_CHATS,  //return all user chats map (ids, name) (access only for target user | ACCESS ERROR)
+    // userId
+
+    GET_BLOCKED_USERS, // return all user blocked users map (id, name) (access only for target user | ACCESS ERROR)
+    // userId
+
+    GET_CONTACTS, // return all user contacts map (id, name) (access only for target user | ACCESS ERROR)
     // userId
 
     REMOVE_USER,    // todo
@@ -27,14 +32,11 @@ enum class TransportType {
     UNBLOCK_USER,  // unblock connection (access only for target user | ACCESS ERROR | STATUS ERROR)
     //  userId, contactString(id)
 
-    GET_BLOCKED_USERS, // return all user blocked users map (id, name) (access only for target user | ACCESS ERROR)
-    // userId
-
-    GET_CONTACTS, // return all user contacts map (id, name) (access only for target user | ACCESS ERROR)
-    // userId
 
 
 
+    GET_MESSAGE, // return message by id (access only for chat members | ACCESS ERROR)
+    // messageId
 
     SEND_MESSAGE, // (access only for chat members | ACCESS ERROR)
     // messageString(Message)
@@ -45,14 +47,12 @@ enum class TransportType {
     DELETE_MESSAGE, //(access only for author and admins | ACCESS ERROR)
     // messageId
 
-    GET_MESSAGE, // return message by id (access only for chat members | ACCESS ERROR)
-    // messageId
+
+
 
 
     ADD_CHAT, // create new chat (access for all)
     // chatString(Chat)
-
-
 
 
     GET_CHAT, // todo
