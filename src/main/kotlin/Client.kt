@@ -5,7 +5,7 @@ import DataClasses.*
 object Client {
     private var webClient = WebClient("127.0.0.1", 9999)
 
-    fun connectTo(host: String, port: Int) {
+    fun connectTo(host: String = "127.0.0.1", port: Int = 9999) {
         webClient = WebClient(host, port)
     }
 
