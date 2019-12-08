@@ -35,6 +35,8 @@ enum class TransportType {
 
 
 
+    GET_MESSAGE, // return message by id (access only for chat members | ACCESS ERROR)
+    // messageId
 
     SEND_MESSAGE, // (access only for chat members | ACCESS ERROR)
     // messageString(Message)
@@ -45,8 +47,6 @@ enum class TransportType {
     DELETE_MESSAGE, //(access only for author and admins | ACCESS ERROR)
     // messageId
 
-    GET_MESSAGE, // return message by id (access only for chat members | ACCESS ERROR)
-    // messageId
 
 
 
