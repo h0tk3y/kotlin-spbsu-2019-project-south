@@ -12,146 +12,133 @@ import TransportType
 import Transport.ResponseStatus
 
 object Client {
+
+
+
     var webClient = WebClient("127.0.0.1", 9999)
 
     fun connectTo(host: String = "127.0.0.1", port: Int = 9999) {
         webClient = WebClient(host, port)
     }
 
+
+
     private val objectMapper = jacksonObjectMapper()
 
-    private var loggedUserId: Long = -1
 
-    private var token: String = ""
+    private fun userJSON(user: User): String = objectMapper.writeValueAsString(user)
+
+    private fun messageJSON(message: Message): String = objectMapper.writeValueAsString(message)
+
+    private fun chatJSON(chat: Chat): String = objectMapper.writeValueAsString(chat)
+
+
+
+
+
+    private var loggedUserId: Long = -1
 
     fun getLoggedUserId(): Long {
         return loggedUserId
     }
 
-    private fun getResponseBody(requestType : TransportType, id : Long = -1, body : String = "") : String {
+
+
+    private var token: String = ""
+
+
+
+    private fun getResponse(requestType: TransportType, id: Long = -1, body: String = ""): String {
         val response = webClient.makeRequest(ServerRequest(requestType, id, body))
-        if(response.status != ResponseStatus.SUCCESSFUL){
+        if (response.status != ResponseStatus.SUCCESSFUL) {
             throw ServerException(response.body)
         }
         return response.body
     }
 
+
+
     class UserDataHandler(private val userId: Long = loggedUserId) {
 
-        private fun getUser(): User  = objectMapper.readValue(getResponseBody(GET_USER, userId))
+        private fun getUser(): User = objectMapper.readValue(getResponse(GET_USER, userId))
 
-        private fun editUser(user: User) {
-            webClient.makeRequest(
-                ServerRequest(
-                    EDIT_USER,
-                    userId,
-                    objectMapper.writeValueAsString(user)
-                )
-            )
-        }
 
-        fun addContact(contactId: Long, name: String = UserDataHandler(contactId).getName()) {
-            val newContact = UserContact(userId, contactId)
-            newContact.name = name
-            webClient.makeRequest(
-                ServerRequest(
-                    ADD_CONTACT,
-                    userId,
-                    objectMapper.writeValueAsString(newContact)
-                )
-            )
-        }
+        fun getName() = getUser().name
 
-        fun changeContactName(contactId: Long, newName: String) {
-            val editedContact = UserContact(userId, contactId)
-            editedContact.name = newName
-            webClient.makeRequest(
-                ServerRequest(
-                    EDIT_CONTACT,
-                    userId,
-                    objectMapper.writeValueAsString(editedContact)
-                )
-            )
-        }
+        fun getLogin() = getUser().login
 
-        fun removeContact(contactId: Long) {
-            val removingContact = UserContact(userId, contactId)
-            webClient.makeRequest(
-                ServerRequest(
-                    REMOVE_CONTACT,
-                    userId,
-                    objectMapper.writeValueAsString(removingContact),
-                    token
-                )
-            )
-        }
+        fun getEmail() = getUser().email
 
-        fun blockUser(blockedUserId: Long) {
-            val newBlockedUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(
-                ServerRequest(
-                    BLOCK_USER,
-                    userId,
-                    objectMapper.writeValueAsString(newBlockedUser)
-                )
-            )
-        }
 
-        fun unblockUser(blockedUserId: Long) {
-            val unblockingUser = UserContact(userId, blockedUserId)
-            webClient.makeRequest(
-                ServerRequest(
-                    UNBLOCK_USER,
-                    userId,
-                    objectMapper.writeValueAsString(unblockingUser)
-                )
-            )
-        }
+
+
+        fun getUserChats() : Map<Long, String> = objectMapper.readValue(getResponse(GET_USER_CHATS, userId))
+
+        fun getContacts(): MutableMap<Long, String> = objectMapper.readValue(getResponse(GET_CONTACTS, userId))
+
+        fun getBlockUsers(): MutableMap<Long, String> = objectMapper.readValue(getResponse(GET_BLOCKED_USERS, userId))
+
+
+
+        private fun editUser(user: User) = getResponse(
+            EDIT_USER,
+            userId,
+            userJSON(user)
+        )
+
 
         fun changeName(newName: String) {
-            val cur = getUser(userId)
+            val cur = getUser()
             cur.name = newName
             editUser(cur)
         }
 
         fun changeEmail(newEmail: String) {
-            val cur = getUser(userId)
+            val cur = getUser()
             cur.email = newEmail
             editUser(cur)
         }
 
-        fun getName() = getUser(userId).name
 
-        fun getLogin() = getUser(userId).login
 
-        fun getEmail() = getUser(userId).email
-
-        fun getChats(): List<Chat> = objectMapper.readValue(
-            webClient.makeRequest(
-                ServerRequest(
-                    GET_USER_CHATS,
-                    userId
-                )
-            ).body
+        fun addContact(contactId: Long, name: String = UserDataHandler(contactId).getName()) = getResponse(
+            ADD_CONTACT,
+            userId,
+            userJSON(User(id = contactId, name = name))
         )
 
-        fun getContacts() : MutableMap<Long, String> = objectMapper.readValue(
-            webClient.makeRequest(
-                ServerRequest(
-                    GET_CONTACTS,
-                    userId
-                )
-            ).body
+
+
+        fun editContact(contactId: Long, newName: String) = getResponse(
+            EDIT_CONTACT,
+            userId,
+            userJSON(User(id = contactId, name =  newName))
         )
 
-        fun getBlockedUsers() : MutableSet<Long> = objectMapper.readValue(
-            webClient.makeRequest(
-                ServerRequest(
-                    GET_BLOCKED_USERS,
-                    userId
-                )
-            ).body
+
+
+        fun removeContact(contactId: Long)  = getResponse(
+            REMOVE_CONTACT,
+            userId,
+            userJSON(User(id = contactId))
         )
+
+
+
+        fun blockUser(blockingUserId: Long) = getResponse(
+            BLOCK_USER,
+            userId,
+            userJSON(User(id = blockingUserId))
+        )
+
+
+
+        fun unblockUser(unblockingUserId: Long) = getResponse(
+            UNBLOCK_USER,
+            userId,
+            userJSON(User(id = unblockingUserId))
+        )
+
     }
 
     class MessageDataHandler(private val messageId: Long = -1) {
@@ -207,84 +194,84 @@ object Client {
             editMessage(cur)
         }
 
-      /*  fun readMessage() {
-            val cur = getMessage()
-            cur.isRead = true
-            editMessage(cur)
-        } */
+        /*  fun readMessage() {
+              val cur = getMessage()
+              cur.isRead = true
+              editMessage(cur)
+          } */
     }
 
-    // TODO: REFACTOR CHAT HANDLER!
-  /*  class ChatDataHandler(private val chatId: Long = -1) {
+// TODO: REFACTOR CHAT HANDLER!
+/*  class ChatDataHandler(private val chatId: Long = -1) {
 
-        private fun getChat(): Chat {
-            return objectMapper.readValue(webClient.makeRequest(ServerRequest(GET_CHAT, chatId)).body)
-        }
+      private fun getChat(): Chat {
+          return objectMapper.readValue(webClient.makeRequest(ServerRequest(GET_CHAT, chatId)).body)
+      }
 
-        private fun editChat(chat: Chat) {
-            webClient.makeRequest(ServerRequest(EDIT_CHAT, chatId, objectMapper.writeValueAsString(chat)))
-        }
+      private fun editChat(chat: Chat) {
+          webClient.makeRequest(ServerRequest(EDIT_CHAT, chatId, objectMapper.writeValueAsString(chat)))
+      }
 
-        fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>): Long {
-            val newChat = Chat(-1, isSingle, name, members)
-            return objectMapper.readValue(
-                webClient.makeRequest(ServerRequest(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
-            )
-        }
+      fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>): Long {
+          val newChat = Chat(-1, isSingle, name, members)
+          return objectMapper.readValue(
+              webClient.makeRequest(ServerRequest(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat))).body
+          )
+      }
 
-        fun changeChatName(newName: String) {
-            val chat = getChat()
-            if (!chat.isSingle) {
-                chat.name = newName
-                editChat(chat)
-            }
-        }
+      fun changeChatName(newName: String) {
+          val chat = getChat()
+          if (!chat.isSingle) {
+              chat.name = newName
+              editChat(chat)
+          }
+      }
 
-        fun addUser(userId: Long) {
-            val chat = getChat()
-            if (!chat.isSingle) {
-                chat.members.add(userId)
-                UserDataHandler(userId).addChat(chatId, chat.name)
-                editChat(chat)
-            }
-        }
+      fun addUser(userId: Long) {
+          val chat = getChat()
+          if (!chat.isSingle) {
+              chat.members.add(userId)
+              UserDataHandler(userId).addChat(chatId, chat.name)
+              editChat(chat)
+          }
+      }
 
-        fun deleteUser(userId: Long) {
-            val chat = getChat()
-            if (!chat.isSingle) {
-                if (userId !in chat.owners) {
-                    chat.members.remove(userId)
-                    UserDataHandler(userId).deleteChat(chatId)
-                    editChat(chat)
-                }
-            }
-        }
+      fun deleteUser(userId: Long) {
+          val chat = getChat()
+          if (!chat.isSingle) {
+              if (userId !in chat.owners) {
+                  chat.members.remove(userId)
+                  UserDataHandler(userId).deleteChat(chatId)
+                  editChat(chat)
+              }
+          }
+      }
 
-        fun sendMessage(messageId: Long) {
-            val chat = getChat()
-            chat.messages.add(messageId)
-            editChat(chat)
-        }
+      fun sendMessage(messageId: Long) {
+          val chat = getChat()
+          chat.messages.add(messageId)
+          editChat(chat)
+      }
 
-        fun editMessage(messageId: Long, text: String) = MessageDataHandler(messageId).editText(text)
+      fun editMessage(messageId: Long, text: String) = MessageDataHandler(messageId).editText(text)
 
-        fun deleteMessage(messageId: Long) = MessageDataHandler(messageId).deleteMessage()
+      fun deleteMessage(messageId: Long) = MessageDataHandler(messageId).deleteMessage()
 
-        fun getMembers() = getChat().members
+      fun getMembers() = getChat().members
 
-        fun getName() = getChat().name
+      fun getName() = getChat().name
 
-        fun getMessages() = getChat().messages
+      fun getMessages() = getChat().messages
 
-        fun isSingle() = getChat().isSingle
-    } */
+      fun isSingle() = getChat().isSingle
+  } */
 
     class LoginDataHandler() {
 
         fun registerUser(login: String, name: String = login, email: String = "") {
             val newUser = User(-1, login, name)
             newUser.email = email
-            val loggedUserData : LoginData = objectMapper.readValue(
+            val loggedUserData: LoginData = objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
                         REGISTER,
@@ -298,11 +285,12 @@ object Client {
         }
 
         fun loginUser(login: String, password: String) {
-            val loggedUserData : LoginData = objectMapper.readValue(
+            val loggedUserData: LoginData = objectMapper.readValue(
                 webClient.makeRequest(
                     ServerRequest(
                         LOGIN,
-                        body = objectMapper.writeValueAsString(LoginData(login, password)
+                        body = objectMapper.writeValueAsString(
+                            LoginData(login, password)
                         )
                     )
                 ).body
