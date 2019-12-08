@@ -67,7 +67,7 @@ object Client {
 
         fun getContacts(): MutableMap<Long, String> = objectMapper.readValue(getResponse(GET_CONTACTS, userId))
 
-        fun getBlockUsers(): MutableMap<Long, String> = objectMapper.readValue(getResponse(GET_BLOCKED_USERS, userId))
+        fun getBlockedUsers(): MutableMap<Long, String> = objectMapper.readValue(getResponse(GET_BLOCKED_USERS, userId))
         //TODO na servere tolko longi!!!!
 
 

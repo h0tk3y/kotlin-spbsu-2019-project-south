@@ -350,4 +350,8 @@ class UserBase(val connection: Connection) {
         }
     }
 
+    fun findByLogin(login: String) : User {
+        TODO()
+    }
+
 }
