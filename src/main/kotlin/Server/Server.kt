@@ -57,7 +57,10 @@ object Server {
                         response.body = objectMapper.writeValueAsString(message)
                     }
 
-                    RequestType.ADD_CHAT -> requestHandler.addChat(request.body)
+                    RequestType.ADD_CHAT -> {
+                        val chatId = requestHandler.addChat(request.body)
+                        response.body = objectMapper.writeValueAsString(chatId)
+                    }
                     RequestType.GET_CHAT -> {
                         val chat: Chat? = requestHandler.getChat(request.id)
                         response.body = objectMapper.writeValueAsString(chat)
