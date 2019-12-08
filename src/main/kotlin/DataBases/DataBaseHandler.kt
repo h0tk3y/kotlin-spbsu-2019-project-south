@@ -119,6 +119,16 @@ class DataBaseHandler {
             """
             statement.execute(queryMessages)
 
+            @Language("MySQL")
+            val queryLogin = """
+                CREATE TABLE IF NOT EXISTS password(
+                login VARCHAR(50) PRIMARY KEY,
+                password VARCHAR(50),
+                INDEX(login)
+                )
+            """.trimIndent()
+            statement.execute(queryLogin)
+
             statement.close()
         } catch (se: SQLException) {
             throw se

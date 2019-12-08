@@ -1,5 +1,6 @@
 
 import DataBases.DataBaseHandler
+import DataBases.PasswordBase
 import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test
@@ -571,6 +572,19 @@ class DataBaseTests {
         userDB.remove(user2Id)
         userDB.remove(user3Id)
         chatDB.remove(chat1Id)
+        handler.closeAll()
+    }
+
+    @Test
+    fun addCheckLogin() {
+        val handler = DataBaseHandler()
+        handler.initAll()
+        val passDB = PasswordBase(handler.connection!!)
+        if (!passDB.checkPassword("<test>_sp", "sp2001"))
+            passDB.add("<test>_sp", "sp2001")
+        assert(passDB.checkPassword("<test>_sp", "sp2001"))
+        assertFalse(passDB.checkPassword("<test>_sp", "sp2002"))
+        assertFalse(passDB.checkPassword("<test>_sp1", "sp2002"))
         handler.closeAll()
     }
 }
