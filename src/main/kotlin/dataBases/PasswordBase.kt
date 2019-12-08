@@ -1,9 +1,8 @@
-package DataBases
+package dataBases
 
 import org.intellij.lang.annotations.Language
 import java.sql.Connection
 import java.sql.SQLException
-import java.sql.Statement
 
 class PasswordBase(val connection: Connection){
     // IF LOGIN EXIST THROW EXCEPTION

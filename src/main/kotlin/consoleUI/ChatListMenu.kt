@@ -1,7 +1,7 @@
-package consoleUi
+package consoleUI
 
 class ChatsListMenu {
-    private fun chats() = Client.UserDataHandler(getId()).getChats()
+    private fun chats() = client.UserDataHandler(getId()).getChats()
 
     fun mainAction() {
         val options = listOf(
@@ -22,21 +22,21 @@ class ChatsListMenu {
     }
 
     private fun selectNameForSingleChat(chatId : Long) : String {
-        val members = Client.ChatData(chatId).getMembers()
+        val members = client.ChatData(chatId).getMembers()
         val userId = if (getId() == members.first()) {
             members.last()
         } else {
             members.first()
         }
-        val contacts = Client.UserData(getId()).getContacts()
+        val contacts = client.UserData(getId()).getContacts()
         if (userId in contacts)
             return contacts[userId]!!
         else
-            return Client.UserData(userId).getLogin()
+            return client.UserData(userId).getLogin()
     }
 
     private fun chatFormat(chat: Map.Entry<Long, String>): String =
-        if (!Client.ChatData(chat.key).isSingle()) {
+        if (!client.ChatData(chat.key).isSingle()) {
             "ID: ${chat.key}, name: ${chat.value}"
         } else {
             "ID: ${chat.key}, name: ${selectNameForSingleChat(chat.key)}"
@@ -55,7 +55,7 @@ class ChatsListMenu {
     private fun createChatAction() {
         //TODO("Allow to add users to chat")
         println("Input name of chat")
-        val chatId = Client.ChatData().createChat(false, readLine()!!, mutableSetOf(getId()))
+        val chatId = client.ChatData().createChat(false, readLine()!!, mutableSetOf(getId()))
         ChatMenu(chatId).mainAction()
     }
 }

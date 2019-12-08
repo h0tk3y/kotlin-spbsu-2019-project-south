@@ -1,9 +1,8 @@
-import DataBases.DataBaseHandler
-import DataClasses.LoginData
-import DataBases.PasswordBase
+import dataBases.DataBaseHandler
+import dataClasses.LoginData
+import dataBases.PasswordBase
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import java.lang.reflect.Member
 import java.sql.SQLException
 
 class RequestHandler() {

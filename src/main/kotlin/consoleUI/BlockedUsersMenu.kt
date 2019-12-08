@@ -1,6 +1,6 @@
-package consoleUi
+package consoleUI
 
-import Client.*
+import client.*
 
 class BlockedUsersMenu {
     private fun blockedUsers() = Client.UserDataHandler(getId()).getBlockedUsers()

@@ -1,6 +1,6 @@
 
-import DataBases.DataBaseHandler
-import DataBases.PasswordBase
+import dataBases.DataBaseHandler
+import dataBases.PasswordBase
 import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test

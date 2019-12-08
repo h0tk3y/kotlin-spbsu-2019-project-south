@@ -1,15 +1,15 @@
-package Client
+package client
 
 import Chat
 import com.fasterxml.jackson.module.kotlin.*
-import TransportType.*
-import DataClasses.*
+import transport.RequestType.*
+import dataClasses.*
 import User
-import Transport.*
+import transport.*
 import ServerRequest
 import Message
-import TransportType
-import Transport.ResponseStatus
+import transport.RequestType
+import transport.ResponseStatus
 
 object Client {
 
@@ -41,7 +41,7 @@ object Client {
 
 
 
-    private fun getResponse(requestType: TransportType, id: Long = -1, body: String = ""): String {
+    private fun getResponse(requestType: RequestType, id: Long = -1, body: String = ""): String {
         val response = webClient.makeRequest(ServerRequest(requestType, id, body))
         if (response.status != ResponseStatus.SUCCESSFUL) {
             throw ServerException(response.body)

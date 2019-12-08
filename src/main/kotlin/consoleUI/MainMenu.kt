@@ -1,4 +1,4 @@
-package consoleUi
+package consoleUI
 
 import kotlin.system.exitProcess
 
@@ -7,15 +7,15 @@ fun browserExit() {
 }
 
 fun getId(): Long {
-    return Client.getLoggedUserId()
+    return client.getLoggedUserId()
 }
 
 fun getName(id: Long = getId()): String {
-    return Client.UserDataHandler(id).getName()
+    return client.UserDataHandler(id).getName()
 }
 
 fun getLogin(id: Long = getId()): String {
-    return Client.UserDataHandler(id).getLogin()
+    return client.UserDataHandler(id).getLogin()
 }
 
 class MainMenu {

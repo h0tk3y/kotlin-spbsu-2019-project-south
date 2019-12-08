@@ -1,4 +1,6 @@
-enum class TransportType {
+package transport
+
+enum class RequestType {
 
     GET_USER,        //get user by id (access for all)
     // userId

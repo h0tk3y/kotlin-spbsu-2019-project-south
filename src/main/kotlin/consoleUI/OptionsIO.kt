@@ -1,4 +1,4 @@
-package consoleUi
+package consoleUI
 
 private fun printOptions(options: List<String>) = options.mapIndexed { index, s -> println("> $index -- $s") }
 

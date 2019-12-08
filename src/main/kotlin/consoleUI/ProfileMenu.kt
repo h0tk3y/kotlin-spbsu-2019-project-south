@@ -1,4 +1,4 @@
-package consoleUi
+package consoleUI
 
 class ProfileMenu {
     fun mainAction() {
@@ -15,7 +15,7 @@ class ProfileMenu {
             println("Your ID: ${getId()}")
             println("Your login: ${getLogin()}")
             println("Your name: ${getName()}")
-            println("Your email: ${Client.UserDataHandler().getEmail()}")
+            println("Your email: ${client.UserDataHandler().getEmail()}")
             println()
 
             when (optionsIO(optionsList)) {
@@ -29,11 +29,11 @@ class ProfileMenu {
 
     private fun changeNameAction() {
         println("Enter your name:")
-        Client.UserDataHandler(getId()).changeName(readLine()!!)
+        client.UserDataHandler(getId()).changeName(readLine()!!)
     }
 
     private fun changeEmailAction() {
         println("Enter your email:")
-        Client.UserDataHandler(getId()).changeEmail(readLine()!!)
+        client.UserDataHandler(getId()).changeEmail(readLine()!!)
     }
 }

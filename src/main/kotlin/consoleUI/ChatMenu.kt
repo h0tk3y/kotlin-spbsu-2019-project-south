@@ -1,4 +1,4 @@
-package consoleUi
+package consoleUI
 
 class ChatMenu(private val chatId : Long) {
 /*

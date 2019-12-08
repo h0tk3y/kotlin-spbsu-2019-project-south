@@ -1,4 +1,4 @@
-package consoleUi
+package consoleUI
 
 class LoginMenu {
     fun mainAction() {
@@ -22,6 +22,6 @@ class LoginMenu {
         val name = readLine()
         println("Enter your email:")
         val email = readLine()
-        Client.registerUser(login = login!!, name = name!!, email = email!!)
+        client.registerUser(login = login!!, name = name!!, email = email!!)
     }
 }

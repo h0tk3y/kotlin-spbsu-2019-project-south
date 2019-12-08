@@ -1,4 +1,4 @@
-package DataClasses
+package dataClasses
 
 import User
 

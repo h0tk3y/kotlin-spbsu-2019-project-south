@@ -1,7 +1,7 @@
-package consoleUi
+package consoleUI
 
 class ContactsMenu {
-    private fun contacts() = Client.UserDataHandler(getId()).getContacts()
+    private fun contacts() = client.UserDataHandler(getId()).getContacts()
 
     fun mainAction() {
 
@@ -37,29 +37,29 @@ class ContactsMenu {
         val userId = readLine()!!.toLong()
         println("Input new name for contact")
         var userName = readLine()
-        if (userName.isNullOrEmpty()) userName = Client.UserData(userId).getName()
-        Client.UserData(getId()).addContact(userId, userName)
-        Client.UserData(userId).addContact(getId(), getName())
-        Client.ChatData().createChat(true, "", mutableSetOf(getId(), userId))
+        if (userName.isNullOrEmpty()) userName = client.UserData(userId).getName()
+        client.UserData(getId()).addContact(userId, userName)
+        client.UserData(userId).addContact(getId(), getName())
+        client.ChatData().createChat(true, "", mutableSetOf(getId(), userId))
         //TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
     }
 
     private fun removeContactAction() {
         println("Select contact to remove:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        Client.UserDataHandler(getId()).removeContact(numId)
+        client.UserDataHandler(getId()).removeContact(numId)
     }
 
     private fun changeContactNameAction() {
         println("Select contact to change name:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
         println("Input new name for contact ${getName(numId)}:")
-        Client.UserDataHandler(getId()).changeContactName(numId, readLine()!!)
+        client.UserDataHandler(getId()).changeContactName(numId, readLine()!!)
     }
 
     private fun addToBlacklist() {
         println("Select contact to add to blacklist:")
         val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        Client.UserDataHandler(getId()).blockUser(numId)
+        client.UserDataHandler(getId()).blockUser(numId)
     }
 }

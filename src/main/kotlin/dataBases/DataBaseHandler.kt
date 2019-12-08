@@ -1,11 +1,7 @@
-package DataBases
+package dataBases
 
 import org.intellij.lang.annotations.Language
 import java.sql.*
-import User
-import Chat
-import Message
-import UserBase
 
 class DataBaseHandler {
     // TODO: Add Logging
