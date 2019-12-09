@@ -18,7 +18,7 @@ class ContactsMenu {
         )
         while (true) {
             println("Your are in your contacts menu")
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> showContactsAction()
                 1 -> addNewContactAction()
                 2 -> removeContactAction()
@@ -55,7 +55,6 @@ class ContactsMenu {
             var userName = readLine()
             if (userName.isNullOrEmpty()) userName = client.UserDataHandler(userId).getName()
             client.UserDataHandler(getId()).addContact(userId, userName)
-            client.UserDataHandler(userId).addContact(getId(), getName())
             client.ChatDataHandler().createChat(true, "", mutableSetOf(getId(), userId))
         } catch (e: ServerException) { printException(e) }
     }
@@ -63,7 +62,9 @@ class ContactsMenu {
     private fun removeContactAction() {
         try {
             println("Select contact to remove:")
-            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            val i = optionsIO(contacts().map { contactFormat(it) })
+            if (i == -1) return
+            val numId = contacts().keys.toList()[i]
             val name = contacts()[numId]
             if (name != null) {
                 client.UserDataHandler(getId()).removeContact(numId, name)
@@ -75,7 +76,9 @@ class ContactsMenu {
     private fun changeContactNameAction() {
         try {
             println("Select contact to change name:")
-            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            val i = optionsIO(contacts().map { contactFormat(it) })
+            if (i == -1) return
+            val numId = contacts().keys.toList()[i]
             println("Input new name for contact ${getName(numId)}:")
             client.UserDataHandler(getId()).editContact(numId, readNotEmptyLine())
         }
@@ -85,7 +88,9 @@ class ContactsMenu {
     private fun addToBlacklist() {
         try {
             println("Select contact to add to blacklist:")
-            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            val i = optionsIO(contacts().map { contactFormat(it) })
+            if (i == -1) return
+            val numId = contacts().keys.toList()[i]
             client.UserDataHandler(getId()).blockUser(numId)
         }
         catch (e : ServerException) { printException(e) }

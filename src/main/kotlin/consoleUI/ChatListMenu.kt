@@ -29,7 +29,7 @@ class ChatsListMenu {
         )
         while (true) {
             println("This is a list of your chats")
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> openChatAction()
                 1 -> showChatsAction()
                 2 -> createChatAction()
@@ -50,7 +50,9 @@ class ChatsListMenu {
     private fun openChatAction() {
         try {
             println("Select chat to open:")
-            val numId = chats().keys.toList()[optionsIO(chats().map { chatFormat(it) })]
+            val i = optionsIO(chats().map { chatFormat(it) })
+            if (i == -1) return
+            val numId = chats().keys.toList()[i]
             ChatMenu(numId).mainAction()
         }
         catch (e : ServerException) { printException(e) }
