@@ -182,9 +182,6 @@ class RequestHandler() {
     }
 
     fun getAdmins(senderId: Long, chatId: Long): MutableSet<Long> {
-        if (senderId !in chatBase.getAdmins(chatId)) {
-            throw ServerException("Not an admin")
-        }
         try {
             return chatBase.getAdmins(chatId)
         } catch (se: SQLException) {
@@ -345,7 +342,7 @@ class RequestHandler() {
 
     fun isAdmin(senderId: Long, chatId: Long) : Boolean {
         try {
-            return senderId in getMembers(senderId, chatId)
+            return senderId in getAdmins(senderId, chatId) || isOwner(senderId, chatId)
         } catch (e: SQLException) {
             throw e
         }

@@ -217,11 +217,13 @@ object Client {
 
 
 
-        fun addAdmin(userId: Long) = getResponse(ADD_MEMBER, chatId, objectMapper.writeValueAsString(userId))
+        fun addAdmin(userId: Long) = getResponse(ADD_ADMIN, chatId, objectMapper.writeValueAsString(userId))
 
 
 
         fun removeAdmin(userId: Long) = getResponse(REMOVE_ADMIN, chatId, objectMapper.writeValueAsString(userId))
+
+        fun isAdmin() : Boolean = objectMapper.readValue(getResponse(IS_ADMIN, chatId))
 
     }
 
