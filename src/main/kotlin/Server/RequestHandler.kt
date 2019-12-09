@@ -278,8 +278,9 @@ class RequestHandler() {
         val userLoginData : LoginData = objectMapper.readValue(loginDataString)
         try {
             if (passwordBase.checkPassword(userLoginData.login, userLoginData.password)) {
-                val user: User = userBase.findByLogin(userLoginData.login);
-                userLoginData.jwt = TokenHandler().makeToken(userBase.get(user.id) ?: throw TODO())
+                val user: User = userBase.findByLogin(userLoginData.login) ?: throw ServerException("User not found")
+                userLoginData.jwt = TokenHandler().makeToken(userBase.get(user.id) ?: throw ServerException("User not found"))
+
                 userLoginData.id = user.id
             }
         }

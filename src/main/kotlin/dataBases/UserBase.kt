@@ -350,8 +350,31 @@ class UserBase(val connection: Connection) {
         }
     }
 
-    fun findByLogin(login: String) : User {
-        TODO()
+    fun findByLogin(login: String): User? {
+        try {
+            @Language("MySQL")
+            val queryUser = """
+                SELECT * FROM users
+                WHERE login = ?
+            """
+            val prStatementUser = connection.prepareStatement(
+                queryUser
+            )
+            prStatementUser.setString(1, login)
+            prStatementUser.execute()
+            val rs = prStatementUser.resultSet
+            if (rs.next()) {
+                val user = User(rs.getInt("user_id").toLong(),
+                    rs.getString("login"),
+                    rs.getString("name"))
+                user.email = rs.getString("email")
+                return user
+            }
+            prStatementUser.close()
+        } catch (se: SQLException) {
+            throw se
+        }
+        return null
     }
 
 }
