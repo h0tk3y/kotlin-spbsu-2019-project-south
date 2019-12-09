@@ -110,7 +110,7 @@ object Server {
                 when (se) {
                     is SQLException -> {
                         response.status = ResponseStatus.DATABASE_ERROR
-                        response.body = "Oh no, it's a scary database exception!"
+                        response.body = se.message!!
                     }
                     is ServerException -> {
                         response.status = ResponseStatus.ACCESS_DENIED
