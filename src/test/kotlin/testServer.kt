@@ -115,4 +115,28 @@ class ServerTests {
         val contacts2 = Client.UserDataHandler().getContacts()
         assertEquals(0, contacts2.size)
     }
+
+    @Test
+    fun testEditContact() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        Client.UserDataHandler().addContact(id2, "Nikita Bosov")
+        Client.UserDataHandler().editContact(id2, "Bosov Nikita")
+        val contacts = Client.UserDataHandler().getContacts()
+        assertTrue(contacts.containsKey(id2) && contacts.get(id2) == "Bosov Nikita")
+        Client.UserDataHandler().removeContact(id2, "Bosov Nikita")
+        val contacts2 = Client.UserDataHandler().getContacts()
+        assertEquals(0, contacts2.size)
+    }
+
+    @Test
+    fun addSingleChat() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        val members = mutableSetOf<Long>();
+        members.add(id1)
+        val chatId = Client.ChatDataHandler().createChat(true, "SuperChat", members)
+        val chats = Client.UserDataHandler().getUserChats()
+        assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "SuperChat")
+    }
 }

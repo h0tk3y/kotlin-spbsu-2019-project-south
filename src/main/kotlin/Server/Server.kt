@@ -93,7 +93,7 @@ object Server {
                         val loginData: LoginData = requestHandler.login(request.body)
                         response.body = objectMapper.writeValueAsString(loginData)
                     }
-                    RequestType.EDIT_CONTACT -> requestHandler.editContact(request.id, request.body)
+                    RequestType.EDIT_CONTACT -> requestHandler.editContact(senderId, request.body)
                     RequestType.BLOCK_USER -> requestHandler.blockUser(request.id, request.body)
                     RequestType.UNBLOCK_USER -> requestHandler.unblockUser(request.id, request.body)
                     RequestType.GET_BLOCKED_USERS -> {
