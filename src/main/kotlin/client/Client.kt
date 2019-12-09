@@ -103,10 +103,10 @@ object Client {
         )
 
 
-        fun removeContact(contactId: Long) = getResponse(
+        fun removeContact(contactId: Long, contactName : String) = getResponse(
             REMOVE_CONTACT,
             userId,
-            userJSON(User(id = contactId))
+            userJSON(User(id = contactId, name = contactName))
         )
 
 

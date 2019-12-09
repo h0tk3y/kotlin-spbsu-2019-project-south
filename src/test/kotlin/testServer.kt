@@ -111,8 +111,8 @@ class ServerTests {
         val contacts = Client.UserDataHandler().getContacts()
         assertTrue(contacts.containsKey(id2) && contacts.get(id2) == "Nikita Bosov")
         assertTrue(contacts.containsKey(id3) && contacts.get(id3) == "Anton Shangareev")
-        Client.UserDataHandler().removeContact(id2)
-        Client.UserDataHandler().removeContact(id3)
+        Client.UserDataHandler().removeContact(id2, "Nikita Bosov")
+        Client.UserDataHandler().removeContact(id3, "Anton Shangareev")
         val contacts2 = Client.UserDataHandler().getContacts()
         assertEquals(0, contacts2.size)
     }
