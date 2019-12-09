@@ -124,6 +124,7 @@ class ChatMenu(private val chatId : Long) {
                 return
             }
             client.ChatDataHandler(chatId).addMember(numId)
+            // TODO  Need to add our chat to list of chats
         }
         catch (e : ServerException) { printException(e) }
     }
@@ -139,6 +140,7 @@ class ChatMenu(private val chatId : Long) {
     private fun leaveChatAction() {
         try {
             //TODO() - need delete chat action
+            //TODO() - also we need to delete chat form chat list of every member
             //client.UserDataHandler(getId()).deleteChat(chatId)
         }
         catch (e : ServerException) { printException(e) }
@@ -170,6 +172,7 @@ class ChatMenu(private val chatId : Long) {
                 break
             }
             client.ChatDataHandler(chatId).kickMember(id)
+            // TODO() - we need to delete chat from list of chats of kicked user
         }
         catch (e : ServerException) { printException(e) }
     }
