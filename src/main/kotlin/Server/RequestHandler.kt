@@ -172,9 +172,6 @@ class RequestHandler() {
 
     fun getMembers(senderId: Long, chatId: Long): MutableList<Long> {
         try {
-            if (senderId !in getAdmins(senderId, chatId)) {
-                throw ServerException("Not an admin")
-            }
             return chatBase.getMembers(chatId)
         } catch (se: SQLException) {
             throw se
@@ -224,7 +221,7 @@ class RequestHandler() {
     fun kickMember(senderId: Long, chatId: Long, memberIdString: String) {
         val memberId: Long = objectMapper.readValue(memberIdString)
         try {
-            if (senderId !in getAdmins(senderId, chatId)) {
+            if (senderId !in getAdmins(senderId, chatId) && senderId != chatBase.get(chatId)!!.owner_id) {
                 throw ServerException("Not an admin")
             }
             chatBase.removeMember(chatId, memberId)
