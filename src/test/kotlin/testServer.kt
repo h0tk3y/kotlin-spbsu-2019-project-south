@@ -1,5 +1,6 @@
 import client.Client
 import client.Client.webClient
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -110,5 +111,9 @@ class ServerTests {
         val contacts = Client.UserDataHandler().getContacts()
         assertTrue(contacts.containsKey(id2) && contacts.get(id2) == "Nikita Bosov")
         assertTrue(contacts.containsKey(id3) && contacts.get(id3) == "Anton Shangareev")
+        Client.UserDataHandler().removeContact(id2)
+        Client.UserDataHandler().removeContact(id3)
+        val contacts2 = Client.UserDataHandler().getContacts()
+        assertEquals(0, contacts2.size)
     }
 }
