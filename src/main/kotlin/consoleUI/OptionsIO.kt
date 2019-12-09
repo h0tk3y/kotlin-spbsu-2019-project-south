@@ -2,6 +2,8 @@ package consoleUI
 
 import client.ServerException
 
+class IOException(cause : String) : Exception(cause)
+
 private fun printOptions(options: List<String>) = options.mapIndexed { index, s -> println("> $index -- $s") }
 
 private fun optionNumReader(string: String?, maxRange: Int): Int {
@@ -30,53 +32,35 @@ fun optionsIO(options: List<String>): Int {
 fun readNotEmptyLine() : String {
     while (true) {
         val s = readLine()
-        if (s == "" || s == null) {
-            println("Invalid input. Please, try again.")
-            continue
-        }
+        if (s == "" || s == null) continue
         return s
     }
 }
 
 fun readLong() : Long {
-    while (true) {
-        try {
-            return readNotEmptyLine().toLong()
-        } catch (e: NumberFormatException) {
-            println("Invalid input. Please, try again.")
-            continue
-        }
-    }
+    try { return readNotEmptyLine().toLong() }
+    catch (e: NumberFormatException) { throw IOException("Invalid format") }
 }
 
 fun readUserId() : Long {
-    while (true) {
-        val id = readLong()
-        try {
-            client.Client.UserDataHandler(id).getName()
-            return id
-        }
-        catch (e : ServerException) {
-            println("This user does not exists. Please try again.")
-            continue
-        }
+    val id = readLong()
+    try {
+        client.Client.UserDataHandler(id).getName()
+        return id
     }
+    catch (e : ServerException) { throw IOException("Invalid format") }
 }
 
 fun readMessageId() : Long {
-    while (true) {
-        val id = readLong()
-        try {
-            client.Client.MessageDataHandler(id).getUserId()
-            return id
-        }
-        catch (e : ServerException) {
-            println("This message does not exists. Please try again.")
-            continue
-        }
+    val id = readLong()
+    try {
+        client.Client.MessageDataHandler(id).getUserId()
+        return id
+    } catch (e: ServerException) {
+        throw IOException("Invalid format")
     }
 }
 
-fun printException(e : ServerException) {
+fun printException(e : Exception) {
     println("${e.cause}")
 }

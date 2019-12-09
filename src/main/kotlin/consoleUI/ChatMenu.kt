@@ -5,12 +5,11 @@ import client.ServerException
 
 class ChatMenu(private val chatId : Long) {
 
-    private fun isAdmin(id : Long) : Boolean = false // TODO()
+    private fun isAdmin(id : Long) : Boolean = (id in client.ChatDataHandler(chatId).getAdmins())
 
     private fun members() = client.ChatDataHandler(chatId).getMembers()
 
     fun mainAction() {
-        //TODO() - waiting for isAdmin()
         if (isAdmin(getId())) mainActionAdmin()
         else mainActionRegular()
     }
@@ -87,10 +86,10 @@ class ChatMenu(private val chatId : Long) {
         )
         try {
             val messages = client.ChatDataHandler(chatId).getMessages()
-            var i = 0
-            while (i < messages.size) {
+            var i = messages.size - 1
+            while (i >= 0) {
                 for (cnt in 0 until lim) {
-                    if (i == messages.size) return
+                    if (i < 0) return
                     /*
                     val userId = client.MessageDataHandler(messages[i]).getUserId()
                     val userName = client.UserDataHandler(userId).getName()
@@ -106,8 +105,6 @@ class ChatMenu(private val chatId : Long) {
                     if (userId !in client.UserDataHandler(getId()).getBlockedUsers() && !messages[i].isDeleted) {
                         println("$messageId\n$userName\n$text\n")
                     }
-                    if (userId != getId()) client.MessageDataHandler(messageId).readMessage()
-
                     ++i
                 }
                 if (optionsIO(options) == 1) return
@@ -120,7 +117,12 @@ class ChatMenu(private val chatId : Long) {
     private fun addMemberAction() {
         try {
             println("Enter id of user")
-            val numId = readUserId()
+            val numId : Long
+            try { numId = readUserId() }
+            catch (e : IOException) {
+                printException(e)
+                return
+            }
             client.ChatDataHandler(chatId).addMember(numId)
         }
         catch (e : ServerException) { printException(e) }
@@ -174,7 +176,12 @@ class ChatMenu(private val chatId : Long) {
 
     private fun editMessageAction() {
         println("Enter id of message")
-        val id = readMessageId()
+        val id: Long
+        try { id = readMessageId() }
+        catch (e: IOException) {
+            printException(e)
+            return
+        }
         if (client.MessageDataHandler(id).getChatId() != chatId) {
             println("You cannot edit messages in other chats")
             return

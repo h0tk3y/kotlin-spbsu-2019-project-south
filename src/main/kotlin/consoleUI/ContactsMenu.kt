@@ -45,7 +45,12 @@ class ContactsMenu {
     private fun addNewContactAction() {
         try {
             println("Input id of User")
-            val userId = readUserId()
+            val userId : Long
+            try { userId = readUserId() }
+            catch (e : IOException) {
+                printException(e)
+                return
+            }
             println("Input new name for contact")
             var userName = readLine()
             if (userName.isNullOrEmpty()) userName = client.UserDataHandler(userId).getName()

@@ -3,8 +3,6 @@ package consoleUI
 import client.Client as client
 import client.ServerException
 
-// TODO = resolve conflict about blockedUsers()
-
 class BlockedUsersMenu {
     private fun blockedUsers() = client.UserDataHandler(getId()).getBlockedUsers()
 
@@ -33,10 +31,14 @@ class BlockedUsersMenu {
     }
 
     private fun addUserAction() {
-        try {
-            println("Enter id of user")
-            client.UserDataHandler(getId()).blockUser(readUserId())
+        println("Enter id of user")
+        val userId : Long
+        try { userId = readUserId() }
+        catch (e : IOException) {
+            printException(e)
+            return
         }
+        try { client.UserDataHandler(getId()).blockUser(userId) }
         catch (e : ServerException) { printException(e) }
     }
 

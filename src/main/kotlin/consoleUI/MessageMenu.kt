@@ -1,5 +1,6 @@
 package consoleUI
 
+import client.ServerException
 import client.Client as client
 
 class MessageMenu(private val messageId: Long) {
@@ -22,8 +23,15 @@ class MessageMenu(private val messageId: Long) {
     private fun editMessageAction() {
         println("Enter text of new message")
         val text = readNotEmptyLine()
-        client.MessageDataHandler(messageId).editText(text)
+        try { client.MessageDataHandler(messageId).editText(text) }
+        catch (e : ServerException) {
+            printException(e)
+            return
+        }
     }
 
-    private fun deleteMessagesAction() = client.MessageDataHandler(messageId).deleteMessage()
+    private fun deleteMessagesAction() {
+        try { client.MessageDataHandler(messageId).deleteMessage() }
+        catch (e : ServerException) { printException(e) }
+    }
 }

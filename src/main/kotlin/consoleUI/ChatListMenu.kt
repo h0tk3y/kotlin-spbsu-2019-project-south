@@ -57,7 +57,6 @@ class ChatsListMenu {
     }
 
 
-    //createChat must return chat id
     private fun createChatAction() {
         try {
             println("Input name of chat")
