@@ -94,7 +94,7 @@ object Server {
                         response.body = objectMapper.writeValueAsString(loginData)
                     }
                     RequestType.EDIT_CONTACT -> requestHandler.editContact(senderId, request.body)
-                    RequestType.BLOCK_USER -> requestHandler.blockUser(request.id, request.body)
+                    RequestType.BLOCK_USER -> requestHandler.blockUser(senderId, request.body)
                     RequestType.UNBLOCK_USER -> requestHandler.unblockUser(request.id, request.body)
                     RequestType.GET_BLOCKED_USERS -> {
                         val blockedUsers: MutableSet<Long> = requestHandler.getBlockedUsers(request.id)

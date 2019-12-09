@@ -304,7 +304,7 @@ class RequestHandler() {
     }
 
     fun blockUser(userId: Long, blockedUserIdString: String) {
-        val blockedUserId: Long = objectMapper.readValue(blockedUserIdString)
+        val blockedUserId: Long = objectMapper.readValue<User>(blockedUserIdString).id
         try {
             userBase.blockUser(userId, blockedUserId)
         } catch (se: SQLException) {
@@ -313,7 +313,7 @@ class RequestHandler() {
     }
 
     fun unblockUser(userId: Long, userToUnlockIdString: String) {
-        val userToUnlockId: Long = objectMapper.readValue(userToUnlockIdString)
+        val userToUnlockId: Long = objectMapper.readValue<User>(userToUnlockIdString).id
         try {
             userBase.unblockUser(userId, userToUnlockId)
         } catch (se: SQLException) {
@@ -330,7 +330,7 @@ class RequestHandler() {
     }
 
     fun leaveChat(senderId: Long, chatId: Long, userString: String) {
-        val memberId: Long = objectMapper.readValue(userString)
+        val memberId: Long = objectMapper.readValue<User>(userString).id
         try {
             if (senderId !in getMembers(senderId, chatId)) {
                 throw ServerException("Not an admin")

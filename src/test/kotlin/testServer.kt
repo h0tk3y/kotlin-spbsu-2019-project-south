@@ -3,8 +3,7 @@ import client.Client.webClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -130,6 +129,19 @@ class ServerTests {
     }
 
     @Test
+    fun testBlockUser() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        Client.UserDataHandler().blockUser(id2)
+        var blockedUsers = Client.UserDataHandler().getBlockedUsers()
+        assertTrue(blockedUsers.contains(id2))
+
+        Client.UserDataHandler().unblockUser(id2)
+        blockedUsers = Client.UserDataHandler().getBlockedUsers()
+        assertTrue(blockedUsers.size == 0)
+    }
+
+    @Test
     fun addSingleChat() {
         Client.LoginDataHandler().loginUser("handmidas", "azul3")
         assertTrue(Client.webClient.token != "")
@@ -174,6 +186,15 @@ class ServerTests {
 
     @Test
     fun testLoginException() {
-        Client.LoginDataHandler().loginUser("handmidas", "azul4")
+        assertThrows<client.ServerException> {
+            Client.LoginDataHandler().loginUser("handmidas", "azul4")
+        }
+    }
+
+    @Test
+    fun testRegisterException() {
+        assertThrows<client.ServerException> {
+            Client.LoginDataHandler().registerUser("handmidas", "azul4", "aaa", "bbb")
+        }
     }
 }
