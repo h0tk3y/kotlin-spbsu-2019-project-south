@@ -200,7 +200,6 @@ object Client {
 
         fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>) : Long {
             val newChat = Chat(-1, isSingle, loggedUserId, name, members)
-            getResponse(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat))
             return objectMapper.readValue(getResponse(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat)))
         }
 
