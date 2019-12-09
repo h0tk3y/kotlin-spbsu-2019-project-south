@@ -1,5 +1,8 @@
 package consoleUI
 
+import client.ServerException
+import client.Client as client
+
 class ProfileMenu {
     fun mainAction() {
 
@@ -29,11 +32,19 @@ class ProfileMenu {
 
     private fun changeNameAction() {
         println("Enter your name:")
-        client.UserDataHandler(getId()).changeName(readLine()!!)
+        val newName = readNotEmptyLine()
+        try {
+            client.UserDataHandler(getId()).changeName(newName)
+        }
+        catch (e : ServerException) { printException(e) }
     }
 
     private fun changeEmailAction() {
         println("Enter your email:")
-        client.UserDataHandler(getId()).changeEmail(readLine()!!)
+        val newEmail = readNotEmptyLine()
+        try {
+            client.UserDataHandler(getId()).changeEmail(newEmail)
+        }
+        catch (e : ServerException) { printException(e) }
     }
 }

@@ -1,5 +1,8 @@
 package consoleUI
 
+import client.Client as client
+import client.ServerException
+
 class ContactsMenu {
     private fun contacts() = client.UserDataHandler(getId()).getContacts()
 
@@ -10,6 +13,7 @@ class ContactsMenu {
             "Add new contact",
             "Remove contact",
             "Change contact name",
+            "Add contact to blacklist",
             "Return"
         )
         while (true) {
@@ -19,7 +23,8 @@ class ContactsMenu {
                 1 -> addNewContactAction()
                 2 -> removeContactAction()
                 3 -> changeContactNameAction()
-                4 -> return
+                4 -> addToBlacklist()
+                5 -> return
             }
         }
 
@@ -28,38 +33,58 @@ class ContactsMenu {
     private fun contactFormat(contact: Map.Entry<Long, String>): String =
         "ID: ${contact.key}, name: ${contact.value}"
 
-    private fun showContactsAction() = contacts().map {
-        println(contactFormat(it))
+    private fun showContactsAction() {
+        try {
+            contacts().map {
+                println(contactFormat(it))
+            }
+        }
+        catch (e : ServerException) { printException(e) }
     }
 
     private fun addNewContactAction() {
-        println("Input id of User")
-        val userId = readLine()!!.toLong()
-        println("Input new name for contact")
-        var userName = readLine()
-        if (userName.isNullOrEmpty()) userName = client.UserData(userId).getName()
-        client.UserData(getId()).addContact(userId, userName)
-        client.UserData(userId).addContact(getId(), getName())
-        client.ChatData().createChat(true, "", mutableSetOf(getId(), userId))
-        //TODO("Required: Login DB. Must be adding new chat to this User and newContactUser")
+        try {
+            println("Input id of User")
+            val userId : Long
+            try { userId = readUserId() }
+            catch (e : IOException) {
+                printException(e)
+                return
+            }
+            println("Input new name for contact")
+            var userName = readLine()
+            if (userName.isNullOrEmpty()) userName = client.UserDataHandler(userId).getName()
+            client.UserDataHandler(getId()).addContact(userId, userName)
+            client.UserDataHandler(userId).addContact(getId(), getName())
+            client.ChatDataHandler().createChat(true, "", mutableSetOf(getId(), userId))
+        } catch (e: ServerException) { printException(e) }
     }
 
     private fun removeContactAction() {
-        println("Select contact to remove:")
-        val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        client.UserDataHandler(getId()).removeContact(numId)
+        try {
+            println("Select contact to remove:")
+            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            client.UserDataHandler(getId()).removeContact(numId)
+        }
+        catch (e : ServerException) { printException(e) }
     }
 
     private fun changeContactNameAction() {
-        println("Select contact to change name:")
-        val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        println("Input new name for contact ${getName(numId)}:")
-        client.UserDataHandler(getId()).changeContactName(numId, readLine()!!)
+        try {
+            println("Select contact to change name:")
+            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            println("Input new name for contact ${getName(numId)}:")
+            client.UserDataHandler(getId()).editContact(numId, readNotEmptyLine())
+        }
+        catch (e : ServerException) { printException(e) }
     }
 
     private fun addToBlacklist() {
-        println("Select contact to add to blacklist:")
-        val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-        client.UserDataHandler(getId()).blockUser(numId)
+        try {
+            println("Select contact to add to blacklist:")
+            val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
+            client.UserDataHandler(getId()).blockUser(numId)
+        }
+        catch (e : ServerException) { printException(e) }
     }
 }

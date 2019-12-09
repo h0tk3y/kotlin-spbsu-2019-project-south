@@ -1,5 +1,6 @@
 package consoleUI
 
+import client.Client as client
 import kotlin.system.exitProcess
 
 fun browserExit() {
@@ -35,7 +36,7 @@ class MainMenu {
                 0 -> ProfileMenu().mainAction()
                 1 -> ContactsMenu().mainAction()
                 2 -> ChatsListMenu().mainAction()
-                3 -> LoginMenu().mainAction()
+                3 -> return
                 4 -> browserExit()
             }
         }
