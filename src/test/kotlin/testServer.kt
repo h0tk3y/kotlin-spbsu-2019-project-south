@@ -1,6 +1,5 @@
 import client.Client
 import client.Client.webClient
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
