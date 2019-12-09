@@ -176,11 +176,11 @@ class ServerTests {
         val members = mutableSetOf<Long>();
         members.add(id1)
         val chatId = Client.ChatDataHandler().createChat(false, "UltraGroupChat", members)
-        Client.ChatDataHandler().addMember(id2)
+        Client.ChatDataHandler(chatId).addMember(id2)
         val chats = Client.UserDataHandler().getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
         Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
-        val chats2 = Client.UserDataHandler().getUserChats()
+        val chats2 = Client.UserDataHandler(chatId).getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
     }
 
