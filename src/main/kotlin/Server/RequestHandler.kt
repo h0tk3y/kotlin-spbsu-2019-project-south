@@ -144,7 +144,8 @@ class RequestHandler() {
     fun addChat(chatString: String) : Long {
         val chat: Chat = objectMapper.readValue(chatString)
         try {
-            return chatBase.add(chat)
+            val id = chatBase.add(chat)
+            return id
         } catch (se: SQLException) {
             throw se
         }

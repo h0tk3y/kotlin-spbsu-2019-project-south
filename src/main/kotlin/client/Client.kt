@@ -139,7 +139,7 @@ object Client {
 
 
         private fun editMessage(message: Message) {
-            message.isEdited = true
+            message.edited = true
             getResponse(EDIT_MESSAGE, messageId, objectMapper.writeValueAsString(message))
         }
 
@@ -160,7 +160,7 @@ object Client {
 
         fun deleteMessage() {
             val cur = getMessage()
-            cur.isDeleted = true
+            cur.deleted = true
             editMessage(cur)
         }
 
@@ -175,7 +175,7 @@ object Client {
 
         fun getName() = getChat().name
 
-        fun isSingle() = getChat().isSingle
+        fun isSingle() = getChat().single
 
 
 
@@ -200,6 +200,7 @@ object Client {
 
         fun createChat(isSingle: Boolean, name: String, members: MutableSet<Long>) : Long {
             val newChat = Chat(-1, isSingle, loggedUserId, name, members)
+            getResponse(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat))
             return objectMapper.readValue(getResponse(ADD_CHAT, chatId, objectMapper.writeValueAsString(newChat)))
         }
 

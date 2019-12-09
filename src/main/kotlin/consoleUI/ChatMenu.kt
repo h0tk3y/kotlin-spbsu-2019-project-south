@@ -102,7 +102,7 @@ class ChatMenu(private val chatId : Long) {
                     val userId = messages[i].userId
                     val userName = client.UserDataHandler(userId).getName()
                     val text = messages[i].text
-                    if (userId !in client.UserDataHandler(getId()).getBlockedUsers() && !messages[i].isDeleted) {
+                    if (userId !in client.UserDataHandler(getId()).getBlockedUsers() && !messages[i].deleted) {
                         println("$messageId\n$userName\n$text\n")
                     }
                     ++i

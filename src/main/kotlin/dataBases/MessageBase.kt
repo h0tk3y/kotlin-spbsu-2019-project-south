@@ -20,10 +20,10 @@ class MessageBase(val connection:Connection) {
             preparedStatement.setString(1, message.text)
             preparedStatement.setInt(2, message.chatId.toInt())
             preparedStatement.setInt(3, message.userId.toInt())
-            preparedStatement.setBoolean(4, message.isEdited)
-            preparedStatement.setBoolean(5, message.isRead)
-            preparedStatement.setBoolean(6, message.isSent)
-            preparedStatement.setBoolean(7, message.isDeleted)
+            preparedStatement.setBoolean(4, message.edited)
+            preparedStatement.setBoolean(5, message.read)
+            preparedStatement.setBoolean(6, message.sent)
+            preparedStatement.setBoolean(7, message.deleted)
             preparedStatement.execute()
 
             val rs = preparedStatement.generatedKeys
@@ -73,10 +73,10 @@ class MessageBase(val connection:Connection) {
             preparedStatement.setString(1, message.text)
             preparedStatement.setInt(2, message.chatId.toInt())
             preparedStatement.setInt(3, message.userId.toInt())
-            preparedStatement.setBoolean(4, message.isEdited)
-            preparedStatement.setBoolean(5, message.isRead)
-            preparedStatement.setBoolean(6, message.isSent)
-            preparedStatement.setBoolean(7, message.isDeleted)
+            preparedStatement.setBoolean(4, message.edited)
+            preparedStatement.setBoolean(5, message.read)
+            preparedStatement.setBoolean(6, message.sent)
+            preparedStatement.setBoolean(7, message.deleted)
             preparedStatement.setInt(8, messageId.toInt())
             preparedStatement.execute()
 
@@ -106,10 +106,10 @@ class MessageBase(val connection:Connection) {
                     rs.getInt(2).toLong(),
                     rs.getInt(3).toLong()
                 )
-                message.isEdited = rs.getBoolean(4)
-                message.isRead = rs.getBoolean(5)
-                message.isSent = rs.getBoolean(6)
-                message.isDeleted = rs.getBoolean(7)
+                message.edited = rs.getBoolean(4)
+                message.read = rs.getBoolean(5)
+                message.sent = rs.getBoolean(6)
+                message.deleted = rs.getBoolean(7)
                 return message
             }
             preparedStatement.close()

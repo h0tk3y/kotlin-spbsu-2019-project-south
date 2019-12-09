@@ -24,7 +24,6 @@ object Server {
         try {
             var senderId = request.id
             if (request.requestType !in withoutToken) {
-                println(request.requestType)
                 if (!TokenHandler().verifyToken(request.jwt)) {
                     response.body = "Invalid token!"
                     response.status = ResponseStatus.ACCESS_DENIED

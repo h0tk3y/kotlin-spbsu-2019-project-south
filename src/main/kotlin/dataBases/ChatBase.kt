@@ -30,7 +30,7 @@ class ChatBase(val connection: Connection) {
                 Statement.RETURN_GENERATED_KEYS
             )
             prStatementChat.setString(1, chat.name)
-            prStatementChat.setBoolean(2, chat.isSingle)
+            prStatementChat.setBoolean(2, chat.single)
             prStatementChat.setInt(3, chat.owner_id.toInt())
             prStatementChat.executeUpdate()
             val rs = prStatementChat.generatedKeys
@@ -103,7 +103,7 @@ class ChatBase(val connection: Connection) {
                 queryUpdate
             )
             prStatementChat.setString(1, chat.name)
-            prStatementChat.setBoolean(2, chat.isSingle)
+            prStatementChat.setBoolean(2, chat.single)
             prStatementChat.setInt(3, chat.owner_id.toInt())
             prStatementChat.setInt(4, chatId.toInt())
             prStatementChat.execute()
@@ -133,7 +133,7 @@ class ChatBase(val connection: Connection) {
             val rs = prStatementChat.resultSet
             if (rs.next()) {
                 val chat = Chat(id = rs.getInt("chat_id").toLong(),
-                    isSingle = rs.getBoolean("is_single"),
+                    single = rs.getBoolean("is_single"),
                     name = rs.getString("name"),
                     owner_id = rs.getInt("owner_id").toLong())
                 return chat
@@ -169,10 +169,10 @@ class ChatBase(val connection: Connection) {
                     rs.getInt(3).toLong(),
                     rs.getInt(4).toLong()
                 )
-                message.isEdited = rs.getBoolean(5)
-                message.isRead = rs.getBoolean(6)
-                message.isSent = rs.getBoolean(7)
-                message.isDeleted = rs.getBoolean(8)
+                message.edited = rs.getBoolean(5)
+                message.read = rs.getBoolean(6)
+                message.sent = rs.getBoolean(7)
+                message.deleted = rs.getBoolean(8)
                 messages.add(message)
             }
             return messages
