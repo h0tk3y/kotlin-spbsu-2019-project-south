@@ -270,7 +270,7 @@ class RequestHandler() {
             userLoginData.jwt = TokenHandler().makeToken(userLoginData.user)
         }
         catch (se: SQLException) {
-            throw se
+            throw ServerException("Login already exists")
         }
         return userLoginData
     }
@@ -283,6 +283,9 @@ class RequestHandler() {
                 userLoginData.jwt = TokenHandler().makeToken(userBase.get(user.id) ?: throw ServerException("User not found"))
 
                 userLoginData.id = user.id
+            }
+            else {
+                throw ServerException("Wrong login or password")
             }
         }
         catch (se: SQLException) {
