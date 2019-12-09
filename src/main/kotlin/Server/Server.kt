@@ -22,13 +22,15 @@ object Server {
         val requestHandler = RequestHandler()
         val withoutToken = arrayOf(RequestType.LOGIN, RequestType.REGISTER)
         try {
-            val senderId = TokenHandler().getId(request.jwt)
-            if (request.requestType !in withoutToken) {
+            var senderId = request.id
+            if (request.requestType != RequestType.REGISTER) {
+                println(request.requestType)
                 if (!TokenHandler().verifyToken(request.jwt)) {
                     response.body = "Invalid token!"
                     response.status = ResponseStatus.ACCESS_DENIED
                     return response
                 }
+                senderId = TokenHandler().getId(request.jwt)
             }
             try {
                 when (request.requestType) {
