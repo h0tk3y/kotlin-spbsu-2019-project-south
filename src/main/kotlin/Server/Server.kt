@@ -23,7 +23,7 @@ object Server {
         val withoutToken = arrayOf(RequestType.LOGIN, RequestType.REGISTER)
         try {
             var senderId = request.id
-            if (request.requestType != RequestType.REGISTER) {
+            if (request.requestType !in withoutToken) {
                 println(request.requestType)
                 if (!TokenHandler().verifyToken(request.jwt)) {
                     response.body = "Invalid token!"
