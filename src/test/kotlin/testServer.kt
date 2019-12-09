@@ -3,8 +3,7 @@ import client.Client.webClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -130,6 +129,19 @@ class ServerTests {
     }
 
     @Test
+    fun testBlockUser() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        Client.UserDataHandler().blockUser(id2)
+        var blockedUsers = Client.UserDataHandler().getBlockedUsers()
+        assertTrue(blockedUsers.contains(id2))
+
+        Client.UserDataHandler().unblockUser(id2)
+        blockedUsers = Client.UserDataHandler().getBlockedUsers()
+        assertTrue(blockedUsers.size == 0)
+    }
+
+    @Test
     fun addSingleChat() {
         Client.LoginDataHandler().loginUser("handmidas", "azul3")
         assertTrue(Client.webClient.token != "")
@@ -164,16 +176,25 @@ class ServerTests {
         val members = mutableSetOf<Long>();
         members.add(id1)
         val chatId = Client.ChatDataHandler().createChat(false, "UltraGroupChat", members)
-        Client.ChatDataHandler().addMember(id2)
+        Client.ChatDataHandler(chatId).addMember(id2)
         val chats = Client.UserDataHandler().getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
         Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
-        val chats2 = Client.UserDataHandler().getUserChats()
+        val chats2 = Client.UserDataHandler(chatId).getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
     }
 
     @Test
     fun testLoginException() {
-        Client.LoginDataHandler().loginUser("handmidas", "azul4")
+        assertThrows<client.ServerException> {
+            Client.LoginDataHandler().loginUser("handmidas", "azul4")
+        }
+    }
+
+    @Test
+    fun testRegisterException() {
+        assertThrows<client.ServerException> {
+            Client.LoginDataHandler().registerUser("handmidas", "azul4", "aaa", "bbb")
+        }
     }
 }
