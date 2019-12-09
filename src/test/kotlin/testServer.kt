@@ -33,16 +33,15 @@ class ServerTests {
         }
         try {
             Client.LoginDataHandler().registerUser("handmidas", "azul3", "Danila", "danila@kotlin.com")
-            id1 = Client.getLoggedUserId()
         } catch (e: client.ServerException) {
             Client.LoginDataHandler().loginUser("handmidas", "azul3")
             assertTrue(Client.webClient.token != "")
             Client.UserDataHandler().changeName("Danila")
             Client.UserDataHandler().changeEmail("danila@kotlin.com")
         }
+        id1 = Client.getLoggedUserId()
         try {
             Client.LoginDataHandler().registerUser("bosov", "antoxadelaikotlin", "Bosov", "bosov@kotlin.com")
-            id2 = Client.getLoggedUserId()
         } catch (e: client.ServerException)
         {
             Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
@@ -50,15 +49,16 @@ class ServerTests {
             Client.UserDataHandler().changeName("Bosov")
             Client.UserDataHandler().changeEmail("bosov@kotlin.com")
         }
+        id2 = Client.getLoggedUserId()
         try {
             Client.LoginDataHandler().registerUser("antoxa", "lollollol", "Antoxa", "antoxa@gdekotlin.com")
-            id3 = Client.getLoggedUserId()
         } catch (e: client.ServerException) {
             Client.LoginDataHandler().loginUser("antoxa", "lollollol")
             assertTrue(Client.webClient.token != "")
             Client.UserDataHandler().changeName("Antoxa")
             Client.UserDataHandler().changeEmail("antoxa@gdekotlin.com")
         }
+        id3 = Client.getLoggedUserId()
     }
 
     @Test
