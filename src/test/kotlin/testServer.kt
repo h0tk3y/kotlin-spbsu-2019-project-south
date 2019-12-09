@@ -1,5 +1,6 @@
 import client.Client
 import client.Client.webClient
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -175,6 +176,7 @@ class ServerTests {
         assertTrue(Client.webClient.token != "")
         var members = mutableSetOf<Long>();
         members.add(id1)
+        members.add(id3)
         val chatId = Client.ChatDataHandler().createChat(false, "UltraGroupChat", members)
         Client.ChatDataHandler(chatId).addMember(id2)
 
@@ -188,11 +190,11 @@ class ServerTests {
         Client.LoginDataHandler().loginUser("handmidas", "azul3")
 
         val members3 = Client.ChatDataHandler(chatId).getMembers()
-        assertTrue(members3.size == 2 && members3.contains(id1) && members3.contains(id2))
+        assertTrue(members3.size == 3 && members3.contains(id1) && members3.contains(id2))
 
-        Client.ChatDataHandler().kickMember(id2)
-        val members2 = Client.ChatDataHandler().getMembers()
-        assertTrue(members2.size == 1 && members2.contains(id1))
+        Client.ChatDataHandler(chatId).kickMember(id2)
+        val members2 = Client.ChatDataHandler(chatId).getMembers()
+        assertTrue(members2.size == 2 && members2.contains(id1) && members2.contains(id3))
     }
 
     @Test
@@ -253,5 +255,21 @@ class ServerTests {
         Client.ChatDataHandler(chatId).removeAdmin(id3)
         var admins = Client.ChatDataHandler().getAdmins()
         assertTrue(admins.size == 0)
+    }
+
+    @Test
+    fun testAddMessage() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        val members = mutableSetOf<Long>()
+        members.add(id1)
+        members.add(id2)
+
+        var chatId = Client.ChatDataHandler().createChat(false, "MegaChat", members)
+        Client.ChatDataHandler(chatId).sendMessage("AAAAAAAAAA")
+        val mes = Client.ChatDataHandler(chatId).getMessages()
+
+        Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
+        Client.ChatDataHandler(chatId).sendMessage("BBBBBBBBBB")
+        assertTrue(mes[0].text == "AAAAAAAAAA" && mes[0].userId == id1)
     }
 }
