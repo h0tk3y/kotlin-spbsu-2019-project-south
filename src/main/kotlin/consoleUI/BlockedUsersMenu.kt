@@ -35,7 +35,7 @@ class BlockedUsersMenu {
     private fun addUserAction() {
         try {
             println("Enter id of user")
-            client.UserDataHandler(getId()).blockUser(readId())
+            client.UserDataHandler(getId()).blockUser(readUserId())
         }
         catch (e : ServerException) { printException(e) }
     }

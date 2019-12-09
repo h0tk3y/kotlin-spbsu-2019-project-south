@@ -29,7 +29,7 @@ class LoginMenu {
         catch (e : ServerException) { printException(e) }
     }
 
-    //TODO() = add password
+
     private fun signUpAction() {
         println("Enter your login:")
         val login = readNotEmptyLine()

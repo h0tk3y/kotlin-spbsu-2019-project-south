@@ -17,7 +17,7 @@ class ChatsListMenu {
     }
 
     private fun chatFormat(chat: Map.Entry<Long, String>): String =
-        if (!client.ChatDataHandler(chat.key).isSingle()) "ID: ${chat.key}, name: ${chat.value}
+        if (!client.ChatDataHandler(chat.key).isSingle()) "ID: ${chat.key}, name: ${chat.value}"
         else "ID: ${chat.key}, name: ${selectNameForSingleChat(chat.key)}"
 
     fun mainAction() {

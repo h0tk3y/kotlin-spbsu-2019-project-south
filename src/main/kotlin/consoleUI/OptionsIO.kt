@@ -38,25 +38,41 @@ fun readNotEmptyLine() : String {
     }
 }
 
-fun readId() : Long {
-    outerLoop@ while (true) {
-        var id : Long
-        innerLoop@ while (true) {
-            try {
-                id = readNotEmptyLine().toLong()
-                break@innerLoop
-            } catch (e: NumberFormatException) {
-                println("Invalid input. Please, try again.")
-                continue@innerLoop
-            }
+fun readLong() : Long {
+    while (true) {
+        try {
+            return readNotEmptyLine().toLong()
+        } catch (e: NumberFormatException) {
+            println("Invalid input. Please, try again.")
+            continue
         }
+    }
+}
+
+fun readUserId() : Long {
+    while (true) {
+        val id = readLong()
         try {
             client.Client.UserDataHandler(id).getName()
             return id
         }
         catch (e : ServerException) {
             println("This user does not exists. Please try again.")
-            continue@outerLoop
+            continue
+        }
+    }
+}
+
+fun readMessageId() : Long {
+    while (true) {
+        val id = readLong()
+        try {
+            client.Client.MessageDataHandler(id).getUserId()
+            return id
+        }
+        catch (e : ServerException) {
+            println("This message does not exists. Please try again.")
+            continue
         }
     }
 }

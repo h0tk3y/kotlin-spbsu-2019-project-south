@@ -19,6 +19,7 @@ class ChatMenu(private val chatId : Long) {
         val options = listOf(
             "Send message",
             "Show latest messages",
+            "Edit message",
             "Show members",
             "Leave chat",
             "Return"
@@ -28,12 +29,13 @@ class ChatMenu(private val chatId : Long) {
             when (optionsIO(options)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
-                2 -> showMembersAction()
-                3 -> {
+                2 -> editMessageAction()
+                3 -> showMembersAction()
+                4 -> {
                     leaveChatAction()
                     return
                 }
-                4 -> return
+                5 -> return
             }
         }
     }
@@ -42,6 +44,7 @@ class ChatMenu(private val chatId : Long) {
         val options = listOf(
             "Send message",
             "Show latest messages",
+            "Edit message",
             "Show member",
             "Add new user",
             "Kick user",
@@ -54,15 +57,16 @@ class ChatMenu(private val chatId : Long) {
             when (optionsIO(options)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
-                2 -> showMembersAction()
-                3 -> addMemberAction()
-                4 -> kickMemberAction()
-                5 -> changeChatNameAction()
-                6 -> {
+                2 -> editMessageAction()
+                3 -> showMembersAction()
+                4 -> addMemberAction()
+                5 -> kickMemberAction()
+                6 -> changeChatNameAction()
+                7 -> {
                     leaveChatAction()
                     return
                 }
-                7 -> return
+                8 -> return
             }
         }
     }
@@ -116,7 +120,7 @@ class ChatMenu(private val chatId : Long) {
     private fun addMemberAction() {
         try {
             println("Enter id of user")
-            val numId = readId()
+            val numId = readUserId()
             client.ChatDataHandler(chatId).addMember(numId)
         }
         catch (e : ServerException) { printException(e) }
@@ -142,23 +146,43 @@ class ChatMenu(private val chatId : Long) {
         "ID: ${memberId}, Name: ${client.UserDataHandler(memberId).getName()}, isAdmin: ${isAdmin(memberId)}"
 
     private fun showMembersAction() {
-        members().map {
-            println(memberFormat(it))
+        try {
+            members().map {
+                println(memberFormat(it))
+            }
         }
+        catch (e : ServerException) { printException(e) }
     }
 
     private fun kickMemberAction() {
-        val id : Long
-        while (true) {
-            println("Select member to kick:")
-            val numId = members()[optionsIO(members().map { memberFormat(it) })]
-            if (isAdmin(numId)) {
-                println("You cannot kick admin")
-                continue
+        try {
+            val id: Long
+            while (true) {
+                println("Select member to kick:")
+                val numId = members()[optionsIO(members().map { memberFormat(it) })]
+                if (isAdmin(numId)) {
+                    println("You cannot kick admin")
+                    continue
+                }
+                id = numId
+                break
             }
-            id = numId
-            break
+            client.ChatDataHandler(chatId).kickMember(id)
         }
-        client.ChatDataHandler(chatId).kickMember(id)
+        catch (e : ServerException) { printException(e) }
+    }
+
+    private fun editMessageAction() {
+        println("Enter id of message")
+        val id = readMessageId()
+        if (client.MessageDataHandler(id).getChatId() != chatId) {
+            println("You cannot edit messages in other chats")
+            return
+        }
+        if (client.MessageDataHandler(id).getUserId() != getId() && !isAdmin(getId())) {
+            println("You cannot edit this message")
+            return
+        }
+        MessageMenu(id).mainAction()
     }
 }
