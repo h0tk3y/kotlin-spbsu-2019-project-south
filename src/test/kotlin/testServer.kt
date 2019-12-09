@@ -133,10 +133,47 @@ class ServerTests {
     fun addSingleChat() {
         Client.LoginDataHandler().loginUser("handmidas", "azul3")
         assertTrue(Client.webClient.token != "")
-        val members = mutableSetOf<Long>();
+        val members = mutableSetOf<Long>()
         members.add(id1)
+        members.add(id2)
         val chatId = Client.ChatDataHandler().createChat(true, "SuperChat", members)
         val chats = Client.UserDataHandler().getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "SuperChat")
+    }
+
+    @Test
+    fun addGroupChat() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        val members = mutableSetOf<Long>();
+        members.add(id1)
+        members.add(id2)
+        members.add(id3)
+        val chatId = Client.ChatDataHandler().createChat(false, "SuperGroupChat", members)
+        val chats = Client.UserDataHandler().getUserChats()
+        assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "SuperGroupChat")
+        Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
+        val chats2 = Client.UserDataHandler().getUserChats()
+        assertTrue(chats.containsKey(chatId) && chats2.get(chatId) == "SuperGroupChat")
+    }
+
+    @Test
+    fun addMember() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        assertTrue(Client.webClient.token != "")
+        val members = mutableSetOf<Long>();
+        members.add(id1)
+        val chatId = Client.ChatDataHandler().createChat(false, "UltraGroupChat", members)
+        Client.ChatDataHandler().addMember(id2)
+        val chats = Client.UserDataHandler().getUserChats()
+        assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
+        Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
+        val chats2 = Client.UserDataHandler().getUserChats()
+        assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
+    }
+
+    @Test
+    fun testLoginException() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul4")
     }
 }
