@@ -42,6 +42,12 @@ class ContactsMenu {
         catch (e : ServerException) { printException(e) }
     }
 
+    private fun checkSingleChat(userId : Long) = client.UserDataHandler(getId()).getUserChats().any {
+        val l = client.ChatDataHandler(it.key).getMembers()
+        val id = getId()
+        client.ChatDataHandler(it.key).isSingle() && (l == listOf(id, userId) || l == listOf(userId, id))
+    }
+
     private fun addNewContactAction() {
         try {
             println("Input id of User")
@@ -55,7 +61,9 @@ class ContactsMenu {
             var userName = readLine()
             if (userName.isNullOrEmpty()) userName = client.UserDataHandler(userId).getName()
             client.UserDataHandler(getId()).addContact(userId, userName)
-            client.ChatDataHandler().createChat(true, "", mutableSetOf(getId(), userId))
+            if (!checkSingleChat(userId)) {
+                client.ChatDataHandler().createChat(true, "", mutableSetOf(getId(), userId))
+            }
         } catch (e: ServerException) { printException(e) }
     }
 

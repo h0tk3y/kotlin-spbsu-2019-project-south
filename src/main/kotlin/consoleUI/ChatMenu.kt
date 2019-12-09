@@ -103,9 +103,11 @@ class ChatMenu(private val chatId : Long) {
                     val userName = client.UserDataHandler(userId).getName()
                     val text = messages[i].text
                     if (userId !in client.UserDataHandler(getId()).getBlockedUsers() && !messages[i].deleted) {
-                        println("$messageId\n$userName\n$text\n")
+                        println("ID: $messageId")
+                        println("FROM: $userName")
+                        println("$text\n")
                     }
-                    ++i
+                    --i
                 }
                 if (optionsIO(options) == 1) return
             }
