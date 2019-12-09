@@ -295,9 +295,9 @@ class RequestHandler() {
     }
 
     fun editContact(userId: Long, contactString: String) {
-        val newContact: Pair<Long, String> = objectMapper.readValue(contactString)
+        val newContact : User = objectMapper.readValue(contactString)
         try {
-            userBase.editContact(userId, newContact.first, newContact.second)
+            userBase.editContact(userId, newContact.id, newContact.name)
         } catch (se: SQLException) {
             throw se
         }
