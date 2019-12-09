@@ -25,7 +25,7 @@ class ChatMenu(private val chatId : Long) {
         )
         while (true) {
             println("Your are in ${client.ChatDataHandler(chatId).getName()} chat")
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
                 2 -> editMessageAction()
@@ -53,7 +53,7 @@ class ChatMenu(private val chatId : Long) {
         )
         while (true) {
             println("Your are in ${client.ChatDataHandler(chatId).getName()} chat")
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
                 2 -> editMessageAction()
@@ -163,7 +163,9 @@ class ChatMenu(private val chatId : Long) {
             val id: Long
             while (true) {
                 println("Select member to kick:")
-                val numId = members()[optionsIO(members().map { memberFormat(it) })]
+                val i = optionsIO(members().map { memberFormat(it) })
+                if (i == -1) return
+                val numId = members()[i]
                 if (isAdmin(numId)) {
                     println("You cannot kick admin")
                     continue

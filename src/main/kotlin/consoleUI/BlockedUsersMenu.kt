@@ -21,7 +21,7 @@ class BlockedUsersMenu {
         )
         while (true) {
             println("You are in your blacklist")
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> showBlockedUsersAction()
                 1 -> addUserAction()
                 2 -> removeUserAction()
@@ -45,9 +45,11 @@ class BlockedUsersMenu {
     private fun removeUserAction() {
         try {
             println("Select user to remove:")
-            val numId = blockedUsers().toList()[optionsIO(blockedUsers().map {
+            val i = optionsIO(blockedUsers().map {
                 blockedUserFormat(it)
-            })]
+            })
+            if (i == -1) return
+            val numId = blockedUsers().toList()[i]
             client.UserDataHandler(getId()).unblockUser(numId)
         }
         catch(e : ServerException) { printException(e) }

@@ -8,7 +8,10 @@ class LoginMenu {
         while (true) {
             println("Welcome to SnailMail!")
             println("Please, sign in with your login or sign up:")
-            when (optionsIO(listOf("Sign in", "Sign up", "Exit"))) {
+
+            val optionsList = listOf("Sign in", "Sign up", "Exit")
+
+            when (optionsIO(optionsList, withReturn = true)) {
                 0 -> signInAction()
                 1 -> signUpAction()
                 2 -> browserExit()

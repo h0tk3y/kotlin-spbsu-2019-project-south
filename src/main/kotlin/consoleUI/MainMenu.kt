@@ -32,7 +32,7 @@ class MainMenu {
 
         while (true) {
             println("Your are in main menu")
-            when (optionsIO(optionsList)) {
+            when (optionsIO(optionsList, withReturn = true)) {
                 0 -> ProfileMenu().mainAction()
                 1 -> ContactsMenu().mainAction()
                 2 -> ChatsListMenu().mainAction()

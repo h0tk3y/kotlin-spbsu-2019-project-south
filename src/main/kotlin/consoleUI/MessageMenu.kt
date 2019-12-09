@@ -12,7 +12,7 @@ class MessageMenu(private val messageId: Long) {
         )
 
         while (true) {
-            when (optionsIO(options)) {
+            when (optionsIO(options, withReturn = true)) {
                 0 -> editMessageAction()
                 1 -> deleteMessagesAction()
                 2 -> return

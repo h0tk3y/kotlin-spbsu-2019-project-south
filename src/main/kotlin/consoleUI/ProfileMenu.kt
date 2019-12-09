@@ -21,7 +21,7 @@ class ProfileMenu {
             println("Your email: ${client.UserDataHandler().getEmail()}")
             println()
 
-            when (optionsIO(optionsList)) {
+            when (optionsIO(optionsList, withReturn = true)) {
                 0 -> changeNameAction()
                 1 -> changeEmailAction()
                 2 -> BlockedUsersMenu().mainAction()
