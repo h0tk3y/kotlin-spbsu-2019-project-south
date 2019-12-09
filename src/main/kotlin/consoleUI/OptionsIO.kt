@@ -62,5 +62,5 @@ fun readMessageId() : Long {
 }
 
 fun printException(e : Exception) {
-    println("${e.cause}")
+    println(e.message)
 }

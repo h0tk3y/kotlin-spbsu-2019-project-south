@@ -24,9 +24,12 @@ class LoginMenu {
         val password = readNotEmptyLine()
         try {
             client.LoginDataHandler().loginUser(login = login, password = password)
-            MainMenu().mainAction()
         }
-        catch (e : ServerException) { printException(e) }
+        catch (e : ServerException) {
+            printException(e)
+            return
+        }
+        MainMenu().mainAction()
     }
 
 
@@ -42,8 +45,11 @@ class LoginMenu {
         try {
             client.LoginDataHandler()
                 .registerUser(login = login, password = password, name = name, email = email)
-            MainMenu().mainAction()
         }
-        catch (e : ServerException) { printException(e) }
+        catch (e : ServerException) {
+            printException(e)
+            return
+        }
+        MainMenu().mainAction()
     }
 }
