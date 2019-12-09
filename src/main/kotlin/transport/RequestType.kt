@@ -94,8 +94,6 @@ enum class RequestType {
     // userString(User)
 
     LOGIN,    // (access for all)
-    //TODO!!!
-
 
     IS_ADMIN,
 

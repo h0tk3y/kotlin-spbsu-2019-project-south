@@ -197,4 +197,50 @@ class ServerTests {
             Client.LoginDataHandler().registerUser("handmidas", "azul4", "aaa", "bbb")
         }
     }
+
+    @Test
+    fun testChatIsSingle() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        val members = mutableSetOf<Long>()
+        members.add(id1)
+        members.add(id2)
+        var chatId = Client.ChatDataHandler().createChat(true, "SingleChat", members)
+        assertTrue(Client.ChatDataHandler(chatId).isSingle())
+
+        chatId = Client.ChatDataHandler().createChat(false, "SingleChat", members)
+        assertFalse(Client.ChatDataHandler(chatId).isSingle())
+    }
+
+    @Test
+    fun testChatAdmin() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        val members = mutableSetOf<Long>()
+        members.add(id1)
+        members.add(id2)
+
+        var chatId = Client.ChatDataHandler().createChat(false, "GroupChat", members)
+        Client.ChatDataHandler(chatId).addAdmin(id3)
+        var admins = Client.ChatDataHandler(chatId).getAdmins()
+        assertTrue(admins.size == 1 && admins.contains(id3))
+
+        Client.ChatDataHandler(chatId).removeAdmin(id3)
+        admins = Client.ChatDataHandler().getAdmins()
+        assertTrue(admins.size == 0)
+    }
+
+    @Test
+    fun testIsAdmin() {
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+        val members = mutableSetOf<Long>()
+        members.add(id1)
+        members.add(id2)
+
+        var chatId = Client.ChatDataHandler().createChat(false, "GroupChat", members)
+        Client.ChatDataHandler(chatId).addAdmin(id3)
+        assertTrue(Client.ChatDataHandler(chatId).isAdmin())
+
+        Client.ChatDataHandler(chatId).removeAdmin(id3)
+        var admins = Client.ChatDataHandler().getAdmins()
+        assertTrue(admins.size == 0)
+    }
 }

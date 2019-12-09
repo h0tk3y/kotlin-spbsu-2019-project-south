@@ -84,6 +84,10 @@ object Server {
                     RequestType.KICK_MEMBER -> requestHandler.kickMember(senderId, request.id, request.body)
                     RequestType.ADD_ADMIN -> requestHandler.addAdmin(senderId, request.id, request.body)
                     RequestType.REMOVE_ADMIN -> requestHandler.removeAdmin(senderId, request.id, request.body)
+                    RequestType.IS_ADMIN -> {
+                        val isAdmin = requestHandler.isAdmin(senderId, request.id)
+                        response.body = objectMapper.writeValueAsString(isAdmin)
+                    }
 
                     RequestType.REGISTER -> {
                         val loginData: LoginData = requestHandler.register(request.body)
