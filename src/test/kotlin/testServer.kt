@@ -173,15 +173,26 @@ class ServerTests {
     fun addMember() {
         Client.LoginDataHandler().loginUser("handmidas", "azul3")
         assertTrue(Client.webClient.token != "")
-        val members = mutableSetOf<Long>();
+        var members = mutableSetOf<Long>();
         members.add(id1)
         val chatId = Client.ChatDataHandler().createChat(false, "UltraGroupChat", members)
         Client.ChatDataHandler(chatId).addMember(id2)
+
         val chats = Client.UserDataHandler().getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
+
         Client.LoginDataHandler().loginUser("bosov", "antoxadelaikotlin")
         val chats2 = Client.UserDataHandler(chatId).getUserChats()
         assertTrue(chats.containsKey(chatId) && chats.get(chatId) == "UltraGroupChat")
+
+        Client.LoginDataHandler().loginUser("handmidas", "azul3")
+
+        val members3 = Client.ChatDataHandler(chatId).getMembers()
+        assertTrue(members3.size == 2 && members3.contains(id1) && members3.contains(id2))
+
+        Client.ChatDataHandler().kickMember(id2)
+        val members2 = Client.ChatDataHandler().getMembers()
+        assertTrue(members2.size == 1 && members2.contains(id1))
     }
 
     @Test
