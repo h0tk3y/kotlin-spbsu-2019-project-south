@@ -64,7 +64,10 @@ class ContactsMenu {
         try {
             println("Select contact to remove:")
             val numId = contacts().keys.toList()[optionsIO(contacts().map { contactFormat(it) })]
-            client.UserDataHandler(getId()).removeContact(numId)
+            val name = contacts()[numId]
+            if (name != null) {
+                client.UserDataHandler(getId()).removeContact(numId, name)
+            }
         }
         catch (e : ServerException) { printException(e) }
     }
