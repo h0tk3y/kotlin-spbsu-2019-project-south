@@ -5,12 +5,12 @@ import client.ServerException
 
 class ChatMenu(private val chatId : Long) {
 
-    private fun isAdmin(id : Long) : Boolean = (id in client.ChatDataHandler(chatId).getAdmins())
+    private fun isAdmin() : Boolean = client.ChatDataHandler(chatId).isAdmin()
 
     private fun members() = client.ChatDataHandler(chatId).getMembers()
 
     fun mainAction() {
-        if (isAdmin(getId())) mainActionAdmin()
+        if (isAdmin()) mainActionAdmin()
         else mainActionRegular()
     }
 
@@ -103,9 +103,11 @@ class ChatMenu(private val chatId : Long) {
                     val userName = client.UserDataHandler(userId).getName()
                     val text = messages[i].text
                     if (userId !in client.UserDataHandler(getId()).getBlockedUsers() && !messages[i].deleted) {
-                        println("$messageId\n$userName\n$text\n")
+                        println("ID: $messageId")
+                        println("FROM: $userName")
+                        println("$text\n")
                     }
-                    ++i
+                    --i
                 }
                 if (optionsIO(options) == 1) return
             }
@@ -147,7 +149,7 @@ class ChatMenu(private val chatId : Long) {
     }
 
     private fun memberFormat(memberId: Long): String =
-        "ID: ${memberId}, Name: ${client.UserDataHandler(memberId).getName()}, isAdmin: ${isAdmin(memberId)}"
+        "ID: ${memberId}, Name: ${client.UserDataHandler(memberId).getName()}"
 
     private fun showMembersAction() {
         try {
@@ -160,21 +162,11 @@ class ChatMenu(private val chatId : Long) {
 
     private fun kickMemberAction() {
         try {
-            val id: Long
-            while (true) {
-                println("Select member to kick:")
-                val i = optionsIO(members().map { memberFormat(it) })
-                if (i == -1) return
-                val numId = members()[i]
-                if (isAdmin(numId)) {
-                    println("You cannot kick admin")
-                    continue
-                }
-                id = numId
-                break
-            }
+            println("Select member to kick:")
+            val i = optionsIO(members().map { memberFormat(it) })
+            if (i == -1) return
+            val id = members()[i]
             client.ChatDataHandler(chatId).kickMember(id)
-            // TODO() - we need to delete chat from list of chats of kicked user
         }
         catch (e : ServerException) { printException(e) }
     }
@@ -191,7 +183,7 @@ class ChatMenu(private val chatId : Long) {
             println("You cannot edit messages in other chats")
             return
         }
-        if (client.MessageDataHandler(id).getUserId() != getId() && !isAdmin(getId())) {
+        if (client.MessageDataHandler(id).getUserId() != getId() && !isAdmin()) {
             println("You cannot edit this message")
             return
         }
