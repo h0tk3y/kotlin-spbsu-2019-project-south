@@ -23,9 +23,9 @@ class MainMenu {
     fun mainAction() {
 
         val optionsList = listOf(
-            "View my profile",
-            "View my contacts",
-            "View my chats",
+            "Profile menu",
+            "Contacts menu",
+            "Chats menu",
             "Sign out",
             "Exit"
         )

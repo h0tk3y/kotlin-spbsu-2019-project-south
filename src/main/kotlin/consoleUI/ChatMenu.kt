@@ -10,62 +10,43 @@ class ChatMenu(private val chatId : Long) {
     private fun members() = client.ChatDataHandler(chatId).getMembers()
 
     fun mainAction() {
-        if (isAdmin()) mainActionAdmin()
-        else mainActionRegular()
-    }
-
-    private fun mainActionRegular() {
-        val options = listOf(
+        val chatOptions = listOf(
             "Send message",
             "Show latest messages",
             "Edit message",
             "Show members",
-            "Leave chat",
-            "Return"
-        )
-        while (true) {
-            println("Your are in ${client.ChatDataHandler(chatId).getName()} chat")
-            when (optionsIO(options, withReturn = true)) {
-                0 -> sendMessageAction()
-                1 -> showMessagesAction()
-                2 -> editMessageAction()
-                3 -> showMembersAction()
-                4 -> {
-                    leaveChatAction()
-                    return
-                }
-                5 -> return
-            }
-        }
-    }
-
-    private fun mainActionAdmin() {
-        val options = listOf(
-            "Send message",
-            "Show latest messages",
-            "Edit message",
-            "Show member",
+            "Return",
+            "Leave chat TODO()",
             "Add new user",
             "Kick user",
             "Change chat's name",
-            "Leave chat",
-            "Return"
+            "Add admin",
+            "Remove admin"
         )
+
         while (true) {
+            val range = if (client.ChatDataHandler(chatId).isSingle()) {
+                IntRange(0, 4)
+            } else {
+                if (isAdmin()) IntRange(0, 8)
+                else IntRange(0, 5)
+            }
             println("Your are in ${client.ChatDataHandler(chatId).getName()} chat")
-            when (optionsIO(options, withReturn = true)) {
+            when (optionsIO(chatOptions.slice(range), withReturn = true)) {
                 0 -> sendMessageAction()
                 1 -> showMessagesAction()
                 2 -> editMessageAction()
                 3 -> showMembersAction()
-                4 -> addMemberAction()
-                5 -> kickMemberAction()
-                6 -> changeChatNameAction()
-                7 -> {
+                4 -> return
+                5 -> {
                     leaveChatAction()
                     return
                 }
-                8 -> return
+                6 -> addMemberAction()
+                7 -> kickMemberAction()
+                8 -> changeChatNameAction()
+                9 -> addAdminAction()
+                10 -> removeAdminAction()
             }
         }
     }
@@ -126,7 +107,6 @@ class ChatMenu(private val chatId : Long) {
                 return
             }
             client.ChatDataHandler(chatId).addMember(numId)
-            // TODO  Need to add our chat to list of chats
         }
         catch (e : ServerException) { printException(e) }
     }
@@ -166,6 +146,10 @@ class ChatMenu(private val chatId : Long) {
             val i = optionsIO(members().map { memberFormat(it) })
             if (i == -1) return
             val id = members()[i]
+            if (id == getId()) {
+                println("You cannot kick yourself")
+                return
+            }
             client.ChatDataHandler(chatId).kickMember(id)
         }
         catch (e : ServerException) { printException(e) }
@@ -188,5 +172,13 @@ class ChatMenu(private val chatId : Long) {
             return
         }
         MessageMenu(id).mainAction()
+    }
+
+    private fun addAdminAction() {
+        TODO()
+    }
+
+    private fun removeAdminAction() {
+        TODO()
     }
 }
