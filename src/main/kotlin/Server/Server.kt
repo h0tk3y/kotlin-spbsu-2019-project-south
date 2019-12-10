@@ -16,10 +16,10 @@ import java.lang.Exception
 import java.sql.SQLException
 
 object Server {
+    private val requestHandler = RequestHandler()
     private val objectMapper = jacksonObjectMapper()
     private fun processRequest(request: ServerRequest): ServerResponse {
         val response = ServerResponse()
-        val requestHandler = RequestHandler()
         val withoutToken = arrayOf(RequestType.LOGIN, RequestType.REGISTER)
         try {
             var senderId = request.id
