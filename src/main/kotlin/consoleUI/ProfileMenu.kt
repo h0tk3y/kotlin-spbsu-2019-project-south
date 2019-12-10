@@ -9,7 +9,7 @@ class ProfileMenu {
         val optionsList = listOf(
             "Change name",
             "Change email",
-            "View my blacklist",
+            "Blacklist menu",
             "Return"
         )
 
